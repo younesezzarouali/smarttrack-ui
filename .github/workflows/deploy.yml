@@ -25,7 +25,7 @@ jobs:
         run: npm run build -- --configuration production
 
       - name: Deploy to S3
-        uses: aws-actions/s3-sync@v1
+        uses: jakejarvis/s3-sync-action
         with:
           bucket: ${{ secrets.S3_BUCKET }}
           region: ${{ secrets.AWS_REGION }}

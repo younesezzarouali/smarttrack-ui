@@ -3,7 +3,7 @@ name: Deploy Angular to S3
 on:
   push:
     branches:
-      - main   # ou master selon ta branche
+      - master
 
 jobs:
   build-deploy:

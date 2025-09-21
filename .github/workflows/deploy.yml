@@ -3,7 +3,7 @@ name: Deploy Angular to S3
 on:
   push:
     branches:
-      - master 
+      - main   # ou master selon ta branche
 
 jobs:
   build-deploy:
@@ -24,9 +24,13 @@ jobs:
       - name: Build Angular app
         run: npm run build -- --configuration production
 
-      - name: Deploy to S3
-        uses: jakejarvis/s3-sync-action
+      - name: Sync files to S3
+        uses: jakejarvis/s3-sync-action@v0.5.1
         with:
-          bucket: ${{ secrets.S3_BUCKET }}
-          region: ${{ secrets.AWS_REGION }}
-          source-dir: dist/smarttrack-ui
+          args: --acl public-read --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          SOURCE_DIR: dist/smarttrack-ui

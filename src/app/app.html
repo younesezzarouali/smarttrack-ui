@@ -17,54 +17,11 @@
   <div class="container text-center">
     <h1 class="display-4 fw-bold text-dark">Suivez vos dépenses intelligemment</h1>
     <p class="lead text-muted mb-4">SmartTrack simplifie la gestion de votre budget.</p>
-    <a href="#" class="btn btn-warning btn-lg fw-bold text-dark shadow-sm">Commencer</a>
+    <a href="#" class="btn btn-warning btn-lg fw-bold text-dark shadow-sm" (click)="openExpenseModal()">Commencer</a>
   </div>
 </header>
 
-<!-- DASHBOARD CARD -->
-<section class="container my-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card border-0 shadow">
-        <div class="card-body">
-          <h5 class="card-title text-center fw-bold mb-4">Aperçu du mois</h5>
-
-          <div class="row text-center mb-4">
-            <div class="col"><small>Total</small><h6>1280 €</h6></div>
-            <div class="col"><small>Budget</small><h6>1500 €</h6></div>
-            <div class="col text-success"><small>Reste</small><h6>220 €</h6></div>
-          </div>
-
-          <!-- Progress bars -->
-          <div class="mb-3">
-            <small>Logement</small>
-            <div class="progress">
-              <div class="progress-bar bg-warning text-dark fw-bold" style="width:65%">650 €</div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <small>Courses</small>
-            <div class="progress">
-              <div class="progress-bar bg-warning text-dark fw-bold" style="width:30%">300 €</div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <small>Transport</small>
-            <div class="progress">
-              <div class="progress-bar bg-warning text-dark fw-bold" style="width:12%">120 €</div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <small>Loisirs</small>
-            <div class="progress">
-              <div class="progress-bar bg-warning text-dark fw-bold" style="width:14%">140 €</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<app-expense-summary></app-expense-summary>
 
 <!-- FEATURES -->
 <section class="container my-5">
@@ -111,7 +68,7 @@
 <!-- FOOTER -->
 <footer class="bg-dark text-light py-3 mt-auto">
   <div class="container d-flex justify-content-between flex-wrap">
-    <span>© {{year}} Enzuim — SmartTrack</span>
+    <span>© {{year}} Ezzuim — SmartTrack by EZZAROUALI Younes</span>
     <div>
       <a href="#" class="text-light me-3">Confidentialité</a>
       <a href="#" class="text-light">Contact</a>

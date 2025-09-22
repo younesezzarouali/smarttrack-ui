@@ -1,0 +1,37 @@
+<!-- DASHBOARD CARD -->
+<section *ngIf="expenseSummary() as summary" class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card border-0 shadow">
+        <div class="card-body">
+          <h5 class="card-title text-center fw-bold mb-4">Aperçu du mois</h5>
+
+          <div class="row text-center mb-4">
+            <div class="col"><small>Total</small>
+              <h6>{{summary.total}} €</h6>
+            </div>
+            <div class="col"><small>Budget</small>
+              <h6>1500 €</h6>
+            </div>
+            <div class="col text-success"><small>Reste</small>
+              <h6>{{1500 - summary.total}} €</h6>
+            </div>
+          </div>
+
+          <!-- Progress bars -->
+
+          @for (category of categories(summary); track category) {
+          <div class="mb-3">
+            <small>{{category}}</small>
+            <div class="progress">
+              <div class="progress-bar bg-warning text-dark fw-bold" [style]="'width:'+summary.getPercentage(category)+'%'">
+                {{summary.totalByCategory[category]}} €
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

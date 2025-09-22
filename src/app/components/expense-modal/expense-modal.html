@@ -1,0 +1,33 @@
+<div class="modal-body">
+  <div class="mb-3">
+    <label class="form-label">Libellé</label>
+    <input type="text"
+           class="form-control"
+           [value]="label()"
+           (input)="label.set($any($event.target).value)" />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Montant</label>
+    <input type="number"
+           class="form-control"
+           [value]="amount()"
+           (input)="amount.set($any($event.target).value)" />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Catégorie</label>
+    <select class="form-select"
+            [value]="category()"
+            (change)="category.set($any($event.target).value)">
+      <option value="FOOD">Nourriture</option>
+      <option value="TRANSPORT">Transport</option>
+      <option value="HOUSING">Logement</option>
+      <option value="ENTERTAINMENT">Divertissement</option>
+      <option value="HEALTH">Santé</option>
+      <option value="OTHER">Autre</option>
+    </select>
+  </div>
+
+  <button class="btn btn-warning" (click)="addExpense()">Ajouter</button>
+</div>

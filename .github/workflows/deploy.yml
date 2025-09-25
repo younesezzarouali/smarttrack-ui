@@ -1,47 +1,45 @@
-name: Deploy Angular to S3
+name: Frontend CI → Deploy under /smarttrack
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
+
+env:
+  AWS_REGION: eu-west-3
+  CLOUDFRONT_DISTRIBUTION_ID: E3J5TDDPPQXI3U
 
 jobs:
-  build-deploy:
+  build_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build Angular app
-        run: npm run build -- --configuration production
-
-      - name: Sync files to S3
-        uses: jakejarvis/s3-sync-action@v0.5.1
-        with:
-          args: --delete
-        env:
-          AWS_S3_BUCKET: ${{ secrets.S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          SOURCE_DIR: dist/smarttrack-ui
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-3
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - run: npm install
+
+      # build avec base-href pour /smarttrack
+      - run: npm run build -- --configuration production --base-href /smarttrack/
+
+      # déployer dans S3 sous /smarttrack/
+      - name: Deploy to S3
+        run: |
+          aws s3 sync ./dist/smarttrack s3://${{ env.S3_BUCKET }}/smarttrack \
+            --delete --cache-control "max-age=31536000"
+
+      # invalider CloudFront
       - name: Invalidate CloudFront cache
         run: |
-            aws cloudfront create-invalidation \
-            --distribution-id E3J5TDDPPQXI3U \
-            --paths "/*"
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/smarttrack/*"

@@ -1,4 +1,4 @@
-name: Deploy Angular to S3 (/smarttrack)
+name: Deploy Angular to S3
 
 on:
   push:
@@ -21,31 +21,27 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 🔹 Build Angular avec base-href /smarttrack/
       - name: Build Angular app
         run: npm run build -- --configuration production
 
-      # 🔹 Sync vers S3 dans le sous-dossier /smarttrack/
       - name: Sync files to S3
-        run: |
-          aws s3 sync dist/smarttrack-ui s3://${{ secrets.S3_BUCKET }} \
-            --delete --cache-control "max-age=31536000"
+        uses: jakejarvis/s3-sync-action@v0.5.1
+        with:
+          args: --delete
         env:
+          AWS_S3_BUCKET: ${{ secrets.S3_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-
-      # 🔹 Config AWS (pour CloudFront ensuite)
+          SOURCE_DIR: dist/smarttrack-ui
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-3
-
-      # 🔹 Invalidation CloudFront uniquement sur /smarttrack/*
       - name: Invalidate CloudFront cache
         run: |
-          aws cloudfront create-invalidation \
+            aws cloudfront create-invalidation \
             --distribution-id E3J5TDDPPQXI3U \
-            --paths "/smarttrack/*"
+            --paths "/*"

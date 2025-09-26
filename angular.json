@@ -45,9 +45,7 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all",
-              "baseHref": "/smarttreck/",
-               "deployUrl": "/smarttreck/"
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,

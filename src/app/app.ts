@@ -15,6 +15,14 @@ export class App {
   }
 
   year = new Date().getFullYear();
+  greeting = this.getGreeting();
+
+  private getGreeting(): string {
+    const hours = new Date().getHours();
+    if (hours < 12) return 'Bonjour';
+    if (hours < 18) return 'Bon après-midi';
+    return 'Bonsoir';
+  }
 
   openExpenseModal() {
     this.modalService.open(ExpenseModalComponent)

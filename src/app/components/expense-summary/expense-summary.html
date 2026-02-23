@@ -6,26 +6,39 @@
         <div class="card-body">
           <h5 class="card-title text-center fw-bold mb-4">Aperçu du mois</h5>
 
-          <div class="row text-center mb-4">
-            <div class="col"><small>Total</small>
-              <h6>{{summary.total}} €</h6>
+          <div class="row text-center mb-2">
+            <div class="col"><small class="text-muted">Total</small>
+              <h6 class="fw-bold">{{summary.total}} €</h6>
             </div>
-            <div class="col"><small>Budget</small>
-              <h6>1500 €</h6>
+            <div class="col"><small class="text-muted">Budget</small>
+              <h6 class="fw-bold">{{summary.monthlyBudget}} €</h6>
             </div>
-            <div class="col text-success"><small>Reste</small>
-              <h6>{{1500 - summary.total}} €</h6>
+            <div class="col" [ngClass]="summary.getRemainingBudget() >= 0 ? 'text-success' : 'text-danger'">
+              <small class="text-muted">Reste</small>
+              <h6 class="fw-bold">{{summary.getRemainingBudget()}} €</h6>
             </div>
           </div>
 
-          <!-- Progress bars -->
+          <!-- Overall Budget Progress -->
+          <div class="mb-4">
+            <div class="progress" style="height: 10px;">
+              <div class="progress-bar" role="progressbar" 
+                [ngClass]="summary.getBudgetProgress() > 90 ? 'bg-danger' : 'bg-success'"
+                [style.width.%]="summary.getBudgetProgress()">
+              </div>
+            </div>
+          </div>
 
+          <h6 class="fw-bold mb-3">Répartition par catégorie</h6>
+          <!-- Progress bars -->
           @for (category of categories(summary); track category) {
           <div class="mb-3">
-            <small>{{category}}</small>
-            <div class="progress">
-              <div class="progress-bar bg-success text-dark fw-bold" [style]="'width:'+summary.getPercentage(category)+'%'">
-                {{summary.totalByCategory[category]}} €
+            <div class="d-flex justify-content-between mb-1">
+              <small class="text-muted text-capitalize">{{category.toLowerCase()}}</small>
+              <small class="fw-bold">{{summary.totalByCategory[category]}} €</small>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-success" [style.width.%]="summary.getPercentage(category)">
               </div>
             </div>
           </div>

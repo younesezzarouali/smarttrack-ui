@@ -1,6 +1,7 @@
 export class ExpenseSummary {
     totalByCategory: { [key: string]: number }; // équivalent du Map<ExpenseCategory, Double>
     total: number
+    monthlyBudget: number = 1500;
 
     constructor(totalByCategory: { [key: string]: number } = {}, total: number = 0) {
         this.totalByCategory = totalByCategory;
@@ -11,4 +12,13 @@ export class ExpenseSummary {
         if (this.total === 0) return 0; // éviter division par 0
         return ((this.totalByCategory[category] || 0) / this.total) * 100;
       }
+
+    getRemainingBudget(): number {
+      return this.monthlyBudget - this.total;
+    }
+
+    getBudgetProgress(): number {
+      if (this.monthlyBudget === 0) return 0;
+      return Math.min((this.total / this.monthlyBudget) * 100, 100);
+    }
 }

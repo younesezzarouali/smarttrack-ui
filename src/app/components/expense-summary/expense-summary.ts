@@ -13,9 +13,16 @@ export class ExpenseSummaryComponent implements OnInit{
   constructor(private expenseService: ExpenseService){}
 
   ngOnInit(): void {
+    console.log('Fetching expense summary...');
     this.expenseService.getSummary().subscribe({
-      next: (data) => this.expenseSummary.set(new ExpenseSummary(data.totalByCategory, data.total))
-    })
+      next: (data) => {
+        console.log('Successfully fetched expense summary:', data);
+        this.expenseSummary.set(new ExpenseSummary(data.totalByCategory, data.total));
+      },
+      error: (err) => {
+        console.error('Failed to fetch expense summary:', err);
+      }
+    });
   }
 
   categories(s: ExpenseSummary): string[] {

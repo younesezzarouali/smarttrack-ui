@@ -2,7 +2,7 @@
 <section *ngIf="expenseSummary() as summary" class="container my-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
-      <div class="card border-0 shadow">
+      <div class="card border-0 shadow" [class.critical-budget]="isBudgetCritical()">
         <div class="card-body">
           <h5 class="card-title text-center fw-bold mb-4">Aperçu du mois</h5>
 

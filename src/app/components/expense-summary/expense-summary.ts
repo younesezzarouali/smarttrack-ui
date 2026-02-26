@@ -28,4 +28,9 @@ export class ExpenseSummaryComponent implements OnInit{
   categories(s: ExpenseSummary): string[] {
     return Object.keys(s.totalByCategory);
   }
+
+  isBudgetCritical(): boolean {
+    const summary = this.expenseSummary();
+    return summary ? summary.total > (1500 * 0.9) : false;
+  }
 }

@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment.prod';
 })
 export class ExpenseModalComponent {
   // ⚡ Signals pour les champs
-  label = signal<string>('');
+  description = signal<string>('');
   amount = signal<number>(0);
   category = signal<string>('OTHER');
   apiUrl = environment.apiUrl
@@ -18,7 +18,7 @@ export class ExpenseModalComponent {
 
   addExpense() {
     this.http.post(`${this.apiUrl}/expenses`, {
-      label: this.label(),
+      description: this.description(),
       amount: this.amount(),
       category: this.category()
     }).subscribe({

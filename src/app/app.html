@@ -1,4 +1,3 @@
-<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-light bg-success shadow-sm">
   <div class="container">
     <a class="navbar-brand fw-bold text-dark" href="#">SmartTrack</a>
@@ -12,7 +11,6 @@
   </div>
 </nav>
 
-<!-- HERO -->
 <header class="bg-light py-5">
   <div class="container text-center">
     <h1 class="display-4 fw-bold text-dark">{{greeting}}, suivez vos dépenses</h1>
@@ -21,51 +19,46 @@
   </div>
 </header>
 
+<section *ngIf="analytics() as stats" class="container my-4">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="kpi-card shadow-sm">
+        <small>Total Dépensé</small>
+        <h3>{{ animatedTotal() }} €</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="kpi-card shadow-sm">
+        <small>Transactions</small>
+        <h3>{{ stats.count }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="kpi-card shadow-sm">
+        <small>Dépense Moyenne</small>
+        <h3>{{ animatedAverage() }} €</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-categories mt-3 p-3 shadow-sm rounded-3 bg-white">
+    <h6 class="fw-bold mb-3">Top catégories (temps réel)</h6>
+    @for (item of stats.topCategories; track item.category) {
+      <div class="category-line mb-2">
+        <div class="d-flex justify-content-between">
+          <span>{{ item.category }}</span>
+          <span class="fw-bold">{{ item.total }} €</span>
+        </div>
+        <div class="category-track">
+          <div class="category-fill" [style.width.%]="stats.total ? (item.total / stats.total) * 100 : 0"></div>
+        </div>
+      </div>
+    }
+  </div>
+</section>
+
 <app-expense-summary></app-expense-summary>
 
-<!-- FEATURES -->
-<section class="container my-5">
-  <div class="row g-4">
-    <div class="col-md-4">
-      <div class="card h-100 border-0 shadow-sm">
-        <div class="card-body text-center">
-          <i class="bi bi-tags-fill fs-1 text-success mb-3"></i>
-          <h5 class="card-title fw-bold">Catégories en 1 clic</h5>
-          <p class="text-muted">Crée, renomme et organise tes catégories facilement.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card h-100 border-0 shadow-sm">
-        <div class="card-body text-center">
-          <i class="bi bi-pie-chart-fill fs-1 text-success mb-3"></i>
-          <h5 class="card-title fw-bold">Budgets mensuels</h5>
-          <p class="text-muted">Fixe des plafonds et reçois des alertes en temps réel.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card h-100 border-0 shadow-sm">
-        <div class="card-body text-center">
-          <i class="bi bi-file-earmark-excel-fill fs-1 text-success mb-3"></i>
-          <h5 class="card-title fw-bold">Exports faciles</h5>
-          <p class="text-muted">Télécharge en CSV pour ton comptable.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="bg-success py-5 text-center">
-  <div class="container">
-    <h2 class="fw-bold text-dark">Prêt à suivre vos dépenses ?</h2>
-    <p class="mb-4 text-dark">SmartTrack s'intègre dans votre quotidien.</p>
-    <a href="#" class="btn btn-dark btn-lg fw-bold">Essayer maintenant</a>
-  </div>
-</section>
-
-<!-- FOOTER -->
 <footer class="bg-dark text-light py-3 mt-auto">
   <div class="container d-flex justify-content-between flex-wrap">
     <span>© {{year}} Ezzuim — SmartTrack by EZZAROUALI Younes</span>

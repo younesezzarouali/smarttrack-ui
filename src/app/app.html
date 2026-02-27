@@ -1,96 +1,48 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-success shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
   <div class="container">
-    <a class="navbar-brand fw-bold text-dark" href="#">SmartTrack</a>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link text-dark fw-semibold" href="#">Accueil</a></li>
-        <li class="nav-item"><a class="nav-link text-dark fw-semibold" href="#">Fonctionnalités</a></li>
-        <li class="nav-item"><a class="nav-link text-dark fw-semibold" href="#">Contact</a></li>
-      </ul>
-    </div>
+    <a class="navbar-brand fw-bold" href="#">SmartTrack</a>
   </div>
 </nav>
 
-<header class="bg-light py-5">
+<header class="bg-primary text-white py-5">
   <div class="container text-center">
-    <h1 class="display-4 fw-bold text-dark">{{greeting}}, suivez vos dépenses</h1>
-    <p class="lead text-muted mb-4">SmartTrack simplifie la gestion de votre budget.</p>
-    <a href="#" class="btn btn-success btn-lg fw-bold text-dark shadow-sm" (click)="openExpenseModal()">Commencer</a>
+    <h1 class="display-4 fw-bold">Suivez vos dépenses simplement</h1>
+    <p class="lead mb-4">Vision Serverless 100% Fonctionnelle.</p>
   </div>
 </header>
 
-<section *ngIf="analytics() as stats" class="container my-4">
-  <div class="row g-3">
-    <div class="col-md-4">
-      <div class="kpi-card shadow-sm">
-        <small>Total Dépensé</small>
-        <h3>{{ animatedTotal() }} €</h3>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="kpi-card shadow-sm">
-        <small>Transactions</small>
-        <h3>{{ stats.count }}</h3>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="kpi-card shadow-sm">
-        <small>Dépense Moyenne</small>
-        <h3>{{ animatedAverage() }} €</h3>
-      </div>
+<main class="container my-5">
+  <div class="row">
+    <div class="col-md-12">
+      <app-expense-summary></app-expense-summary>
     </div>
   </div>
 
-  <div class="top-categories mt-3 p-3 shadow-sm rounded-3 bg-white">
-    <h6 class="fw-bold mb-3">Top catégories (temps réel)</h6>
-    @for (item of stats.topCategories; track item.category) {
-      <div class="category-line mb-2">
-        <div class="d-flex justify-content-between">
-          <span>{{ item.category }}</span>
-          <span class="fw-bold">{{ item.total }} €</span>
-        </div>
-        <div class="category-track">
-          <div class="category-fill" [style.width.%]="stats.total ? (item.total / stats.total) * 100 : 0"></div>
-        </div>
-      </div>
-    }
-  </div>
-</section>
-
-
-<section class="container my-4 trend-wrap">
-  <div class="d-flex justify-content-between align-items-center mb-2">
-    <h6 class="fw-bold mb-0">Tendance des dépenses</h6>
-    <div class="btn-group btn-group-sm">
-      <button class="btn" [class.btn-dark]="selectedDays()===7" [class.btn-outline-dark]="selectedDays()!==7" (click)="loadTrends(7)">7j</button>
-      <button class="btn" [class.btn-dark]="selectedDays()===30" [class.btn-outline-dark]="selectedDays()!==30" (click)="loadTrends(30)">30j</button>
+  <div class="mt-5">
+    <h2 class="mb-4">Dernières Transactions</h2>
+    <div class="table-responsive">
+      <table class="table table-hover bg-white shadow-sm rounded">
+        <thead class="table-light">
+          <tr>
+            <th>Date</th>
+            <th>Catégorie</th>
+            <th>Montant</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ex of expenses">
+            <td>{{ ex.date }}</td>
+            <td>{{ ex.category }}</td>
+            <td class="fw-bold text-end">{{ ex.amount }} €</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
+</main>
 
-  <div class="trend-card p-3 shadow-sm rounded-3 bg-white">
-    <div *ngIf="isLoadingTrends()" class="skeleton-line"></div>
-    <div *ngIf="!isLoadingTrends() && trends() as t">
-      <svg viewBox="0 0 320 80" class="sparkline" preserveAspectRatio="none">
-        <path [attr.d]="trendPath()" class="sparkline-path"></path>
-      </svg>
-      <div class="d-flex justify-content-between mt-2 small text-muted">
-        <span>Moyenne/jour: <strong>{{ t.averagePerDay }} €</strong></span>
-        <span [class.text-success]="t.trendDelta >= 0" [class.text-danger]="t.trendDelta < 0">
-          Δ J-1: <strong>{{ t.trendDelta }} €</strong>
-        </span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<app-expense-summary></app-expense-summary>
-
-<footer class="bg-dark text-light py-3 mt-auto">
-  <div class="container d-flex justify-content-between flex-wrap">
-    <span>© {{year}} Ezzuim — SmartTrack by EZZAROUALI Younes</span>
-    <div>
-      <a href="#" class="text-light me-3">Confidentialité</a>
-      <a href="#" class="text-light">Contact</a>
-    </div>
+<footer class="bg-light py-4 border-top mt-auto">
+  <div class="container text-center text-muted">
+    <span>© 2026 Ezzium Consulting — SmartTrack Platform</span>
   </div>
 </footer>

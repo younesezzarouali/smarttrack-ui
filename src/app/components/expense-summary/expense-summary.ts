@@ -1,36 +1,26 @@
-import { Component, OnInit, signal,  } from '@angular/core';
-import { ExpenseSummary } from '../../models/expense-summary.model';
+import { Component, OnInit, signal } from '@angular/core';
 import { ExpenseService } from '../../services/expense.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-expense-summary',
   templateUrl: './expense-summary.html',
+  standalone: true,
   imports: [CommonModule],
 })
-export class ExpenseSummaryComponent implements OnInit{
-  expenseSummary = signal<ExpenseSummary | null>(null);
-  constructor(private expenseService: ExpenseService){}
+export class ExpenseSummaryComponent implements OnInit {
+  summary = signal<any>(null);
+  constructor(private expenseService: ExpenseService) {}
 
   ngOnInit(): void {
-    console.log('Fetching expense summary...');
     this.expenseService.getSummary().subscribe({
-      next: (data) => {
-        console.log('Successfully fetched expense summary:', data);
-        this.expenseSummary.set(new ExpenseSummary(data.totalByCategory, data.total));
-      },
-      error: (err) => {
-        console.error('Failed to fetch expense summary:', err);
-      }
+      next: (data) => this.summary.set(data),
+      error: (err) => console.error('Failed to fetch summary', err)
     });
   }
 
-  categories(s: ExpenseSummary): string[] {
-    return Object.keys(s.totalByCategory);
-  }
-
-  isBudgetCritical(): boolean {
-    const summary = this.expenseSummary();
-    return summary ? summary.total > (1500 * 0.9) : false;
+  getCategories(): string[] {
+    const s = this.summary();
+    return s ? Object.keys(s.totalByCategory) : [];
   }
 }

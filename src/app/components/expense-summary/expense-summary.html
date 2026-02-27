@@ -1,50 +1,39 @@
-<!-- DASHBOARD CARD -->
-<section *ngIf="expenseSummary() as summary" class="container my-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card border-0 shadow" [class.critical-budget]="isBudgetCritical()">
-        <div class="card-body">
-          <h5 class="card-title text-center fw-bold mb-4">Aperçu du mois</h5>
-
-          <div class="row text-center mb-2">
-            <div class="col"><small class="text-muted">Total</small>
-              <h6 class="fw-bold">{{summary.total}} €</h6>
-            </div>
-            <div class="col"><small class="text-muted">Budget</small>
-              <h6 class="fw-bold">{{summary.monthlyBudget}} €</h6>
-            </div>
-            <div class="col" [ngClass]="summary.getRemainingBudget() >= 0 ? 'text-success' : 'text-danger'">
-              <small class="text-muted">Reste</small>
-              <h6 class="fw-bold">{{summary.getRemainingBudget()}} €</h6>
-            </div>
-          </div>
-
-          <!-- Overall Budget Progress -->
-          <div class="mb-4">
-            <div class="progress" style="height: 10px;">
-              <div class="progress-bar" role="progressbar" 
-                [ngClass]="summary.getBudgetProgress() > 90 ? 'bg-danger' : 'bg-success'"
-                [style.width.%]="summary.getBudgetProgress()">
-              </div>
-            </div>
-          </div>
-
-          <h6 class="fw-bold mb-3">Répartition par catégorie</h6>
-          <!-- Progress bars -->
-          @for (category of categories(summary); track category) {
-          <div class="mb-3">
-            <div class="d-flex justify-content-between mb-1">
-              <small class="text-muted text-capitalize">{{category.toLowerCase()}}</small>
-              <small class="fw-bold">{{summary.totalByCategory[category]}} €</small>
-            </div>
-            <div class="progress" style="height: 8px;">
-              <div class="progress-bar bg-success" [style.width.%]="summary.getPercentage(category)">
-              </div>
-            </div>
-          </div>
-          }
-        </div>
+<div *ngIf="summary() as s" class="row g-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0 border-start border-primary border-4">
+      <div class="card-body">
+        <h6 class="text-muted small text-uppercase fw-bold">Total Dépensé</h6>
+        <h2 class="mb-0">{{ s.total }} €</h2>
       </div>
     </div>
   </div>
-</section>
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0 border-start border-success border-4">
+      <div class="card-body">
+        <h6 class="text-muted small text-uppercase fw-bold">Transactions</h6>
+        <h2 class="mb-0">{{ s.count }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0 border-start border-info border-4">
+      <div class="card-body">
+        <h6 class="text-muted small text-uppercase fw-bold">Période</h6>
+        <h2 class="mb-0 h4">{{ s.period }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="summary() as s" class="mt-4 p-4 bg-white shadow-sm rounded">
+  <h6 class="fw-bold mb-3">Détail par catégorie</h6>
+  <div *ngFor="let cat of getCategories()" class="mb-2">
+    <div class="d-flex justify-content-between mb-1">
+      <span>{{ cat }}</span>
+      <span class="fw-bold">{{ s.totalByCategory[cat] }} €</span>
+    </div>
+    <div class="progress" style="height: 8px;">
+      <div class="progress-bar bg-primary" [style.width.%]="(s.totalByCategory[cat] / s.total) * 100"></div>
+    </div>
+  </div>
+</div>

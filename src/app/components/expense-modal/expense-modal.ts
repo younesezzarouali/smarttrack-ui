@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment.prod';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-expense-modal',
@@ -14,7 +15,7 @@ export class ExpenseModalComponent {
   category = signal<string>('OTHER');
   apiUrl = environment.apiUrl
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private modalService: NgbModal) {}
 
   addExpense() {
     this.http.post(`${this.apiUrl}/expenses`, {
@@ -22,7 +23,10 @@ export class ExpenseModalComponent {
       amount: this.amount(),
       category: this.category()
     }).subscribe({
-      next: res => console.log('Expense added', res),
+      next: res =>  {
+        console.log('Expense added', res);
+        this.modalService.dismissAll();
+      },
       error: err => console.error('Error', err)
     });
   }

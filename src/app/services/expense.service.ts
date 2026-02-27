@@ -6,7 +6,12 @@ import { environment } from '../environments/environment.prod';
 @Injectable({ providedIn: 'root' })
 export class ExpenseService {
   constructor(private http: HttpClient) {}
+
   getSummary(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/expenses/summary`);
+  }
+
+  getExpenses(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/expenses`);
   }
 }

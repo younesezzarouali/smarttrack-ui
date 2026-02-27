@@ -3,8 +3,8 @@
     <label class="form-label">Libellé</label>
     <input type="text"
            class="form-control"
-           [value]="description()"
-           (input)="description.set($any($event.target).value)" />
+           [value]="label()"
+           (input)="label.set($any($event.target).value)" />
   </div>
 
   <div class="mb-3">

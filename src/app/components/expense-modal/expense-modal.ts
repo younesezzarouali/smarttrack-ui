@@ -10,7 +10,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ExpenseModalComponent {
   // ⚡ Signals pour les champs
-  description = signal<string>('');
+  label = signal<string>('');
   amount = signal<number>(0);
   category = signal<string>('OTHER');
   apiUrl = environment.apiUrl
@@ -19,7 +19,7 @@ export class ExpenseModalComponent {
 
   addExpense() {
     this.http.post(`${this.apiUrl}/expenses`, {
-      description: this.description(),
+      label: this.label(),
       amount: this.amount(),
       category: this.category()
     }).subscribe({

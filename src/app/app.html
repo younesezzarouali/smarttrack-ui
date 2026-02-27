@@ -8,6 +8,9 @@
   <div class="container text-center">
     <h1 class="display-4 fw-bold">Suivez vos dépenses simplement</h1>
     <p class="lead mb-4">Vision Serverless 100% Fonctionnelle.</p>
+    <button class="btn btn-light btn-lg shadow-sm" (click)="openModal(content)">
+      <i class="bi bi-plus-circle me-2"></i>Nouvelle Dépense
+    </button>
   </div>
 </header>
 
@@ -24,15 +27,17 @@
       <table class="table table-hover bg-white shadow-sm rounded">
         <thead class="table-light">
           <tr>
-            <th>Date</th>
+            <th>Libellé</th>
             <th>Catégorie</th>
             <th>Montant</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let ex of expenses">
-            <td>{{ ex.date }}</td>
-            <td>{{ ex.category }}</td>
+            <td>{{ ex.label }}</td>
+            <td>
+              <span class="badge bg-secondary">{{ ex.category }}</span>
+            </td>
             <td class="fw-bold text-end">{{ ex.amount }} €</td>
           </tr>
         </tbody>
@@ -40,6 +45,14 @@
     </div>
   </div>
 </main>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Ajouter une dépense</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <app-expense-modal></app-expense-modal>
+</ng-template>
 
 <footer class="bg-light py-4 border-top mt-auto">
   <div class="container text-center text-muted">

@@ -4,6 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { ExpenseService } from './services/expense.service';
 import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary';
 import { ExpenseModalComponent } from './components/expense-modal/expense-modal';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-root',
@@ -17,10 +18,17 @@ export class AppComponent implements OnInit {
   summary: any = null;
   expenses: any[] = [];
 
-  constructor(private expenseService: ExpenseService) {}
+  constructor(private expenseService: ExpenseService, private modalService: NgbModal) {}
 
   ngOnInit() {
     this.refreshData();
+  }
+
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true }).result.then(
+      () => this.refreshData(),
+      () => this.refreshData()
+    );
   }
 
   refreshData() {

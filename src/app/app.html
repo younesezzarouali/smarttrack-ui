@@ -57,6 +57,32 @@
   </div>
 </section>
 
+
+<section class="container my-4 trend-wrap">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h6 class="fw-bold mb-0">Tendance des dépenses</h6>
+    <div class="btn-group btn-group-sm">
+      <button class="btn" [class.btn-dark]="selectedDays()===7" [class.btn-outline-dark]="selectedDays()!==7" (click)="loadTrends(7)">7j</button>
+      <button class="btn" [class.btn-dark]="selectedDays()===30" [class.btn-outline-dark]="selectedDays()!==30" (click)="loadTrends(30)">30j</button>
+    </div>
+  </div>
+
+  <div class="trend-card p-3 shadow-sm rounded-3 bg-white">
+    <div *ngIf="isLoadingTrends()" class="skeleton-line"></div>
+    <div *ngIf="!isLoadingTrends() && trends() as t">
+      <svg viewBox="0 0 320 80" class="sparkline" preserveAspectRatio="none">
+        <path [attr.d]="trendPath()" class="sparkline-path"></path>
+      </svg>
+      <div class="d-flex justify-content-between mt-2 small text-muted">
+        <span>Moyenne/jour: <strong>{{ t.averagePerDay }} €</strong></span>
+        <span [class.text-success]="t.trendDelta >= 0" [class.text-danger]="t.trendDelta < 0">
+          Δ J-1: <strong>{{ t.trendDelta }} €</strong>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <app-expense-summary></app-expense-summary>
 
 <footer class="bg-dark text-light py-3 mt-auto">

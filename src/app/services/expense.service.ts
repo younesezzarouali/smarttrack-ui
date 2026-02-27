@@ -8,6 +8,45 @@ import { environment } from "../environments/environment.prod";
 export interface CategoryTotal {
   category: string;
   total: number;
+
+  getTrends(days: number = 7): Observable<ExpenseTrends> {
+    return this.http.get<ExpenseTrends>(`${this.apiUrl}/trends?days=${days}`).pipe(
+      catchError((error) => {
+        console.error('Error fetching trends:', error);
+        return throwError(() => new Error('Something went wrong while fetching trends.'));
+      })
+    );
+  }
+}
+
+export interface ExpenseTrendPoint {
+  date: string;
+  total: number;
+
+  getTrends(days: number = 7): Observable<ExpenseTrends> {
+    return this.http.get<ExpenseTrends>(`${this.apiUrl}/trends?days=${days}`).pipe(
+      catchError((error) => {
+        console.error('Error fetching trends:', error);
+        return throwError(() => new Error('Something went wrong while fetching trends.'));
+      })
+    );
+  }
+}
+
+export interface ExpenseTrends {
+  days: number;
+  points: ExpenseTrendPoint[];
+  averagePerDay: number;
+  trendDelta: number;
+
+  getTrends(days: number = 7): Observable<ExpenseTrends> {
+    return this.http.get<ExpenseTrends>(`${this.apiUrl}/trends?days=${days}`).pipe(
+      catchError((error) => {
+        console.error('Error fetching trends:', error);
+        return throwError(() => new Error('Something went wrong while fetching trends.'));
+      })
+    );
+  }
 }
 
 export interface ExpenseAnalytics {
@@ -15,6 +54,15 @@ export interface ExpenseAnalytics {
   count: number;
   average: number;
   topCategories: CategoryTotal[];
+
+  getTrends(days: number = 7): Observable<ExpenseTrends> {
+    return this.http.get<ExpenseTrends>(`${this.apiUrl}/trends?days=${days}`).pipe(
+      catchError((error) => {
+        console.error('Error fetching trends:', error);
+        return throwError(() => new Error('Something went wrong while fetching trends.'));
+      })
+    );
+  }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -37,6 +85,15 @@ export class ExpenseService {
       catchError((error) => {
         console.error('Error fetching analytics:', error);
         return throwError(() => new Error('Something went wrong while fetching analytics.'));
+      })
+    );
+  }
+
+  getTrends(days: number = 7): Observable<ExpenseTrends> {
+    return this.http.get<ExpenseTrends>(`${this.apiUrl}/trends?days=${days}`).pipe(
+      catchError((error) => {
+        console.error('Error fetching trends:', error);
+        return throwError(() => new Error('Something went wrong while fetching trends.'));
       })
     );
   }

@@ -30,3 +30,51 @@
   border-radius: 999px;
   transition: width 600ms ease;
 }
+
+.trend-wrap {
+  animation: fadeInUp 350ms ease;
+}
+
+.trend-card {
+  border: 1px solid #e7edf4;
+}
+
+.sparkline {
+  width: 100%;
+  height: 86px;
+  display: block;
+}
+
+.sparkline-path {
+  fill: none;
+  stroke: #198754;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 6px rgba(25, 135, 84, 0.25));
+  animation: drawLine 650ms ease;
+}
+
+.skeleton-line {
+  width: 100%;
+  height: 86px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #edf2f7 25%, #f8fbff 50%, #edf2f7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes drawLine {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

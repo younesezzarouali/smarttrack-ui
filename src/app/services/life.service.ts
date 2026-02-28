@@ -24,8 +24,12 @@ export class LifeService {
 
   constructor(private http: HttpClient) {}
 
-  sendMagicInput(text: string): Observable<LifeEvent[]> {
-    return this.http.post<LifeEvent[]>(`${this.apiUrl}/magic`, { text }).pipe(
+  parseMagicInput(text: string): Observable<LifeEvent[]> {
+    return this.http.post<LifeEvent[]>(`${this.apiUrl}/parse`, { text });
+  }
+
+  saveEvents(events: LifeEvent[]): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/events/batch`, events).pipe(
       tap(() => this.fetchAll())
     );
   }

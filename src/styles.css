@@ -118,18 +118,42 @@ body {
   opacity: 0.2;
 }
 
-/* Progress Bars */
+/* Progress Bars (Refined for State Indication) */
 .progress {
-  height: 4px !important;
+  height: 6px !important;
   background: rgba(255, 255, 255, 0.05) !important;
-  border-radius: 4px;
+  border-radius: 6px;
   overflow: hidden;
 }
 
 .progress-bar {
-  border-radius: 4px;
-  background-color: white !important; /* Force all bars to white */
+  border-radius: 6px;
+  background-color: white !important;
+  transition: width 300ms ease; /* Smooth state change animation */
 }
+
+/* Typography Opacity Hierarchy */
+.kpi-label-refined {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+  opacity: 0.6; /* Soft label */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kpi-value-refined {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white; /* Full white for values */
+}
+
+.percentage-dim {
+  font-size: 0.7rem;
+  opacity: 0.4;
+  margin-left: 4px;
+}
+
 
 /* Minimal Icons */
 .icon-subtle {

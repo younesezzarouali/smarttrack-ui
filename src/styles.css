@@ -1,58 +1,56 @@
 :root {
-  /* Strict Apple-Style Palette */
-  --app-bg: #0B0B0F;
-  --surface: #16171C;
-  --surface-elevated: #1C1E24;
+  /* Strict 3-Layer Background System */
+  --bg-base: #0B0B0F;
+  --bg-card: #16171C;
+  --bg-elevated: #1C1E24;
   
+  /* Typography */
   --text-main: #FFFFFF;
   --text-secondary: #8E8E93;
   --text-tertiary: #48484A;
   
-  --ios-blue: #007AFF;
-  --ios-red: #FF453A;
+  /* System Colors */
+  --accent: #FFFFFF;
+  --system-red: #FF453A;
   
   /* Precision Geometry */
   --radius-card: 16px;
   --radius-input: 24px;
+  --spacing-main: 24px;
   --card-padding: 20px;
-  --section-gap: 24px;
   
   --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
 }
 
 body {
-  background-color: var(--app-bg);
+  background-color: var(--bg-base);
   color: var(--text-main);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   margin: 0;
+  line-height: 1.5;
 }
 
-/* Hierarchy & Spacing */
-.main-content {
-  padding-top: 100px;
-  display: flex;
-  flex-column: column;
-  gap: var(--section-gap);
-}
-
-.section-spacer {
-  margin-bottom: var(--section-gap) !important;
-}
-
-/* Minimalist Cards */
+/* Structural Components */
 .apple-card {
-  background: var(--surface);
+  background-color: var(--bg-card);
   border-radius: var(--radius-card);
   padding: var(--card-padding);
   border: none;
+  box-shadow: none;
 }
 
 .apple-card-elevated {
-  background: var(--surface-elevated);
+  background-color: var(--bg-elevated);
   border-radius: var(--radius-card);
   padding: var(--card-padding);
   border: none;
+  box-shadow: none;
+}
+
+/* Layout Spacing */
+.section-gap {
+  margin-bottom: var(--spacing-main) !important;
 }
 
 /* History Items */
@@ -67,35 +65,35 @@ body {
   border-bottom: none;
 }
 
-/* KPI Typography */
-.kpi-value {
-  font-size: 2.2rem;
+/* KPI Mastery */
+.kpi-title {
+  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.kpi-label {
-  font-size: 0.75rem;
-  font-weight: 500;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 /* Signature Pill Input */
-.pill-input-wrapper {
-  background: #1C1E24 !important; /* Use the elevated surface color, solid */
+.pill-container {
+  background-color: var(--bg-elevated);
   border-radius: var(--radius-input);
   padding: 6px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .form-control {
-  background: transparent !important; /* Force transparent to see the dark wrapper */
-  border: none;
+  background: transparent !important;
+  border: none !important;
   color: white !important;
-  font-size: 1rem;
+  padding: 10px 16px;
   box-shadow: none !important;
 }
 
@@ -103,9 +101,9 @@ body {
   color: var(--text-tertiary);
 }
 
-.btn-send-minimal {
-  width: 32px;
-  height: 32px;
+.btn-circle {
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: white;
   color: black;
@@ -113,24 +111,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: opacity 0.2s;
 }
 
-/* Progress Bars */
-.progress {
-  height: 2px !important;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.progress-bar {
-  background-color: white;
+.btn-circle:disabled {
+  opacity: 0.3;
 }
 
 /* Animations */
-.animate-in {
-  animation: fadeIn 0.4s ease-out;
+.fade-in {
+  animation: apple-entry 0.4s ease-out;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+@keyframes apple-entry {
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }

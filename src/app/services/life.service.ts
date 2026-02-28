@@ -13,6 +13,12 @@ export interface LifeEvent {
   payload: any;
 }
 
+export interface MagicResponse {
+  intent: 'CAPTURE' | 'ANALYSE';
+  answer?: string;
+  events?: LifeEvent[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class LifeService {
   private apiUrl = `${environment.apiUrl}/life`;
@@ -24,8 +30,8 @@ export class LifeService {
 
   constructor(private http: HttpClient) {}
 
-  parseMagicInput(text: string): Observable<LifeEvent[]> {
-    return this.http.post<LifeEvent[]>(`${this.apiUrl}/parse`, { text });
+  interact(text: string): Observable<MagicResponse> {
+    return this.http.post<MagicResponse>(`${this.apiUrl}/magic`, { text });
   }
 
   saveEvents(events: LifeEvent[]): Observable<void> {

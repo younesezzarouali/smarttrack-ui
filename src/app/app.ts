@@ -21,10 +21,9 @@ export class AppComponent implements OnInit {
   loading: boolean = false;
   editingEvent: LifeEvent | null = null;
   
-  // State for AI validation preview
   pendingEvents: LifeEvent[] | null = null;
+  aiAnswer: string | null = null;
 
-  // Grouped events for the timeline
   readonly groupedEvents = computed(() => {
     const groups: { date: string, items: LifeEvent[] }[] = [];
     const events = this.lifeService.events();
@@ -38,7 +37,6 @@ export class AppComponent implements OnInit {
       }
       group.items.push(event);
     });
-    
     return groups;
   });
 
@@ -52,7 +50,7 @@ export class AppComponent implements OnInit {
     } else {
       this.speechService.startListening(
         (text) => this.magicText = text,
-        () => console.log('Voice capture ended')
+        () => console.log('Capture ended')
       );
     }
   }
@@ -62,16 +60,23 @@ export class AppComponent implements OnInit {
     if (!textInput || this.loading) return;
 
     this.loading = true;
-    this.lifeService.parseMagicInput(textInput)
+    this.aiAnswer = null;
+    this.pendingEvents = null;
+
+    this.lifeService.interact(textInput)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
-        next: (parsed) => {
+        next: (response) => {
           this.magicText = '';
-          this.pendingEvents = parsed; // Show preview instead of saving directly
+          if (response.intent === 'ANALYSE') {
+            this.aiAnswer = response.answer || 'I parsed your data but have no specific answer.';
+          } else {
+            this.pendingEvents = response.events || [];
+          }
         },
         error: (err) => {
-          console.error('AI Parsing failed', err);
-          alert('AI processing failed. Check your API key or connection.');
+          console.error('Magic failed', err);
+          alert('AI processing failed.');
         }
       });
   }
@@ -92,6 +97,10 @@ export class AppComponent implements OnInit {
     this.pendingEvents = null;
   }
 
+  dismissAnswer() {
+    this.aiAnswer = null;
+  }
+
   startEdit(event: LifeEvent) {
     this.editingEvent = { ...event, payload: { ...event.payload } };
   }
@@ -110,7 +119,7 @@ export class AppComponent implements OnInit {
   }
 
   clearAll() {
-    if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+    if (confirm('Are you sure you want to clear all data?')) {
       this.lifeService.clearAll().subscribe();
     }
   }
@@ -120,10 +129,8 @@ export class AppComponent implements OnInit {
     const today = new Date();
     const yesterday = new Date();
     yesterday.setDate(today.getDate() - 1);
-
     if (date.toDateString() === today.toDateString()) return 'Today';
     if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
-    
     return date.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
   }
 }

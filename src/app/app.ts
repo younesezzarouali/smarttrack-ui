@@ -27,7 +27,6 @@ export class AppComponent implements OnInit, OnDestroy {
   editingEvent: LifeEvent | null = null;
   showDebug: boolean = false;
   
-  // States converted to Signals to match template calls
   pendingEvents = signal<LifeEvent[]>([]);
   pendingUpdates = signal<any[]>([]);
   aiAnswer = signal<string | null>(null);
@@ -44,10 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.lifeService.events().forEach(event => {
       const dateLabel = new Date(event.timestamp).toLocaleDateString();
       let group = groups.find(g => g.date === dateLabel);
-      if (!group) {
-        group = { date: dateLabel, items: [] };
-        groups.push(group);
-      }
+      if (!group) { group = { date: dateLabel, items: [] }; groups.push(group); }
       group.items.push(event);
     });
     return groups;
@@ -73,7 +69,6 @@ export class AppComponent implements OnInit, OnDestroy {
   processMagic() {
     const textInput = this.magicText.trim();
     if (!textInput || this.loading) return;
-
     this.loading = true;
     this.aiAnswer.set(null);
     this.pendingEvents.set([]);
@@ -119,7 +114,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   undoSave() {
-    this.recentlySavedEvents.forEach(e => this.lifeService.deleteEvent(e.timestamp).subscribe());
+    this.recentlySavedEvents.forEach(e => this.deleteEvent(e.timestamp));
     this.undoVisible.set(false);
   }
 
@@ -128,12 +123,32 @@ export class AppComponent implements OnInit, OnDestroy {
     this.pendingUpdates.set([]);
   }
 
+  // --- INTERACTIVE TIMELINE METHODS ---
+  startEdit(event: LifeEvent) {
+    this.editingEvent = { ...event, payload: { ...event.payload } };
+  }
+
+  saveEdit() {
+    if (this.editingEvent) {
+      this.lifeService.updateEvent(this.editingEvent).subscribe({
+        next: () => this.editingEvent = null,
+        error: (err: any) => console.error('Update failed', err)
+      });
+    }
+  }
+
+  cancelEdit() {
+    this.editingEvent = null;
+  }
+
+  deleteEvent(timestamp: number) {
+    if (confirm('Delete this event?')) {
+      this.lifeService.deleteEvent(timestamp).subscribe();
+    }
+  }
+
   openCreateHabit() {
-    this.modalService.open(CreateHabitModalComponent, { 
-      centered: true, 
-      size: 'sm',
-      windowClass: 'mini-modal'
-    });
+    this.modalService.open(CreateHabitModalComponent, { centered: true, size: 'sm', windowClass: 'mini-modal' });
   }
 
   deleteHabit(id: string) {
@@ -147,6 +162,4 @@ export class AppComponent implements OnInit, OnDestroy {
       this.lifeService.clearAll().subscribe();
     }
   }
-
-  placeholderSignalValue = computed(() => this.placeholderSignal());
 }

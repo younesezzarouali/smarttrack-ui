@@ -18,25 +18,32 @@
   </div>
 </header>
 
-<!-- ULTRA COMPACT CONFIRMATION -->
-<div *ngIf="pendingEvents().length > 0 || pendingUpdates().length > 0" class="fixed-top h-100 d-flex align-items-center justify-content-center px-3" style="z-index: 2100; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);">
-  <div class="rev-modal-compact animate-slide">
-    <div class="rev-modal-title-sm">Confirm Entry</div>
-    
-    <div class="mb-4">
-      <div *ngFor="let p of pendingEvents()" class="d-flex justify-content-between align-items-center py-2 border-bottom border-white border-opacity-5">
-        <span class="text-white small fw-bold">{{ p.content }}</span>
-        <span class="text-white fw-bold">{{ p.payload.amount ? p.payload.amount+'€' : p.payload.duration_min+' min' }}</span>
+<!-- CONFIRMATION SHEET -->
+<div *ngIf="pendingEvents().length > 0 || pendingUpdates().length > 0" class="fixed-top h-100 d-flex align-items-end justify-content-center" style="z-index: 2100; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);">
+  <div class="bottom-sheet animate-slide">
+    <div class="text-center mb-4">
+      <div style="width: 40px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 0 auto 20px;"></div>
+      <h4 class="fw-bold">Confirm Transaction</h4>
+    </div>
+    <div class="mb-5 px-2">
+      <div *ngFor="let p of pendingEvents()" class="d-flex justify-content-between align-items-center py-3 border-bottom border-white border-opacity-5">
+        <span class="text-white fw-bold">{{ p.content }}</span>
+        <span class="text-white fw-bold fs-4">
+          <ng-container *ngIf="p.payload.amount">{{ p.payload.amount }}€</ng-container>
+          <ng-container *ngIf="!p.payload.amount && (p.payload.duration_min || p.payload.value)">{{ p.payload.duration_min || p.payload.value }} min</ng-container>
+        </span>
       </div>
-      <div *ngFor="let u of pendingUpdates()" class="d-flex justify-content-between align-items-center py-2">
-        <span class="text-white opacity-70 small">{{ u.habitName }}</span>
-        <span class="text-white fw-bold">+{{ u.progressDelta }}</span>
+      <div *ngFor="let u of pendingUpdates()" class="mt-3">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="text-white opacity-70">{{ u.habitName }}</span>
+          <span class="text-white fw-bold">+{{ u.progressDelta }} min</span>
+        </div>
+        <div class="prog-container"><div class="prog-fill" style="width: 100%; opacity: 0.6;"></div></div>
       </div>
     </div>
-
-    <div class="d-flex flex-column gap-1">
-      <button class="btn-rev-main-sm" (click)="confirmPending()" [disabled]="loading">Confirm & Save</button>
-      <button class="btn btn-link text-secondary text-decoration-none fw-bold w-100 py-2 small" (click)="cancelPending()">Discard</button>
+    <div class="d-flex flex-column gap-2 mb-4">
+      <button class="btn btn-rev-white" (click)="confirmPending()" [disabled]="loading">Confirm & Save</button>
+      <button class="btn btn-link text-secondary text-decoration-none" (click)="cancelPending()">Discard</button>
     </div>
   </div>
 </div>
@@ -44,18 +51,39 @@
 <main class="app-container">
   <ng-container *ngIf="lifeService.activeTab() === 'journal'">
     <app-expense-summary></app-expense-summary>
+    
     <div *ngFor="let group of groupedEvents()" class="mb-5">
-      <h6 style="color: #8E8E93; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; padding-left: 8px;">{{ group.date }}</h6>
+      <h6 class="kpi-label mb-3 px-1">{{ group.date }}</h6>
       <div class="card-rev p-0 overflow-hidden">
-        <div *ngFor="let event of group.items" class="px-4 py-3 d-flex justify-content-between align-items-center border-bottom border-white border-opacity-5">
-          <div class="d-flex align-items-center">
-            <div style="width: 40px; height: 40px; background: #1C1C1E; border-radius: 12px; display: flex; align-items: center; justify-content: center;"><i class="bi" [ngClass]="event.type === 'FINANCE' ? 'bi-credit-card text-warning' : 'bi-activity text-info'"></i></div>
-            <div class="ms-3"><div class="text-white fw-bold">{{ event.content }}</div><div class="text-secondary small">{{ event.timestamp | date:'HH:mm' }}</div></div>
+        <div *ngFor="let event of group.items" class="px-4 py-3 border-bottom border-white border-opacity-5 timeline-item-interactive"
+             [class.editing]="editingEvent?.timestamp === event.timestamp">
+          
+          <!-- View Mode -->
+          <div *ngIf="editingEvent?.timestamp !== event.timestamp" class="d-flex justify-content-between align-items-center" (click)="startEdit(event)">
+            <div class="d-flex align-items-center">
+              <div style="width: 40px; height: 40px; background: #1C1C1E; border-radius: 12px; display: flex; align-items: center; justify-content: center;"><i class="bi" [ngClass]="event.type === 'FINANCE' ? 'bi-credit-card text-warning' : 'bi-activity text-info'"></i></div>
+              <div class="ms-3"><div class="text-white fw-bold">{{ event.content }}</div><div class="text-secondary small">{{ event.timestamp | date:'HH:mm' }}</div></div>
+            </div>
+            <div class="text-white fw-bold fs-5">
+              <span *ngIf="event.type === 'FINANCE'">-{{ event.payload.amount }}€</span>
+              <span *ngIf="event.type !== 'FINANCE' && (event.payload.value || event.payload.duration_min)">{{ event.payload.value || event.payload.duration_min }} min</span>
+            </div>
           </div>
-          <div class="text-white fw-bold fs-5">
-            <span *ngIf="event.type === 'FINANCE'">-{{ event.payload.amount }}€</span>
-            <span *ngIf="event.type !== 'FINANCE' && (event.payload.value || event.payload.duration_min)">{{ event.payload.value || event.payload.duration_min }} min</span>
+
+          <!-- Edit Mode Inline -->
+          <div *ngIf="editingEvent?.timestamp === event.timestamp" class="py-2 animate-slide">
+            <input type="text" class="form-control bg-transparent text-white fw-bold p-0 mb-3 border-0 border-bottom rounded-0 border-primary" [(ngModel)]="editingEvent!.content" style="font-size: 18px;">
+            <div class="d-flex justify-content-between align-items-center gap-3">
+              <div class="d-flex gap-2">
+                <button class="btn btn-rev-blue-sm" (click)="saveEdit()">Save</button>
+                <button class="btn btn-link text-secondary text-decoration-none small" (click)="cancelEdit()">Cancel</button>
+              </div>
+              <button class="btn btn-link text-danger text-decoration-none small fw-bold" (click)="deleteEvent(event.timestamp)">
+                <i class="bi bi-trash3 me-1"></i> Delete
+              </button>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -63,19 +91,19 @@
 
   <ng-container *ngIf="lifeService.activeTab() === 'habits'">
     <div class="d-flex justify-content-between align-items-center mb-4 px-1">
-      <h6 style="color: #8E8E93; font-size: 12px; font-weight: 700; text-transform: uppercase; m-0;">My Habits</h6>
-      <button class="btn-rev-blue-sm" (click)="openCreateHabit()">+ Add</button>
+      <h6 class="kpi-label m-0">My Habits</h6>
+      <button class="btn btn-rev-blue-sm" (click)="openCreateHabit()">+ Add</button>
     </div>
     <div class="card-rev">
       <div *ngFor="let habit of habitService.habits()" class="mb-4 last-mb-0">
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <div class="d-flex align-items-center gap-2"><i class="bi bi-circle-fill" [style.color]="habit.category === 'HEALTH' ? '#00D084' : '#0075FF'" style="font-size: 0.5rem;"></i><span class="text-white fw-bold">{{ habit.name }}</span></div>
+          <div class="d-flex align-items-center gap-2"><i class="bi bi-circle-fill" [style.color]="habit.category === 'HEALTH' ? 'var(--rev-success)' : 'var(--rev-blue)'" style="font-size: 0.5rem;"></i><span class="text-white fw-bold">{{ habit.name }}</span></div>
           <span class="text-secondary fw-bold small">{{ habitService.getHabitProgress(habit.id) }} / {{ habit.targetValue }} min</span>
         </div>
         <div class="prog-container"><div class="prog-fill" [style.width.%]="habitService.getHabitPercentage(habit)"></div></div>
         <div class="mt-3 d-flex justify-content-between align-items-center">
           <div class="streak-pill"><i class="bi bi-fire text-warning me-1"></i>Streak: {{ habit.streak }} days</div>
-          <button class="btn btn-sm text-danger opacity-30 p-0" (click)="deleteHabit(habit.id)"><i class="bi bi-trash3"></i></button>
+          <button class="btn btn-rev-delete p-0" (click)="deleteHabit(habit.id)"><i class="bi bi-trash3"></i></button>
         </div>
       </div>
     </div>

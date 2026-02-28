@@ -46,6 +46,34 @@
     </div>
   </div>
 
+  <!-- AI Pending Preview (Review Entry) -->
+  <div *ngIf="pendingEvents" class="row justify-content-center section-gap apple-entry">
+    <div class="col-lg-10">
+      <div class="apple-card-elevated border border-white border-opacity-5">
+        <h6 class="kpi-title mb-4 opacity-50">Review Entry</h6>
+        <div class="list-group list-group-flush mb-4">
+          <div *ngFor="let p of pendingEvents" class="list-group-item bg-transparent border-white border-opacity-5 py-3 px-0">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="text-white fw-medium">{{ p.content }}</span>
+              <div class="text-white fw-bold">
+                <span *ngIf="p.payload.amount">{{ p.payload.amount }}€</span>
+                <span *ngIf="p.payload.duration_min && !p.payload.amount">{{ p.payload.duration_min }}m</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex gap-3">
+          <button class="btn btn-primary-fintech flex-grow-1" (click)="confirmPending()" [disabled]="loading">
+            Confirm & Save
+          </button>
+          <button class="btn btn-sm text-secondary px-3" (click)="cancelPending()" [disabled]="loading">
+            Discard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- History Timeline (Ultra Minimal) -->
   <div class="row justify-content-center">
     <div class="col-lg-10">

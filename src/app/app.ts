@@ -100,6 +100,12 @@ export class AppComponent implements OnInit, OnDestroy {
     }, () => {});
   }
 
+  deleteHabit(id: string) {
+    if (confirm('Are you sure you want to delete this habit?')) {
+      this.habitService.deleteHabit(id).subscribe();
+    }
+  }
+
   toggleListening() {
     if (this.speechService.isListening()) {
       this.speechService.stopListening();

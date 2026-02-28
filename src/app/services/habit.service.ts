@@ -35,22 +35,31 @@ export class HabitService {
   constructor(private http: HttpClient) {}
 
   fetchHabits(): void {
-    this.http.get<{habits: Habit[], progress: any}>(this.apiUrl + '/active').subscribe({ // Updated endpoint
-        next: (res) => {
-            // Support both old and new response structures during migration
-            const habits = Array.isArray(res) ? res : res.habits; 
+    this.http.get<Habit[]>(this.apiUrl + '/active').subscribe({
+        next: (habits) => {
             this.habitsSignal.set(habits || []);
-            // If response has progress, use it, otherwise fetch separately or rely on sync
-            if (!Array.isArray(res) && res.progress) {
-                this.progressSignal.set(res.progress);
-            }
+            // After habits, fetch progress
+            this.fetchProgress();
         },
         error: (err) => console.error('Habit fetch failed', err)
     });
   }
 
+  fetchProgress(): void {
+    this.http.get<HabitProgress>(this.apiUrl + '/progress/daily').subscribe({
+      next: (prog) => this.progressSignal.set(prog),
+      error: (err) => console.error('Progress fetch failed', err)
+    });
+  }
+
   createHabit(habit: any): Observable<any> {
     return this.http.post<Habit>(this.apiUrl, habit).pipe(
+      tap(() => this.fetchHabits())
+    );
+  }
+
+  deleteHabit(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => this.fetchHabits())
     );
   }

@@ -1,175 +1,160 @@
-<nav class="navbar navbar-dark py-4 fixed-top bg-black bg-opacity-75" style="backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+<nav class="navbar navbar-dark py-4 fixed-top bg-black bg-opacity-80" style="backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 1060;">
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center fw-bold fs-4" href="#">
-      SmartTrack
-    </a>
-    <div class="d-flex gap-2">
-      <button class="btn btn-sm text-secondary opacity-50" (click)="showDebug = !showDebug">
-        <i class="bi bi-cpu"></i>
+    <a class="navbar-brand fw-bold fs-4" href="#" style="letter-spacing: -0.03em;">SmartTrack</a>
+    <div class="d-flex align-items-center gap-2">
+      <!-- Reset History Moved Here -->
+      <button *ngIf="events().length > 0" class="btn btn-sm text-danger opacity-40 hover-opacity-100 me-2" (click)="clearAll()">
+        <i class="bi bi-trash3"></i>
+      </button>
+      <button class="btn btn-sm text-secondary opacity-40 p-0" (click)="showDebug = !showDebug">
+        <i class="bi bi-cpu fs-5"></i>
       </button>
     </div>
   </div>
 </nav>
 
-<main class="container mb-5 pb-5" style="padding-top: 120px;">
-  <div class="mb-5">
-    <app-expense-summary></app-expense-summary>
-  </div>
+<main class="container mb-5 pb-5" style="padding-top: 140px;">
+  
+  <app-expense-summary></app-expense-summary>
 
   <!-- AI Answer Bubble -->
-  <div *ngIf="aiAnswer" class="row justify-content-center mb-5 animate-fade-in">
+  <div *ngIf="aiAnswer" class="row justify-content-center section-spacer animate-fade-in">
     <div class="col-lg-8">
-      <div class="fintech-card p-4 position-relative" style="background: var(--surface-elevated); border: 1px solid var(--border-color);">
-        <button type="button" class="btn-close position-absolute top-0 end-0 m-3 small" (click)="dismissAnswer()"></button>
+      <div class="fintech-card p-4 position-relative border border-white border-opacity-10" style="background: var(--surface-hover);">
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3 opacity-30" (click)="dismissAnswer()"></button>
         <div class="d-flex align-items-start">
-          <div class="bg-primary rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-            <i class="bi bi-stars text-black small"></i>
-          </div>
+          <div class="text-white me-3 opacity-80"><i class="bi bi-stars fs-4"></i></div>
           <div class="flex-grow-1">
-            <p class="text-white m-0 lh-base" style="font-size: 1.1rem; font-weight: 400;">{{ aiAnswer }}</p>
+            <p class="text-white m-0 lh-base fs-5 fw-normal">{{ aiAnswer }}</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- AI Pending Preview -->
-  <div *ngIf="pendingEvents" class="row justify-content-center mb-5 animate-fade-in">
+  <!-- AI Pending Preview (Draft) -->
+  <div *ngIf="pendingEvents" class="row justify-content-center section-spacer animate-fade-in">
     <div class="col-lg-8">
-      <div class="fintech-card p-4 shadow-2xl" style="background: var(--surface-elevated); border: 1px solid var(--ios-blue);">
-        <h6 class="text-secondary fw-bold mb-4 small text-uppercase" style="letter-spacing: 1px;">Confirm Data Entry</h6>
-        <div class="list-group list-group-flush mb-4 bg-transparent">
-          <div *ngFor="let p of pendingEvents" class="list-group-item bg-transparent border-white border-opacity-10 py-3 px-0">
-            <div class="d-flex align-items-center">
+      <div class="fintech-card p-4 border border-primary border-opacity-30 shadow-2xl" style="background: #1c1c1e;">
+        <h6 class="label-secondary mb-4">Proposed Log</h6>
+        <div class="list-group list-group-flush mb-4">
+          <div *ngFor="let p of pendingEvents" class="list-group-item bg-transparent border-white border-opacity-5 py-3 px-0">
+            <div class="d-flex justify-content-between align-items-center">
               <span class="text-white fw-medium">{{ p.content }}</span>
-              <span *ngIf="p.payload.amount" class="ms-auto fw-bold text-white">{{ p.payload.amount }} €</span>
+              <span *ngIf="p.payload.amount" class="fw-bold text-white">{{ p.payload.amount }}€</span>
             </div>
           </div>
         </div>
         <div class="d-flex gap-3">
-          <button class="btn btn-primary-fintech flex-grow-1" (click)="confirmPending()" [disabled]="loading">
-            Save
-          </button>
-          <button class="btn btn-dark border-0 flex-grow-1" style="background: rgba(255,255,255,0.05)" (click)="cancelPending()" [disabled]="loading">
-            Cancel
-          </button>
+          <button class="btn btn-primary-fintech flex-grow-1" (click)="confirmPending()" [disabled]="loading">Log Data</button>
+          <button class="btn btn-dark border-0 flex-grow-1" style="background: rgba(255,255,255,0.05)" (click)="cancelPending()" [disabled]="loading">Discard</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- History Timeline -->
+  <!-- History & Briefing Section -->
   <div class="row justify-content-center">
     <div class="col-lg-10">
-      <div class="d-flex justify-content-between align-items-center mb-4 px-2">
-        <h6 class="text-secondary text-uppercase fw-bold m-0 small" style="letter-spacing: 1px;">History</h6>
-        <button *ngIf="events().length > 0" class="btn btn-sm text-danger border-0 small opacity-50" (click)="clearAll()">
-          Delete All
-        </button>
-      </div>
       
-      <div *ngFor="let group of groupedEvents()" class="mb-5">
-        <div class="mb-4 px-2">
-          <span class="text-white fw-bold fs-4">{{ group.date }}</span>
+      <div *ngFor="let group of groupedEvents()" class="section-spacer">
+        <div class="mb-4 px-1">
+          <span class="text-white fw-bold fs-3" style="letter-spacing: -0.03em;">{{ group.date }}</span>
         </div>
 
-        <!-- Daily Briefing Card -->
-        <div *ngIf="group.date === 'Today' && briefing()" 
-             class="fintech-card p-4 mb-5 animate-fade-in" 
-             style="background: #1c1c1e; border: 1px solid var(--border-color);">
-          <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-quote text-secondary fs-4 me-2"></i>
-            <h6 class="m-0 fw-bold small text-secondary text-uppercase" style="letter-spacing: 1px;">Briefing</h6>
-          </div>
-          <p class="text-white m-0 lh-base" style="font-size: 1.2rem; font-weight: 500;">
-            {{ briefing() }}
-          </p>
-        </div>
-
-        <div *ngFor="let event of group.items" class="fintech-card p-4 mb-3 event-card">
-          <div *ngIf="editingEvent?.timestamp !== event.timestamp" class="d-flex align-items-center">
-            <div class="rounded-3 p-2 me-3 d-flex align-items-center justify-content-center" 
-                 style="width: 40px; height: 40px; background: rgba(255,255,255,0.05);">
-              <i class="bi" [ngClass]="{
-                'bi-credit-card text-white': event.type === 'FINANCE',
-                'bi-figure-run text-white': event.type === 'HEALTH',
-                'bi-macbook text-white': event.type === 'WORK',
-                'bi-text-left text-white': event.type === 'NOTE'
-              }"></i>
+        <!-- DAILY BRIEFING -->
+        <div *ngIf="group.date === 'Today' && briefing()" class="briefing-signature mb-5 animate-fade-in">
+          <div class="d-flex flex-column p-4 rounded-4" style="background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);">
+            <div class="d-flex align-items-center mb-3 text-secondary opacity-60">
+              <i class="bi bi-chat-right-quote-fill me-2"></i>
+              <span class="label-secondary">Daily Insight</span>
             </div>
-            <div class="flex-grow-1">
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="text-white fw-semibold fs-5">{{ event.content }}</span>
-                <div class="text-white fw-bold fs-5">
-                  <span *ngIf="event.type === 'FINANCE'">{{ event.payload.amount }}€</span>
-                  <span *ngIf="event.type === 'HEALTH'">{{ event.payload.value }}{{ event.payload.unit }}</span>
-                  <span *ngIf="event.type === 'WORK'">{{ event.payload.duration_min }}m</span>
+            <p class="briefing-text">"{{ briefing() }}"</p>
+          </div>
+        </div>
+
+        <div class="fintech-card overflow-hidden">
+          <div *ngFor="let event of group.items" class="p-4 event-card">
+            <div *ngIf="editingEvent?.timestamp !== event.timestamp" class="d-flex align-items-center">
+              <div class="rounded-3 p-2 me-3 d-flex align-items-center justify-content-center opacity-80" 
+                   style="width: 36px; height: 36px; background: rgba(255,255,255,0.05);">
+                <i class="bi text-white" [ngClass]="{
+                  'bi-credit-card': event.type === 'FINANCE',
+                  'bi-figure-run': event.type === 'HEALTH',
+                  'bi-macbook': event.type === 'WORK',
+                  'bi-text-left': event.type === 'NOTE'
+                }"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="text-white fw-medium fs-5">{{ event.content }}</span>
+                  <div class="text-white fw-semibold fs-5">
+                    <span *ngIf="event.type === 'FINANCE'">{{ event.payload.amount }}€</span>
+                    <span *ngIf="event.type === 'HEALTH'">{{ event.payload.value }}{{ event.payload.unit }}</span>
+                    <span *ngIf="event.type === 'WORK'">{{ event.payload.duration_min }}m</span>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mt-1">
+                  <small class="text-secondary opacity-40 me-3">{{ event.timestamp | date:'HH:mm' }}</small>
+                  <span *ngIf="event.payload.emotion" class="text-secondary opacity-60 small italic">
+                    {{ event.payload.emotion }}
+                  </span>
                 </div>
               </div>
-              <div class="d-flex align-items-center mt-1">
-                <small class="text-secondary small me-2">{{ event.timestamp | date:'HH:mm' }}</small>
-                <span *ngIf="event.payload.emotion" class="badge rounded-pill border border-white border-opacity-10 text-secondary fw-normal py-1" style="font-size: 0.7rem;">
-                  {{ event.payload.emotion }}
-                </span>
-              </div>
-            </div>
-            <div class="ms-3">
-              <button class="btn btn-sm text-secondary opacity-25 p-0" (click)="startEdit(event)">
-                <i class="bi bi-chevron-right"></i>
+              <button class="btn btn-sm text-secondary opacity-20 ms-3 p-0" (click)="startEdit(event)">
+                <i class="bi bi-pencil-square"></i>
               </button>
             </div>
-          </div>
 
-          <!-- Edit Mode (Apple Style) -->
-          <div *ngIf="editingEvent?.timestamp === event.timestamp" class="py-2">
-            <input type="text" class="form-control fs-4 fw-bold p-0 mb-3" [(ngModel)]="editingEvent!.content" style="background: transparent;">
-            <div class="row g-3">
-              <div class="col-md-6" *ngIf="event.type === 'FINANCE'">
-                <label class="form-label small text-secondary">Amount (€)</label>
-                <input type="text" class="form-control bg-dark border-secondary border-opacity-25" [(ngModel)]="editingEvent!.payload.amount">
+            <!-- Inline Edit -->
+            <div *ngIf="editingEvent?.timestamp === event.timestamp" class="py-2">
+              <input type="text" class="form-control fs-4 fw-bold p-0 mb-3 text-white" [(ngModel)]="editingEvent!.content" style="background: transparent;">
+              <div class="row g-3">
+                <div class="col-md-6" *ngIf="event.type === 'FINANCE'">
+                  <label class="label-secondary mb-2">Amount (€)</label>
+                  <input type="text" class="form-control rounded-3" style="background: #2c2c2e;" [(ngModel)]="editingEvent!.payload.amount">
+                </div>
               </div>
-            </div>
-            <div class="d-flex gap-2 mt-4">
-              <button class="btn btn-primary-fintech px-4" (click)="saveEdit()">Save</button>
-              <button class="btn btn-sm text-secondary px-3" (click)="cancelEdit()">Cancel</button>
+              <div class="d-flex gap-3 mt-4">
+                <button class="btn btn-primary-fintech px-4" (click)="saveEdit()">Save</button>
+                <button class="btn btn-sm text-secondary" (click)="cancelEdit()">Cancel</button>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div *ngIf="groupedEvents().length === 0" class="text-center py-5 opacity-20">
+        <i class="bi bi-app-indicator display-1 mb-3"></i>
+        <p class="fs-5">Ready for your story.</p>
       </div>
     </div>
   </div>
 </main>
 
-<!-- Apple Pill Input (Fixed Bottom) -->
-<div class="fixed-bottom p-4 pb-5">
+<!-- Bottom Pill Input -->
+<div class="fixed-bottom p-4 pb-5" style="z-index: 1050;">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-7">
-        
-        <!-- Undo Banner (Minimal) -->
         <div *ngIf="undoVisible()" class="mb-3 animate-fade-in text-center">
           <button class="btn btn-dark rounded-pill border border-white border-opacity-10 px-4 py-2 small" (click)="undoSave()">
-            <span class="text-white-50">Entry saved.</span> <span class="text-white fw-bold ms-2">UNDO</span>
+            <span class="text-white-50">Saved.</span> <span class="text-white fw-bold ms-2">UNDO</span>
           </button>
         </div>
 
-        <div class="pill-input-container shadow-2xl">
+        <div class="pill-input-container">
           <div class="input-group align-items-center">
-            <button class="btn border-0 text-secondary px-3" (click)="toggleListening()">
-              <i class="bi fs-5" [ngClass]="speechService.isListening() ? 'bi-mic-fill text-danger pulse-mic' : 'bi-mic'"></i>
+            <button class="btn border-0 text-secondary opacity-60 px-3" (click)="toggleListening()">
+              <i class="bi fs-5" [ngClass]="speechService.isListening() ? 'bi-mic-fill text-danger' : 'bi-mic'"></i>
             </button>
-
             <input type="text" 
                    class="form-control border-0 bg-transparent py-2 fs-5" 
                    [placeholder]="speechService.isListening() ? 'Listening...' : placeholderSignal()" 
                    [(ngModel)]="magicText" (keyup.enter)="processMagic()" [disabled]="loading">
-
-            <button class="btn bg-white rounded-circle d-flex align-items-center justify-content-center me-1" 
-                    style="width: 38px; height: 38px;"
-                    (click)="processMagic()"
-                    [disabled]="loading || !magicText">
-              <i *ngIf="!loading" class="bi bi-arrow-up text-black fs-5"></i>
-              <span *ngIf="loading" class="spinner-border spinner-border-sm text-black"></span>
+            <button class="btn-send-apple me-1 shadow-sm" (click)="processMagic()" [disabled]="loading || !magicText">
+              <i *ngIf="!loading" class="bi bi-arrow-up fs-5"></i>
+              <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
             </button>
           </div>
         </div>

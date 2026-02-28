@@ -98,8 +98,9 @@ body {
 .form-control {
   background: transparent;
   border: none;
-  color: white;
+  color: #ffffff !important; /* Force pure white for input text */
   padding: 12px 20px;
+  font-weight: 400;
 }
 
 .form-control:focus {

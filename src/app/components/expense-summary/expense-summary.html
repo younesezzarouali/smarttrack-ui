@@ -1,39 +1,33 @@
 <div *ngIf="summary() as s" class="row g-4">
   <div class="col-md-4">
-    <div class="card shadow-sm border-0 border-start border-primary border-4">
-      <div class="card-body">
-        <h6 class="text-muted small text-uppercase fw-bold">Total Dépensé</h6>
-        <h2 class="mb-0">{{ s.total }} €</h2>
+    <div class="glass-panel p-4 position-relative overflow-hidden h-100">
+      <div class="position-absolute top-0 end-0 p-3 opacity-25">
+        <i class="bi bi-wallet2 display-1" style="color: var(--neon-pink);"></i>
       </div>
+      <h6 class="text-secondary small text-uppercase fw-bold mb-3" style="letter-spacing: 2px;">TOTAL SPENT</h6>
+      <h2 class="mb-0 display-4" style="font-family: var(--font-display); color: var(--text-primary); text-shadow: 0 0 10px rgba(255,255,255,0.3);">
+        {{ s.total }} <span style="font-size: 1.5rem; color: var(--neon-pink);">€</span>
+      </h2>
     </div>
   </div>
-  <div class="col-md-4">
-    <div class="card shadow-sm border-0 border-start border-success border-4">
-      <div class="card-body">
-        <h6 class="text-muted small text-uppercase fw-bold">Transactions</h6>
-        <h2 class="mb-0">{{ s.count }}</h2>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card shadow-sm border-0 border-start border-info border-4">
-      <div class="card-body">
-        <h6 class="text-muted small text-uppercase fw-bold">Période</h6>
-        <h2 class="mb-0 h4">{{ s.period }}</h2>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div *ngIf="summary() as s" class="mt-4 p-4 bg-white shadow-sm rounded">
-  <h6 class="fw-bold mb-3">Détail par catégorie</h6>
-  <div *ngFor="let cat of getCategories()" class="mb-2">
-    <div class="d-flex justify-content-between mb-1">
-      <span>{{ cat }}</span>
-      <span class="fw-bold">{{ s.totalByCategory[cat] }} €</span>
-    </div>
-    <div class="progress" style="height: 8px;">
-      <div class="progress-bar bg-primary" [style.width.%]="(s.totalByCategory[cat] / s.total) * 100"></div>
+  <div class="col-md-8">
+    <div class="glass-panel p-4 h-100">
+      <h6 class="text-secondary small text-uppercase fw-bold mb-4" style="letter-spacing: 2px;">CATEGORY BREAKDOWN</h6>
+      
+      <div *ngFor="let cat of getCategories()" class="mb-4">
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-uppercase fw-bold" style="color: var(--neon-cyan);">{{ cat }}</span>
+          <span class="fw-bold" style="font-family: var(--font-display);">{{ s.totalByCategory[cat] }} €</span>
+        </div>
+        <div class="progress" style="height: 6px; background: rgba(255,255,255,0.1); overflow: visible;">
+          <div class="progress-bar rounded-pill" 
+               role="progressbar" 
+               [style.width.%]="(s.totalByCategory[cat] / s.total) * 100"
+               style="background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); box-shadow: 0 0 10px var(--neon-purple);">
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

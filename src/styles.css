@@ -1,21 +1,165 @@
-
-@keyframes pulse-red {
-  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
-  70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
-  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+:root {
+  /* Cyberpunk Palette */
+  --bg-dark: #050505;
+  --bg-panel: rgba(20, 20, 30, 0.6);
+  --neon-cyan: #00f3ff;
+  --neon-purple: #bc13fe;
+  --neon-pink: #ff0055;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
 }
 
-.critical-budget {
-  animation: pulse-red 2s infinite;
-  border: 2px solid #dc2626 !important;
-  background-color: #fef2f2 !important;
+body {
+  background-color: var(--bg-dark);
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.1), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.1), transparent 25%);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
 }
 
-.fade-in-up {
-  animation: fadeInUp 0.5s ease-out;
+h1, h2, h3, h4, h5, h6, .navbar-brand {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Glassmorphism Card */
+.glass-panel {
+  background: var(--bg-panel);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: var(--glass-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+  border-color: rgba(0, 243, 255, 0.3);
+}
+
+/* Neon Button */
+.btn-neon {
+  background: transparent;
+  color: var(--neon-cyan);
+  border: 1px solid var(--neon-cyan);
+  font-family: var(--font-display);
+  font-weight: 700;
+  padding: 10px 25px;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px var(--neon-cyan);
+}
+
+.btn-neon:hover {
+  background: var(--neon-cyan);
+  color: #000;
+  box-shadow: 0 0 20px var(--neon-cyan);
+}
+
+.btn-neon-secondary {
+  border-color: var(--neon-purple);
+  color: var(--neon-purple);
+  box-shadow: 0 0 5px var(--neon-purple);
+}
+
+.btn-neon-secondary:hover {
+  background: var(--neon-purple);
+  color: #fff;
+  box-shadow: 0 0 20px var(--neon-purple);
+}
+
+/* Table Overrides */
+.table-futuristic {
+  color: var(--text-primary);
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.table-futuristic thead th {
+  background: transparent;
+  color: var(--neon-cyan);
+  border-bottom: 1px solid var(--neon-cyan);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  padding: 15px;
+}
+
+.table-futuristic tbody tr {
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.2s ease;
+}
+
+.table-futuristic tbody tr:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(1.01);
+}
+
+.table-futuristic td {
+  border: none;
+  padding: 15px;
+  vertical-align: middle;
+}
+
+.table-futuristic td:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.table-futuristic td:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+/* Tags / Badges */
+.badge-neon {
+  background: rgba(0, 243, 255, 0.1);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+}
+
+/* Modal Override */
+.modal-content {
+  background: #0a0a0a;
+  border: 1px solid var(--neon-purple);
+  box-shadow: 0 0 30px rgba(188, 19, 254, 0.3);
+  color: white;
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.form-control, .form-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+  color: white;
 }

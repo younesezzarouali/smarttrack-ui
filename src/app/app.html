@@ -1,44 +1,56 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top p-4" style="background: transparent;">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="#">SmartTrack</a>
+    <a class="navbar-brand fs-3 text-uppercase" href="#">
+      <i class="bi bi-cpu-fill me-2" style="color: var(--neon-cyan);"></i>SmartTrack
+    </a>
   </div>
 </nav>
 
-<header class="bg-primary text-white py-5">
-  <div class="container text-center">
-    <h1 class="display-4 fw-bold">Suivez vos dépenses simplement</h1>
-    <p class="lead mb-4">Vision Serverless 100% Fonctionnelle.</p>
-    <button class="btn btn-light btn-lg shadow-sm" (click)="openModal(content)">
-      <i class="bi bi-plus-circle me-2"></i>Nouvelle Dépense
-    </button>
-  </div>
-</header>
+<div class="d-flex flex-column justify-content-center align-items-center text-center text-white" style="min-height: 50vh; padding-top: 80px;">
+  <h1 class="display-1 fw-bold mb-3" style="text-shadow: 0 0 20px rgba(0, 243, 255, 0.5);">
+    FUTURE FINANCE
+  </h1>
+  <p class="lead mb-5 text-secondary" style="max-width: 600px;">
+    Vision Serverless 100% Fonctionnelle.
+  </p>
+  
+  <button class="btn-neon rounded-pill px-5 py-3" (click)="openModal(content)">
+    <i class="bi bi-plus-lg me-2"></i>ADD DATA
+  </button>
+</div>
 
-<main class="container my-5">
-  <div class="row">
+<main class="container mb-5 pb-5">
+  <div class="row g-4 mb-5">
     <div class="col-md-12">
+      <!-- Summary Component injected here -->
       <app-expense-summary></app-expense-summary>
     </div>
   </div>
 
-  <div class="mt-5">
-    <h2 class="mb-4">Dernières Transactions</h2>
+  <div class="glass-panel p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="m-0" style="color: var(--neon-purple);">TRANSACTIONS</h3>
+      <span class="badge badge-neon px-3 py-2">LIVE FEED</span>
+    </div>
+    
     <div class="table-responsive">
-      <table class="table table-hover bg-white shadow-sm rounded">
-        <thead class="table-light">
+      <table class="table table-futuristic align-middle">
+        <thead>
           <tr>
-            <th>Libellé</th>
-            <th>Catégorie</th>
-            <th>Montant</th>
+            <th>LABEL</th>
+            <th>CATEGORY</th>
+            <th class="text-end">AMOUNT</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let ex of expenses">
-            <td>{{ ex.label }}</td>
+            <td class="fw-bold">{{ ex.label }}</td>
             <td>
-              <span class="badge bg-secondary">{{ ex.category }}</span>
+              <span class="badge badge-neon rounded-0">{{ ex.category }}</span>
             </td>
-            <td class="fw-bold text-end">{{ ex.amount }} €</td>
+            <td class="text-end" style="color: var(--neon-cyan); font-family: var(--font-display); font-size: 1.2rem;">
+              {{ ex.amount }} €
+            </td>
           </tr>
         </tbody>
       </table>
@@ -48,14 +60,8 @@
 
 <ng-template #content let-modal>
   <div class="modal-header">
-    <h4 class="modal-title">Ajouter une dépense</h4>
+    <h4 class="modal-title" style="color: var(--neon-cyan);">NEW ENTRY</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <app-expense-modal></app-expense-modal>
 </ng-template>
-
-<footer class="bg-light py-4 border-top mt-auto">
-  <div class="container text-center text-muted">
-    <span>© 2026 Ezzium Consulting — SmartTrack Platform</span>
-  </div>
-</footer>

@@ -1,5 +1,5 @@
 <div class="row g-4 mb-4">
-  <!-- Main Financial Summary -->
+  <!-- Total Spent -->
   <div class="col-lg-4">
     <div class="fintech-card p-4 h-100 d-flex flex-column justify-content-center border-start border-4 border-primary">
       <div class="text-secondary small fw-bold text-uppercase mb-2" style="letter-spacing: 0.05em;">Total Spent</div>
@@ -12,7 +12,7 @@
     </div>
   </div>
 
-  <!-- Work Productivity Widget -->
+  <!-- Work Focus -->
   <div class="col-lg-4">
     <div class="fintech-card p-4 h-100 d-flex flex-column justify-content-center border-start border-4 border-warning">
       <div class="text-secondary small fw-bold text-uppercase mb-2" style="letter-spacing: 0.05em;">Work Focus</div>
@@ -25,29 +25,27 @@
     </div>
   </div>
 
-  <!-- Health & Vitality Widget -->
+  <!-- Health & Vitality -->
   <div class="col-lg-4">
     <div class="fintech-card p-4 h-100 d-flex flex-column justify-content-center border-start border-4 border-info">
-      <div class="text-secondary small fw-bold text-uppercase mb-2" style="letter-spacing: 0.05em;">Health Pulse</div>
+      <div class="text-secondary small fw-bold text-uppercase mb-2" style="letter-spacing: 0.05em;">Vitality Score</div>
       <div class="display-5 fw-extrabold text-white mb-1">
-        {{ healthActivities() }} <span class="text-info">act.</span>
+        {{ vitalityScore() }}<span class="text-info" style="font-size: 1.5rem;">%</span>
       </div>
-      <div class="text-info small d-flex align-items-center fw-medium mt-2">
-        <i class="bi bi-heart-pulse me-2"></i> Vitality Score
+      <div class="text-info small d-flex align-items-center fw-medium mt-2" title="Based on activities and your mood">
+        <i class="bi bi-info-circle me-2"></i> Activity & Mood Base
       </div>
     </div>
   </div>
 </div>
 
 <div class="row g-4">
-  <!-- Category Breakdown -->
   <div class="col-12">
     <div class="fintech-card p-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h6 class="m-0 fw-bold">Spending by Category</h6>
         <i class="bi bi-pie-chart text-muted small"></i>
       </div>
-      
       <div class="row row-cols-1 row-cols-md-3 g-4">
         <div *ngFor="let cat of categoryNames()" class="col">
           <div class="d-flex justify-content-between mb-2">
@@ -55,17 +53,10 @@
             <span class="small fw-bold text-white">{{ categoriesBreakdown()[cat] | number:'1.2-2' }} €</span>
           </div>
           <div class="progress" style="height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px;">
-            <div class="progress-bar" 
-                 role="progressbar" 
-                 [style.width.%]="getPercentage(categoriesBreakdown()[cat])"
-                 style="background-color: var(--primary); border-radius: 10px;">
-            </div>
+            <div class="progress-bar" role="progressbar" [style.width.%]="getPercentage(categoriesBreakdown()[cat])" style="background-color: var(--primary); border-radius: 10px;"></div>
           </div>
         </div>
-        
-        <div *ngIf="categoryNames().length === 0" class="col-12 text-center py-2 text-muted small opacity-50">
-          No categories tracked yet.
-        </div>
+        <div *ngIf="categoryNames().length === 0" class="col-12 text-center py-2 text-muted small opacity-50">No categories tracked yet.</div>
       </div>
     </div>
   </div>

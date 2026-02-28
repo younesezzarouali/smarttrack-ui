@@ -39,9 +39,33 @@ export class ExpenseSummaryComponent {
     return (totalMinutes / 60).toFixed(1);
   });
 
-  // HEALTH Metrics (Count activities)
+  // HEALTH Metrics & Vitality Score
   readonly healthActivities = computed(() => {
     return this.lifeService.events().filter(e => e.type === 'HEALTH').length;
+  });
+
+  /**
+   * VITALITY SCORE LOGIC:
+   * Base: 50%
+   * +15% per health activity (max 30%)
+   * +10% for POSITIVE sentiments
+   * -10% for NEGATIVE sentiments
+   */
+  readonly vitalityScore = computed(() => {
+    let score = 50;
+    const events = this.lifeService.events();
+    
+    // Add health bonus
+    const healthCount = events.filter(e => e.type === 'HEALTH').length;
+    score += Math.min(healthCount * 15, 30);
+
+    // Sentiment impact
+    events.forEach(e => {
+      if (e.payload.sentiment === 'POSITIVE') score += 5;
+      if (e.payload.sentiment === 'NEGATIVE') score -= 10;
+    });
+
+    return Math.min(Math.max(score, 0), 100);
   });
 
   readonly categoryNames = computed(() => Object.keys(this.categoriesBreakdown()));

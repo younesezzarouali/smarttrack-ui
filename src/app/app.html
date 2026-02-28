@@ -2,63 +2,91 @@
   <div class="container">
     <a class="navbar-brand d-flex align-items-center fw-bold fs-4" href="#">
       <div class="bg-primary rounded-3 p-2 me-2 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-        <i class="bi bi-graph-up-arrow fs-6"></i>
+        <i class="bi bi-stars fs-6"></i>
       </div>
-      SmartTrack
+      SmartTrack LifeOS
     </a>
-    <button class="btn btn-primary-fintech d-flex align-items-center" (click)="openModal(content)">
-      <i class="bi bi-plus-lg me-2"></i> New Transaction
-    </button>
   </div>
 </nav>
 
-<main class="container mt-4 mb-5">
-  <!-- Statistics Row -->
+<main class="container mt-2 mb-5">
+  <!-- Status Dashboard -->
   <div class="mb-5">
     <app-expense-summary></app-expense-summary>
   </div>
 
-  <!-- Recent Transactions Section -->
-  <div class="fintech-card overflow-hidden">
-    <div class="p-4 border-bottom border-light border-opacity-10 d-flex justify-content-between align-items-center">
-      <h5 class="m-0 fw-bold">Recent Transactions</h5>
-      <a href="#" class="text-primary text-decoration-none small fw-semibold">View all</a>
+  <!-- Magic Input Section -->
+  <div class="row justify-content-center mb-5">
+    <div class="col-lg-8">
+      <div class="fintech-card p-2 shadow-lg" style="border: 1px solid rgba(99, 102, 241, 0.3);">
+        <div class="input-group">
+          <input type="text" 
+                 class="form-control border-0 bg-transparent fs-5 py-3 ps-4" 
+                 placeholder="How was your day? (ex: Spent 10€ on coffee, ran 5km...)"
+                 [(ngModel)]="magicText"
+                 (keyup.enter)="processMagic()"
+                 [disabled]="loading">
+          <button class="btn btn-primary-fintech px-4" 
+                  type="button" 
+                  (click)="processMagic()"
+                  [disabled]="loading || !magicText">
+            <span *ngIf="!loading"><i class="bi bi-send-fill"></i></span>
+            <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+          </button>
+        </div>
+      </div>
+      <div class="text-center mt-3">
+        <small class="text-muted">Powered by Gemini 2.0 Flash</small>
+      </div>
     </div>
-    
-    <div class="table-responsive">
-      <table class="fintech-table">
-        <thead>
-          <tr>
-            <th>Description</th>
-            <th>Category</th>
-            <th class="text-end">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let ex of expenses">
-            <td class="fw-medium text-white">{{ ex.label }}</td>
-            <td>
-              <span class="fintech-badge">{{ ex.category }}</span>
-            </td>
-            <td class="text-end fw-bold text-white">
-              {{ ex.amount | number:'1.2-2' }} €
-            </td>
-          </tr>
-          <tr *ngIf="expenses.length === 0">
-            <td colspan="3" class="text-center py-5 text-muted">
-              No transactions recorded yet.
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  </div>
+
+  <!-- Timeline of Events -->
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <h6 class="text-muted text-uppercase fw-bold mb-4" style="letter-spacing: 1px;">Live Timeline</h6>
+      
+      <div class="timeline">
+        <div *ngFor="let event of events" class="fintech-card p-4 mb-3 animate-fade-in">
+          <div class="d-flex align-items-start">
+            <div class="rounded-circle p-3 me-3 d-flex align-items-center justify-content-center" 
+                 [ngClass]="{
+                   'bg-success-subtle text-success': event.type === 'FINANCE',
+                   'bg-info-subtle text-info': event.type === 'HEALTH',
+                   'bg-warning-subtle text-warning': event.type === 'WORK',
+                   'bg-primary-subtle text-primary': event.type === 'NOTE'
+                 }" style="width: 50px; height: 50px; background: rgba(255,255,255,0.05);">
+              <i class="bi" [ngClass]="{
+                'bi-currency-euro': event.type === 'FINANCE',
+                'bi-heart-pulse': event.type === 'HEALTH',
+                'bi-briefcase': event.type === 'WORK',
+                'bi-sticky': event.type === 'NOTE'
+              }"></i>
+            </div>
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="badge fintech-badge">{{ event.type }}</span>
+                <small class="text-muted">{{ event.timestamp | date:'short' }}</small>
+              </div>
+              <p class="m-0 fw-medium text-white">{{ event.content }}</p>
+              
+              <!-- Payload details -->
+              <div class="mt-2 d-flex flex-wrap gap-2">
+                <small *ngFor="let entry of event.payload | keyvalue" class="text-secondary bg-dark px-2 py-1 rounded border border-light border-opacity-10">
+                  <span class="text-muted">{{ entry.key }}:</span> {{ entry.value }}
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="events.length === 0" class="text-center py-5">
+          <div class="opacity-25 mb-3">
+            <i class="bi bi-chat-dots display-1"></i>
+          </div>
+          <p class="text-muted">No events recorded. Type something above to begin.</p>
+        </div>
+      </div>
     </div>
   </div>
 </main>
-
-<ng-template #content let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title fw-bold">Add Transaction</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
-  </div>
-  <app-expense-modal></app-expense-modal>
-</ng-template>

@@ -1,45 +1,53 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ExpenseService } from './services/expense.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { LifeService, LifeEvent } from './services/life.service';
 import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary';
-import { ExpenseModalComponent } from './components/expense-modal/expense-modal';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, ExpenseSummaryComponent, ExpenseModalComponent],
+  imports: [CommonModule, RouterOutlet, FormsModule, ExpenseSummaryComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class AppComponent implements OnInit {
-  title = 'smarttrack-ui';
-  summary: any = null;
-  expenses: any[] = [];
+  magicText: string = '';
+  loading: boolean = false;
+  events: LifeEvent[] = [];
 
-  constructor(private expenseService: ExpenseService, private modalService: NgbModal) {}
+  constructor(private lifeService: LifeService) {}
 
   ngOnInit() {
     this.refreshData();
   }
 
-  openModal(content: any) {
-    this.modalService.open(content, { centered: true }).result.then(
-      () => this.refreshData(),
-      () => this.refreshData()
-    );
+  processMagic() {
+    if (!this.magicText.trim()) return;
+
+    this.loading = true;
+    this.lifeService.sendMagicInput(this.magicText).subscribe({
+      next: (newEvents) => {
+        this.magicText = '';
+        this.loading = false;
+        this.refreshData(); // Reload all events to see updates
+      },
+      error: (err) => {
+        console.error('Magic failed', err);
+        this.loading = false;
+        alert('AI processing failed. Check your API key or connection.');
+      }
+    });
   }
 
   refreshData() {
-    this.expenseService.getSummary().subscribe({
-      next: (data) => this.summary = data,
-      error: (err) => console.error('Failed to fetch summary', err)
-    });
-
-    this.expenseService.getExpenses().subscribe({
-      next: (data) => this.expenses = data,
-      error: (err) => console.error('Failed to fetch expenses', err)
+    this.lifeService.getEvents().subscribe({
+      next: (data) => {
+        // Sort by timestamp descending
+        this.events = data.sort((a, b) => b.timestamp - a.timestamp);
+      },
+      error: (err) => console.error('Failed to fetch events', err)
     });
   }
 }

@@ -78,12 +78,18 @@
         </div>
 
         <!-- Daily Briefing Card (Only for Today) -->
-        <div *ngIf="group.date === 'Today' && briefing()" class="fintech-card p-4 mb-4 border-info border-opacity-25" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(56, 189, 248, 0.05));">
-          <div class="d-flex align-items-center mb-2">
-            <i class="bi bi-magic text-info me-2"></i>
-            <h6 class="m-0 fw-bold small text-info text-uppercase" style="letter-spacing: 1px;">Daily Briefing</h6>
+        <div *ngIf="group.date === 'Today' && briefing()" 
+             class="fintech-card p-4 mb-5 border-0 shadow-lg animate-fade-in" 
+             style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(168, 85, 247, 0.2) !important;">
+          <div class="d-flex align-items-center mb-3">
+            <div class="bg-primary rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);">
+              <i class="bi bi-lightning-charge-fill text-white small"></i>
+            </div>
+            <h6 class="m-0 fw-bold small text-white text-uppercase" style="letter-spacing: 2px;">Daily Performance Coach</h6>
           </div>
-          <p class="text-white m-0 opacity-90 italic lh-lg" style="font-size: 1.05rem;">" {{ briefing() }} "</p>
+          <p class="text-white m-0 lh-lg" style="font-size: 1.15rem; font-weight: 500; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            {{ briefing() }}
+          </p>
         </div>
 
         <div *ngFor="let event of group.items" class="fintech-card p-3 mb-3 event-card" 

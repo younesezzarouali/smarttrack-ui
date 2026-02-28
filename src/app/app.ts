@@ -60,8 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit() {
-    this.lifeService.fetchAll();
-    this.lifeService.fetchBriefing();
+    this.lifeService.sync();
     this.startPlaceholderRotation();
   }
 

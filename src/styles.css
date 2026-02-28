@@ -130,3 +130,21 @@ h1, h2, h3, h4, .navbar-brand {
 .btn-close {
   filter: invert(1);
 }
+
+/* Fix visibility for standard text classes */
+.text-muted {
+  color: #94a3b8 !important; /* Slate 400 */
+}
+
+.text-secondary {
+  color: #cbd5e1 !important; /* Slate 300 */
+}
+
+small {
+  color: #94a3b8;
+}
+
+.bg-dark {
+  background-color: rgba(15, 23, 42, 0.8) !important;
+}
+

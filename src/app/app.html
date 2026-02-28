@@ -66,14 +66,14 @@
             <div class="flex-grow-1">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <span class="badge fintech-badge">{{ event.type }}</span>
-                <small class="text-muted">{{ event.timestamp | date:'short' }}</small>
+                <small class="text-secondary">{{ event.timestamp | date:'short' }}</small>
               </div>
-              <p class="m-0 fw-medium text-white">{{ event.content }}</p>
+              <p class="m-0 fw-medium text-white" style="font-size: 1.1rem;">{{ event.content }}</p>
               
               <!-- Payload details -->
               <div class="mt-2 d-flex flex-wrap gap-2">
-                <small *ngFor="let entry of event.payload | keyvalue" class="text-secondary bg-dark px-2 py-1 rounded border border-light border-opacity-10">
-                  <span class="text-muted">{{ entry.key }}:</span> {{ entry.value }}
+                <small *ngFor="let entry of event.payload | keyvalue" class="text-white bg-dark px-2 py-1 rounded border border-light border-opacity-10" style="background: rgba(255,255,255,0.05) !important;">
+                  <span class="text-secondary">{{ entry.key }}:</span> {{ entry.value }}
                 </small>
               </div>
             </div>

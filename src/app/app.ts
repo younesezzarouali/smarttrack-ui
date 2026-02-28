@@ -132,7 +132,13 @@ export class AppComponent implements OnInit, OnDestroy {
           this.pendingEvents = null;
           this.showUndo(eventsToSave);
         }))
-        .subscribe();
+        .subscribe({
+          next: () => {
+            // Force a refresh after saving to see the updates in dashboard and timeline
+            this.lifeService.sync();
+          },
+          error: (err) => console.error('Save failed', err)
+        });
     }
   }
 
@@ -167,7 +173,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   cancelEdit() { this.editingEvent = null; }
-  clearAll() { if (confirm('Clear all data?')) this.lifeService.clearAll().subscribe(); }
+  
+  clearAll() { 
+    if (confirm('Clear all data?')) {
+      this.lifeService.clearAll().subscribe({
+        next: () => this.lifeService.sync()
+      });
+    }
+  }
 
   private getRelativeDateLabel(timestamp: number): string {
     const date = new Date(timestamp);

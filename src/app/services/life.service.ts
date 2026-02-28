@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, signal, inject } from '@angular/core';
 import { Observable, tap, forkJoin } from 'rxjs';
 import { environment } from '../environments/environment';
+import { HabitService } from './habit.service';
 
 export type LifeEventType = 'FINANCE' | 'HEALTH' | 'WORK' | 'HABIT' | 'NOTE';
 
@@ -22,6 +23,7 @@ export interface MagicResponse {
 @Injectable({ providedIn: 'root' })
 export class LifeService {
   private apiUrl = `${environment.apiUrl}/life`;
+  private habitService = inject(HabitService);
   
   private eventsSignal = signal<LifeEvent[]>([]);
   readonly briefing = signal<string>('');
@@ -39,7 +41,7 @@ export class LifeService {
 
   saveEvents(events: LifeEvent[]): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/events/batch`, events).pipe(
-      tap(() => this.sync()) // Optimize: single sync call
+      tap(() => this.sync())
     );
   }
 
@@ -55,14 +57,10 @@ export class LifeService {
     );
   }
 
-  /**
-   * OPTIMIZATION: Sync all data in parallel
-   */
   sync(): void {
     const offset = new Date().getTimezoneOffset();
     const params = new HttpParams().set('timezoneOffset', offset.toString());
 
-    // Execute requests in parallel
     forkJoin({
       events: this.http.get<LifeEvent[]>(`${this.apiUrl}/events`),
       briefing: this.http.get<{briefing: string}>(`${this.apiUrl}/briefing`, { params })
@@ -70,12 +68,12 @@ export class LifeService {
       next: (res) => {
         this.eventsSignal.set(res.events);
         this.briefing.set(res.briefing.briefing);
+        this.habitService.fetchHabits(); // Also sync habits
       },
       error: (err) => console.error('Sync failed', err)
     });
   }
 
-  // Helper for separate calls if needed
   fetchBriefing(): void {
     const offset = new Date().getTimezoneOffset();
     const params = new HttpParams().set('timezoneOffset', offset.toString());
@@ -87,6 +85,7 @@ export class LifeService {
       tap(() => {
         this.eventsSignal.set([]);
         this.briefing.set('');
+        this.habitService.fetchHabits();
       })
     );
   }

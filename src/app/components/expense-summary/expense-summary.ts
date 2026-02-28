@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LifeService } from '../../services/life.service';
+import { HabitService } from '../../services/habit.service';
 
 @Component({
   selector: 'app-expense-summary',
@@ -10,8 +11,9 @@ import { LifeService } from '../../services/life.service';
 })
 export class ExpenseSummaryComponent {
   private lifeService = inject(LifeService);
+  public habitService = inject(HabitService);
   
-  // Weekly Goals (Hardcoded for now as per strategy)
+  // Weekly Goals (Static for now)
   readonly GOALS = {
     budget: 400,
     sport: 3,
@@ -24,18 +26,6 @@ export class ExpenseSummaryComponent {
       const amt = parseFloat(e.payload.amount);
       return acc + (isNaN(amt) ? 0 : amt);
     }, 0);
-  });
-
-  readonly categoriesBreakdown = computed(() => {
-    const breakdown: Record<string, number> = {};
-    this.lifeService.financeEvents().forEach(e => {
-      const cat = e.payload.category || 'OTHER';
-      const amt = parseFloat(e.payload.amount);
-      if (!isNaN(amt)) {
-        breakdown[cat] = (breakdown[cat] || 0) + amt;
-      }
-    });
-    return breakdown;
   });
 
   // WORK Metrics
@@ -58,6 +48,11 @@ export class ExpenseSummaryComponent {
     const events = this.lifeService.events();
     const healthCount = events.filter(e => e.type === 'HEALTH').length;
     score += Math.min(healthCount * 15, 30);
+    
+    // Add habits bonus
+    const completedHabits = this.habitService.progress()?.completedIds?.length || 0;
+    score += (completedHabits * 10);
+
     events.forEach(e => {
       if (e.payload.sentiment === 'POSITIVE') score += 5;
       if (e.payload.sentiment === 'NEGATIVE') score -= 10;
@@ -69,11 +64,4 @@ export class ExpenseSummaryComponent {
   readonly budgetProgress = computed(() => Math.min((this.totalSpent() / this.GOALS.budget) * 100, 100));
   readonly sportProgress = computed(() => Math.min((this.healthActivities() / this.GOALS.sport) * 100, 100));
   readonly workProgress = computed(() => Math.min((this.workHoursNum() / this.GOALS.work) * 100, 100));
-
-  readonly categoryNames = computed(() => Object.keys(this.categoriesBreakdown()));
-
-  getPercentage(amount: number): number {
-    const total = this.totalSpent();
-    return total > 0 ? (amount / total) * 100 : 0;
-  }
 }

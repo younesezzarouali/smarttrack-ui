@@ -22,7 +22,33 @@
   </div>
 </div>
 
-<!-- Weekly Focus - State Indicator Upgrade -->
+<!-- Daily Habits Section -->
+<div class="row section-gap" *ngIf="habitService.habits().length > 0">
+  <div class="col-12">
+    <div class="apple-card">
+      <h6 class="kpi-title mb-4 opacity-50">Daily Habits</h6>
+      <div class="d-flex flex-column" style="gap: 20px !important;">
+        <div *ngFor="let habit of habitService.habits()">
+          <div class="d-flex justify-content-between mb-2 align-items-center">
+            <span class="kpi-label-refined">{{ habit.name }}</span>
+            <div class="kpi-value-refined">
+              {{ habitService.getHabitProgress(habit.id) | number:'1.0-1' }} / {{ habit.targetValue }} {{ habit.unit }}
+              <span class="percentage-dim">{{ habitService.getHabitPercentage(habit) | number:'1.0-0' }}%</span>
+              <span *ngIf="habit.streak > 0" class="ms-2 badge bg-white bg-opacity-10 text-white fw-bold" style="font-size: 0.6rem;">
+                <i class="bi bi-fire text-warning me-1"></i>{{ habit.streak }}
+              </span>
+            </div>
+          </div>
+          <div class="progress">
+            <div class="progress-bar" [style.width.%]="habitService.getHabitPercentage(habit)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Weekly Focus Card -->
 <div class="row section-gap">
   <div class="col-12">
     <div class="apple-card">

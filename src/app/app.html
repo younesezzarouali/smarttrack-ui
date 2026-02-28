@@ -2,7 +2,7 @@
   <div class="container">
     <a class="navbar-brand fw-bold fs-5" href="#" style="letter-spacing: -0.03em;">SmartTrack</a>
     <div class="d-flex align-items-center gap-3">
-      <!-- Settings Dropdown (Relocated Delete All) -->
+      <!-- Settings Dropdown -->
       <div class="dropdown">
         <button class="btn btn-sm text-secondary opacity-40 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="bi bi-three-dots"></i>
@@ -21,8 +21,36 @@
   
   <app-expense-summary></app-expense-summary>
 
-  <!-- DAILY BRIEFING (Clean, No Icon) -->
-  <div *ngIf="briefing()" class="row justify-content-center section-gap apple-entry">
+  <!-- AI Pending Preview (MOVED ABOVE HISTORY FOR CLARITY) -->
+  <div *ngIf="pendingEvents" class="row justify-content-center section-gap fade-in">
+    <div class="col-lg-10">
+      <div class="apple-card-elevated border border-white border-opacity-10 shadow-lg p-4">
+        <h6 class="kpi-title mb-4 opacity-50">Review Entry</h6>
+        <div class="list-group list-group-flush mb-4">
+          <div *ngFor="let p of pendingEvents" class="list-group-item bg-transparent border-white border-opacity-5 py-3 px-0">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="text-white fw-medium fs-5">{{ p.content }}</span>
+              <div class="text-white fw-bold fs-5">
+                <span *ngIf="p.payload.amount">{{ p.payload.amount }}€</span>
+                <span *ngIf="p.payload.duration_min && !p.payload.amount">{{ p.payload.duration_min }}m</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex gap-3">
+          <button class="btn btn-primary-fintech flex-grow-1 py-3 fw-bold" (click)="confirmPending()" [disabled]="loading">
+            Confirm & Save
+          </button>
+          <button class="btn btn-sm text-secondary px-4" (click)="cancelPending()" [disabled]="loading">
+            Discard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAILY BRIEFING -->
+  <div *ngIf="briefing()" class="row justify-content-center section-gap fade-in">
     <div class="col-lg-10">
       <div class="apple-card-elevated">
         <h6 class="kpi-title mb-2 opacity-50">Insight</h6>
@@ -34,7 +62,7 @@
   </div>
 
   <!-- AI Answer Bubble -->
-  <div *ngIf="aiAnswer" class="row justify-content-center section-gap apple-entry">
+  <div *ngIf="aiAnswer" class="row justify-content-center section-gap fade-in">
     <div class="col-lg-10">
       <div class="apple-card border border-white border-opacity-10">
         <div class="d-flex justify-content-between align-items-start mb-2">
@@ -46,35 +74,7 @@
     </div>
   </div>
 
-  <!-- AI Pending Preview (Review Entry) -->
-  <div *ngIf="pendingEvents" class="row justify-content-center section-gap apple-entry">
-    <div class="col-lg-10">
-      <div class="apple-card-elevated border border-white border-opacity-5">
-        <h6 class="kpi-title mb-4 opacity-50">Review Entry</h6>
-        <div class="list-group list-group-flush mb-4">
-          <div *ngFor="let p of pendingEvents" class="list-group-item bg-transparent border-white border-opacity-5 py-3 px-0">
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="text-white fw-medium">{{ p.content }}</span>
-              <div class="text-white fw-bold">
-                <span *ngIf="p.payload.amount">{{ p.payload.amount }}€</span>
-                <span *ngIf="p.payload.duration_min && !p.payload.amount">{{ p.payload.duration_min }}m</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="d-flex gap-3">
-          <button class="btn btn-primary-fintech flex-grow-1" (click)="confirmPending()" [disabled]="loading">
-            Confirm & Save
-          </button>
-          <button class="btn btn-sm text-secondary px-3" (click)="cancelPending()" [disabled]="loading">
-            Discard
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- History Timeline (Ultra Minimal) -->
+  <!-- History Timeline -->
   <div class="row justify-content-center">
     <div class="col-lg-10">
       <div *ngFor="let group of groupedEvents()" class="section-gap">
@@ -82,7 +82,6 @@
         
         <div class="apple-card p-0 overflow-hidden">
           <div *ngFor="let event of group.items" class="px-4 py-3 event-row">
-            
             <div *ngIf="editingEvent?.timestamp !== event.timestamp" class="w-100 d-flex align-items-center">
               <div class="flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center">
@@ -130,7 +129,7 @@
     <div class="row justify-content-center">
       <div class="col-lg-8">
         
-        <div *ngIf="undoVisible()" class="mb-3 text-center apple-entry">
+        <div *ngIf="undoVisible()" class="mb-3 text-center fade-in">
           <button class="btn btn-dark rounded-pill border border-white border-opacity-10 px-4 py-2 small" (click)="undoSave()">
             <span class="text-secondary">Action completed.</span> <span class="text-white fw-bold ms-2">UNDO</span>
           </button>
@@ -141,12 +140,7 @@
             <button class="btn border-0 text-secondary opacity-60 px-3" (click)="toggleListening()">
               <i class="bi fs-5" [ngClass]="speechService.isListening() ? 'bi-mic-fill text-white' : 'bi-mic'"></i>
             </button>
-            
-            <input type="text" 
-                   class="form-control" 
-                   [placeholder]="speechService.isListening() ? 'Listening...' : placeholderSignal()" 
-                   [(ngModel)]="magicText" (keyup.enter)="processMagic()" [disabled]="loading">
-
+            <input type="text" class="form-control border-0 bg-transparent py-2 fs-5" [placeholder]="speechService.isListening() ? 'Listening...' : placeholderSignal()" [(ngModel)]="magicText" (keyup.enter)="processMagic()" [disabled]="loading">
             <button class="btn-circle me-1 shadow-sm" (click)="processMagic()" [disabled]="loading || !magicText">
               <i *ngIf="!loading" class="bi bi-arrow-up text-black fs-5"></i>
               <span *ngIf="loading" class="spinner-border spinner-border-sm text-black"></span>

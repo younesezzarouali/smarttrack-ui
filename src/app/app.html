@@ -116,7 +116,23 @@
                 <div class="d-flex align-items-center mt-1">
                   <small class="text-secondary opacity-50 me-2">{{ event.timestamp | date:'HH:mm' }}</small>
                   <span class="text-muted small">•</span>
-                  <small class="text-muted small ms-2 text-uppercase">{{ event.payload.category || event.payload.project || event.type }}</small>
+                  <small class="text-muted small ms-2 text-uppercase me-3">{{ event.payload.category || event.payload.project || event.type }}</small>
+                  
+                  <!-- Sentiment Indicator -->
+                  <span *ngIf="event.payload.emotion" 
+                        class="badge rounded-pill border border-light border-opacity-10 py-1"
+                        [ngClass]="{
+                          'text-success bg-success bg-opacity-10': event.payload.sentiment === 'POSITIVE',
+                          'text-danger bg-danger bg-opacity-10': event.payload.sentiment === 'NEGATIVE',
+                          'text-secondary bg-dark': event.payload.sentiment === 'NEUTRAL'
+                        }" style="font-size: 0.65rem; letter-spacing: 0.5px;">
+                    <i class="bi me-1" [ngClass]="{
+                      'bi-emoji-smile-fill': event.payload.sentiment === 'POSITIVE',
+                      'bi-emoji-frown-fill': event.payload.sentiment === 'NEGATIVE',
+                      'bi-emoji-neutral-fill': event.payload.sentiment === 'NEUTRAL'
+                    }"></i>
+                    {{ event.payload.emotion }}
+                  </span>
                 </div>
               </div>
 

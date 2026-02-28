@@ -1,18 +1,9 @@
 :root {
   --bg-black: #000000;
   --bg-surface: #111111;
-  --bg-surface-light: #1C1C1E;
   --bg-input-bar: #1C1C1E;
-  
-  --text-primary: #FFFFFF;
-  --text-secondary: #8E8E93;
-  
   --rev-blue: #0075FF;
   --rev-danger: #FF453A;
-  --rev-success: #00D084;
-  
-  --radius-xl: 24px;
-  --radius-pill: 40px;
 }
 
 body {
@@ -22,72 +13,48 @@ body {
   margin: 0;
 }
 
-/* --- REVOLUT INPUT BAR --- */
-.bottom-bar-rev {
-  position: fixed;
-  bottom: 24px;
-  left: 16px;
-  right: 16px;
-  height: 56px;
-  background: var(--bg-input-bar);
-  border-radius: 28px;
-  display: flex;
-  align-items: center;
-  padding: 0 6px 0 12px;
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-  z-index: 2000;
+/* --- MINI MODAL REVOLUT --- */
+.mini-modal .modal-content {
+  background: #1C1C1E !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  max-width: 280px !important; /* Largeur carte bancaire */
+  margin: auto !important;
 }
 
-.btn-mic-rev {
-  width: 40px !important;
-  height: 40px !important;
-  min-width: 40px;
-  border-radius: 50% !important;
-  background: rgba(255, 255, 255, 0.12) !important;
-  color: white !important;
-  border: none !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+.rev-modal-title-mini {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
-.btn-mic-rev.listening {
-  background: var(--rev-danger) !important;
-  animation: pulse-mic 1.5s infinite;
+.rev-input-mini {
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
 }
 
-.input-rev {
-  flex: 1;
-  background: transparent !important;
-  border: none !important;
-  color: white !important;
-  font-size: 16px !important;
-  padding: 0 12px !important;
-  outline: none !important;
-}
-
-.btn-send-rev {
-  width: 44px !important;
-  height: 44px !important;
-  min-width: 44px;
-  border-radius: 50% !important;
+.btn-rev-main-mini {
   background: white !important;
   color: black !important;
+  border-radius: 20px !important;
+  font-weight: 700 !important;
+  padding: 8px !important;
+  width: 100%;
   border: none !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 14px !important;
 }
 
-@keyframes pulse-mic {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-/* --- REVOLUT COMPONENTS --- */
+/* --- REST OF STYLES --- */
+.bottom-bar-rev { position: fixed; bottom: 24px; left: 16px; right: 16px; height: 56px; background: var(--bg-input-bar); border-radius: 28px; display: flex; align-items: center; padding: 0 6px 0 12px; border: 1px solid rgba(255,255,255,0.1); z-index: 2000; }
+.btn-mic-rev { width: 40px !important; height: 40px !important; border-radius: 50% !important; background: rgba(255, 255, 255, 0.12) !important; color: white !important; border: none !important; display: flex; align-items: center; justify-content: center; }
+.btn-mic-rev.listening { background: var(--rev-danger) !important; animation: pulse-mic 1.5s infinite; }
+.input-rev { flex: 1; background: transparent !important; border: none !important; color: white !important; font-size: 16px !important; padding: 0 12px !important; outline: none !important; }
+.btn-send-rev { width: 44px !important; height: 44px !important; border-radius: 50% !important; background: white !important; color: black !important; border: none !important; display: flex; align-items: center; justify-content: center; }
+@keyframes pulse-mic { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 .app-container { padding: 160px 16px 140px; max-width: 600px; margin: 0 auto; }
 .revolut-header { position: fixed; top: 0; left: 0; right: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); z-index: 1060; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .card-rev { background: var(--bg-surface); border-radius: 24px; padding: 24px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.04); }
@@ -95,15 +62,8 @@ body {
 .prog-container { height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; }
 .prog-fill { height: 100%; background: var(--rev-blue); border-radius: 4px; transition: width 0.6s ease; }
 .streak-pill { background: #1C1C1E; color: #8E8E93; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-
 .btn-rev-white { background: white !important; color: black !important; border-radius: 30px !important; font-weight: 700 !important; padding: 12px 24px !important; border: none !important; width: 100%; }
 .kpi-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #8E8E93; letter-spacing: 0.5px; }
-
 .btn-rev-blue-sm { background-color: var(--rev-blue) !important; color: white !important; border-radius: 20px !important; font-size: 12px !important; font-weight: 700 !important; padding: 6px 16px !important; border: none !important; }
-
-/* Transitions */
-.transition-all { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-
-/* Animation */
 .animate-slide { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }

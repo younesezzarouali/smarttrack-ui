@@ -27,9 +27,10 @@ export class AppComponent implements OnInit, OnDestroy {
   editingEvent: LifeEvent | null = null;
   showDebug: boolean = false;
   
-  pendingEvents: LifeEvent[] = [];
-  pendingUpdates: any[] = [];
-  aiAnswer: string | null = null;
+  // States converted to Signals to match template calls
+  pendingEvents = signal<LifeEvent[]>([]);
+  pendingUpdates = signal<any[]>([]);
+  aiAnswer = signal<string | null>(null);
 
   recentlySavedEvents: LifeEvent[] = [];
   undoVisible = signal<boolean>(false);
@@ -74,9 +75,9 @@ export class AppComponent implements OnInit, OnDestroy {
     if (!textInput || this.loading) return;
 
     this.loading = true;
-    this.aiAnswer = null;
-    this.pendingEvents = [];
-    this.pendingUpdates = [];
+    this.aiAnswer.set(null);
+    this.pendingEvents.set([]);
+    this.pendingUpdates.set([]);
 
     this.lifeService.interact(textInput)
       .pipe(finalize(() => this.loading = false))
@@ -84,10 +85,10 @@ export class AppComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.magicText = '';
           if (response.intent === 'ANALYSE') {
-            this.aiAnswer = response.answer || 'Analyzed.';
+            this.aiAnswer.set(response.answer || 'Analyzed.');
           } else {
-            this.pendingEvents = response.events || [];
-            this.pendingUpdates = response.habitUpdates || [];
+            this.pendingEvents.set(response.events || []);
+            this.pendingUpdates.set(response.habitUpdates || []);
           }
         },
         error: (err: any) => console.error('Magic failed', err)
@@ -95,14 +96,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   confirmPending() {
-    if (this.pendingEvents.length > 0 || this.pendingUpdates.length > 0) {
+    const eventsToSave = [...this.pendingEvents()];
+    if (eventsToSave.length > 0 || this.pendingUpdates().length > 0) {
       this.loading = true;
-      const eventsToSave = [...this.pendingEvents];
       this.lifeService.saveBatch(eventsToSave)
         .pipe(finalize(() => {
           this.loading = false;
-          this.pendingEvents = [];
-          this.pendingUpdates = [];
+          this.pendingEvents.set([]);
+          this.pendingUpdates.set([]);
           this.showUndo(eventsToSave);
         }))
         .subscribe();
@@ -110,6 +111,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private showUndo(events: LifeEvent[]) {
+    if (events.length === 0) return;
     this.recentlySavedEvents = events;
     this.undoVisible.set(true);
     if (this.undoTimer) clearTimeout(this.undoTimer);
@@ -122,12 +124,16 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   cancelPending() { 
-    this.pendingEvents = [];
-    this.pendingUpdates = [];
+    this.pendingEvents.set([]);
+    this.pendingUpdates.set([]);
   }
 
   openCreateHabit() {
-    this.modalService.open(CreateHabitModalComponent, { centered: true });
+    this.modalService.open(CreateHabitModalComponent, { 
+      centered: true, 
+      size: 'sm',
+      windowClass: 'mini-modal'
+    });
   }
 
   deleteHabit(id: string) {

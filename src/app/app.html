@@ -22,7 +22,7 @@
   <app-expense-summary></app-expense-summary>
 
   <!-- DAILY BRIEFING (Clean, No Icon) -->
-  <div *ngIf="briefing()" class="row justify-content-center section-gap fade-in">
+  <div *ngIf="briefing()" class="row justify-content-center section-gap apple-entry">
     <div class="col-lg-10">
       <div class="apple-card-elevated">
         <h6 class="kpi-title mb-2 opacity-50">Insight</h6>
@@ -34,7 +34,7 @@
   </div>
 
   <!-- AI Answer Bubble -->
-  <div *ngIf="aiAnswer" class="row justify-content-center section-gap fade-in">
+  <div *ngIf="aiAnswer" class="row justify-content-center section-gap apple-entry">
     <div class="col-lg-10">
       <div class="apple-card border border-white border-opacity-10">
         <div class="d-flex justify-content-between align-items-start mb-2">
@@ -102,7 +102,7 @@
     <div class="row justify-content-center">
       <div class="col-lg-8">
         
-        <div *ngIf="undoVisible()" class="mb-3 text-center fade-in">
+        <div *ngIf="undoVisible()" class="mb-3 text-center apple-entry">
           <button class="btn btn-dark rounded-pill border border-white border-opacity-10 px-4 py-2 small" (click)="undoSave()">
             <span class="text-secondary">Action completed.</span> <span class="text-white fw-bold ms-2">UNDO</span>
           </button>

@@ -1,4 +1,4 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LifeService } from '../../services/life.service';
 
@@ -9,24 +9,35 @@ import { LifeService } from '../../services/life.service';
   templateUrl: './expense-summary.html'
 })
 export class ExpenseSummaryComponent {
+  private lifeService = inject(LifeService);
   
-  // Reactive summary based on the global lifeService state
-  readonly summary = computed(() => {
-    const events = this.lifeService.financeEvents();
-    const total = events.reduce((acc, e) => acc + parseFloat(e.payload.amount || '0'), 0);
-    
-    const byCat: Record<string, number> = {};
-    events.forEach(e => {
-      const cat = e.payload.category || 'OTHER';
-      byCat[cat] = (byCat[cat] || 0) + parseFloat(e.payload.amount || '0');
-    });
-
-    return { total, totalByCategory: byCat };
+  // Calcul automatique du total
+  readonly totalSpent = computed(() => {
+    return this.lifeService.financeEvents().reduce((acc, e) => {
+      const amt = parseFloat(e.payload.amount);
+      return acc + (isNaN(amt) ? 0 : amt);
+    }, 0);
   });
 
-  constructor(private lifeService: LifeService) {}
+  // Calcul automatique de la répartition par catégorie
+  readonly categoriesBreakdown = computed(() => {
+    const breakdown: Record<string, number> = {};
+    this.lifeService.financeEvents().forEach(e => {
+      const cat = e.payload.category || 'OTHER';
+      const amt = parseFloat(e.payload.amount);
+      if (!isNaN(amt)) {
+        breakdown[cat] = (breakdown[cat] || 0) + amt;
+      }
+    });
+    return breakdown;
+  });
 
-  getCategories(): string[] {
-    return Object.keys(this.summary().totalByCategory);
+  // Signal pour la liste des noms de catégories
+  readonly categoryNames = computed(() => Object.keys(this.categoriesBreakdown()));
+
+  // Calcul du pourcentage pour les barres de progression
+  getPercentage(amount: number): number {
+    const total = this.totalSpent();
+    return total > 0 ? (amount / total) * 100 : 0;
   }
 }

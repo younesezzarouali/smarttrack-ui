@@ -1,13 +1,13 @@
-<div *ngIf="summary() as s" class="row g-4">
+<div class="row g-4">
   <!-- Main Summary Card -->
   <div class="col-lg-4">
     <div class="fintech-card p-4 h-100 d-flex flex-column justify-content-center">
       <div class="text-secondary small fw-bold text-uppercase mb-2" style="letter-spacing: 0.05em;">Total Portfolio Spent</div>
       <div class="display-5 fw-extrabold text-white mb-1">
-        {{ s.total | number:'1.2-2' }} <span class="text-primary">€</span>
+        {{ totalSpent() | number:'1.2-2' }} <span class="text-primary">€</span>
       </div>
       <div class="text-accent small d-flex align-items-center fw-medium mt-2">
-        <i class="bi bi-arrow-up-right me-1"></i> +2.4% vs last month
+        <i class="bi bi-activity me-1"></i> Live Analytics Enabled
       </div>
     </div>
   </div>
@@ -17,22 +17,26 @@
     <div class="fintech-card p-4 h-100">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h6 class="m-0 fw-bold">Spending by Category</h6>
-        <i class="bi bi-three-dots text-muted"></i>
+        <i class="bi bi-pie-chart text-muted"></i>
       </div>
       
       <div class="row row-cols-1 row-cols-md-2 g-4">
-        <div *ngFor="let cat of getCategories()" class="col">
+        <div *ngFor="let cat of categoryNames()" class="col">
           <div class="d-flex justify-content-between mb-2">
             <span class="small fw-semibold text-muted text-uppercase">{{ cat }}</span>
-            <span class="small fw-bold">{{ s.totalByCategory[cat] | number:'1.2-2' }} €</span>
+            <span class="small fw-bold text-white">{{ categoriesBreakdown()[cat] | number:'1.2-2' }} €</span>
           </div>
           <div class="progress" style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px;">
-            <div class="progress-bar" 
+            <div class="progress-bar animate-fade-in" 
                  role="progressbar" 
-                 [style.width.%]="(s.totalByCategory[cat] / s.total) * 100"
+                 [style.width.%]="getPercentage(categoriesBreakdown()[cat])"
                  style="background-color: var(--primary); border-radius: 10px;">
             </div>
           </div>
+        </div>
+        
+        <div *ngIf="categoryNames().length === 0" class="col-12 text-center py-4 text-muted small italic">
+          No financial data to display.
         </div>
       </div>
     </div>

@@ -17,16 +17,18 @@ export interface LifeEvent {
 export class LifeService {
   private apiUrl = `${environment.apiUrl}/life`;
   
-  // Use a signal to store events globally for reactivity
+  // Le signal source qui contient tous les événements
   private eventsSignal = signal<LifeEvent[]>([]);
-  readonly events = computed(() => this.eventsSignal().sort((a, b) => b.timestamp - a.timestamp));
+
+  // Signaux dérivés (Computed) qui se mettent à jour seuls
+  readonly events = computed(() => [...this.eventsSignal()].sort((a, b) => b.timestamp - a.timestamp));
   readonly financeEvents = computed(() => this.eventsSignal().filter(e => e.type === 'FINANCE'));
 
   constructor(private http: HttpClient) {}
 
   sendMagicInput(text: string): Observable<LifeEvent[]> {
     return this.http.post<LifeEvent[]>(`${this.apiUrl}/magic`, { text }).pipe(
-      tap(() => this.fetchAll()) // Refresh state after addition
+      tap(() => this.fetchAll()) // Déclenche la mise à jour globale
     );
   }
 

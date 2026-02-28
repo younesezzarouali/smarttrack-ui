@@ -118,6 +118,19 @@ body {
   opacity: 0.3;
 }
 
+/* Progress Bars (Fixed Visibility) */
+.progress {
+  height: 4px !important;
+  background: rgba(255, 255, 255, 0.1) !important; /* Semi-transparent track */
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  border-radius: 4px;
+  background-color: white;
+}
+
 /* Animations */
 .fade-in {
   animation: apple-entry 0.4s ease-out;

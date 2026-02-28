@@ -1,211 +1,101 @@
 :root {
-  /* Fintech Slate Palette */
-  --app-bg: #0f172a; /* Deep Slate */
-  --surface: #1e293b;
-  --surface-hover: #334155;
-  --primary: #6366f1; /* Indigo */
-  --primary-hover: #4f46e5;
-  --accent: #10b981; /* Emerald for success/money */
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --border-color: rgba(255, 255, 255, 0.08);
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  /* Apple Dark Mode Palette */
+  --app-bg: #000000;
+  --surface: #1c1c1e;
+  --surface-elevated: #2c2c2e;
+  --primary: #ffffff;
+  --ios-blue: #007aff;
+  --text-main: #ffffff;
+  --text-secondary: #8e8e93;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --radius: 20px;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
   background-color: var(--app-bg);
   color: var(--text-main);
   font-family: var(--font-sans);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
 }
 
-/* Typography */
-h1, h2, h3, h4, .navbar-brand {
-  font-weight: 700;
-  letter-spacing: -0.025em;
-}
-
-/* Professional Cards */
+/* Apple Cards */
 .fintech-card {
   background: var(--surface);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s ease;
-}
-
-/* Buttons */
-.btn-primary-fintech {
-  background-color: var(--primary);
   border: none;
-  color: white;
-  font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  border-radius: var(--radius);
+  box-shadow: none;
+  transition: background 0.2s ease;
 }
 
-.btn-primary-fintech:hover {
-  background-color: var(--primary-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-}
-
-/* Modern Table */
-.fintech-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  color: var(--text-main);
-}
-
-.fintech-table th {
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.fintech-table td {
-  padding: 16px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.fintech-table tbody tr:hover {
-  background: var(--surface-hover);
-}
-
-/* Badges */
-.fintech-badge {
-  padding: 4px 10px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 6px;
-  background: rgba(99, 102, 241, 0.15);
-  color: var(--primary);
-}
-
-/* Forms */
-.form-control, .form-select {
-  background-color: #0f172a;
-  border: 1px solid var(--border-color);
-  color: white;
-  border-radius: 8px;
-  padding: 10px 14px;
-}
-
-.form-control:focus, .form-select:focus {
-  background-color: #0f172a;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-  color: white;
-}
-
-/* Modal */
-.modal-content {
-  background-color: var(--surface);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  color: var(--text-main);
-}
-
-.modal-title {
-  color: var(--text-main);
-}
-
-.modal-header, .modal-footer {
-  border-color: var(--border-color);
-}
-
-.form-control::placeholder {
-  color: #64748b; /* Slate 500 */
-  opacity: 0.8;
-}
-
-/* Smart Cards Styling */
 .event-card {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border-left: 4px solid transparent;
+  border: 1px solid var(--border-color);
+  background: transparent !important;
 }
 
 .event-card:hover {
-  background: var(--surface-hover) !important;
-  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.03) !important;
 }
 
-.event-card.finance { border-left-color: var(--accent); }
-.event-card.health { border-left-color: #38bdf8; }
-.event-card.work { border-left-color: #fbbf24; }
-.event-card.note { border-left-color: var(--primary); }
-
-.event-icon {
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  font-size: 1.2rem;
-  background: rgba(255, 255, 255, 0.03);
+/* Typography Hierarchy */
+h1, h2, h3, .navbar-brand {
+  font-weight: 600;
 }
 
-.event-main-value {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 1.1rem;
+.text-secondary {
+  color: var(--text-secondary) !important;
 }
 
-/* Debug / Technical view */
-.debug-panel {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  font-family: 'Monaco', 'Consolas', monospace;
-  font-size: 0.75rem;
+/* Minimal Buttons */
+.btn-primary-fintech {
+  background-color: var(--primary);
+  color: #000;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 40px;
+  border: none;
 }
 
+.btn-primary-fintech:hover {
+  background-color: #e5e5e7;
+  transform: scale(1.02);
+}
+
+/* Input Signature (The Pill) */
+.pill-input-container {
+  background: rgba(28, 28, 30, 0.8) !important;
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  padding: 6px;
+}
+
+.form-control {
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 12px 20px;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  background: transparent;
+}
+
+/* Animations */
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
+  animation: apple-fade 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes fadeIn {
+@keyframes apple-fade {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.btn-close {
-  filter: invert(1);
-}
-
-@keyframes pulse-mic {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.7; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.pulse-mic {
-  animation: pulse-mic 1.5s infinite ease-in-out;
-}
-
-
-/* Fix visibility for standard text classes */
-.text-muted {
-  color: #94a3b8 !important; /* Slate 400 */
-}
-
-.text-secondary {
-  color: #cbd5e1 !important; /* Slate 300 */
-}
-
-small {
-  color: #94a3b8;
-}
-
-.bg-dark {
-  background-color: rgba(15, 23, 42, 0.8) !important;
-}
-
+/* Utilities */
+.bg-success-subtle { background: rgba(48, 209, 88, 0.1) !important; }
+.bg-info-subtle { background: rgba(10, 132, 255, 0.1) !important; }
+.bg-warning-subtle { background: rgba(255, 159, 10, 0.1) !important; }
+.bg-primary-subtle { background: rgba(191, 90, 242, 0.1) !important; }

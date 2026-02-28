@@ -1,34 +1,32 @@
-<nav class="navbar navbar-dark py-3 fixed-top bg-dark bg-opacity-50" style="backdrop-filter: blur(10px);">
+<nav class="navbar navbar-dark py-4 fixed-top bg-black bg-opacity-75" style="backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
-      <div class="bg-primary rounded-3 p-2 me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 35px;">
-        <i class="bi bi-stars fs-6"></i>
-      </div>
+    <a class="navbar-brand d-flex align-items-center fw-bold fs-4" href="#">
       SmartTrack
     </a>
-    <button class="btn btn-sm btn-outline-secondary opacity-50" (click)="showDebug = !showDebug">
-      <i class="bi bi-code-slash"></i>
-    </button>
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm text-secondary opacity-50" (click)="showDebug = !showDebug">
+        <i class="bi bi-cpu"></i>
+      </button>
+    </div>
   </div>
 </nav>
 
-<main class="container mb-5 pb-5" style="padding-top: 100px;">
+<main class="container mb-5 pb-5" style="padding-top: 120px;">
   <div class="mb-5">
     <app-expense-summary></app-expense-summary>
   </div>
 
   <!-- AI Answer Bubble -->
-  <div *ngIf="aiAnswer" class="row justify-content-center mb-4 animate-fade-in">
+  <div *ngIf="aiAnswer" class="row justify-content-center mb-5 animate-fade-in">
     <div class="col-lg-8">
-      <div class="fintech-card p-4 border-info shadow-lg position-relative" style="background: rgba(13, 202, 240, 0.1);">
-        <button type="button" class="btn-close position-absolute top-0 end-0 m-3" (click)="dismissAnswer()"></button>
+      <div class="fintech-card p-4 position-relative" style="background: var(--surface-elevated); border: 1px solid var(--border-color);">
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3 small" (click)="dismissAnswer()"></button>
         <div class="d-flex align-items-start">
-          <div class="bg-info rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-            <i class="bi bi-robot text-white"></i>
+          <div class="bg-primary rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+            <i class="bi bi-stars text-black small"></i>
           </div>
           <div class="flex-grow-1">
-            <h6 class="text-info text-uppercase fw-bold mb-2 small">AI Assistant</h6>
-            <p class="text-white m-0 lh-lg">{{ aiAnswer }}</p>
+            <p class="text-white m-0 lh-base" style="font-size: 1.1rem; font-weight: 400;">{{ aiAnswer }}</p>
           </div>
         </div>
       </div>
@@ -38,22 +36,21 @@
   <!-- AI Pending Preview -->
   <div *ngIf="pendingEvents" class="row justify-content-center mb-5 animate-fade-in">
     <div class="col-lg-8">
-      <div class="fintech-card p-4 border-primary shadow-lg" style="background: rgba(99, 102, 241, 0.1);">
-        <h6 class="text-primary text-uppercase fw-bold mb-3 small">Review Entry</h6>
+      <div class="fintech-card p-4 shadow-2xl" style="background: var(--surface-elevated); border: 1px solid var(--ios-blue);">
+        <h6 class="text-secondary fw-bold mb-4 small text-uppercase" style="letter-spacing: 1px;">Confirm Data Entry</h6>
         <div class="list-group list-group-flush mb-4 bg-transparent">
-          <div *ngFor="let p of pendingEvents" class="list-group-item bg-transparent border-light border-opacity-10 py-3 px-0">
+          <div *ngFor="let p of pendingEvents" class="list-group-item bg-transparent border-white border-opacity-10 py-3 px-0">
             <div class="d-flex align-items-center">
-              <span class="badge fintech-badge me-3">{{ p.type }}</span>
               <span class="text-white fw-medium">{{ p.content }}</span>
-              <span *ngIf="p.payload.amount" class="ms-auto fw-bold text-primary">{{ p.payload.amount }} €</span>
+              <span *ngIf="p.payload.amount" class="ms-auto fw-bold text-white">{{ p.payload.amount }} €</span>
             </div>
           </div>
         </div>
-        <div class="d-flex gap-2">
-          <button class="btn btn-primary-fintech flex-grow-1 py-2" (click)="confirmPending()" [disabled]="loading">
-            Confirm & Save
+        <div class="d-flex gap-3">
+          <button class="btn btn-primary-fintech flex-grow-1" (click)="confirmPending()" [disabled]="loading">
+            Save
           </button>
-          <button class="btn btn-outline-secondary px-4 py-2" (click)="cancelPending()" [disabled]="loading">
+          <button class="btn btn-dark border-0 flex-grow-1" style="background: rgba(255,255,255,0.05)" (click)="cancelPending()" [disabled]="loading">
             Cancel
           </button>
         </div>
@@ -66,115 +63,75 @@
     <div class="col-lg-10">
       <div class="d-flex justify-content-between align-items-center mb-4 px-2">
         <h6 class="text-secondary text-uppercase fw-bold m-0 small" style="letter-spacing: 1px;">History</h6>
-        <button *ngIf="events().length > 0" class="btn btn-sm btn-outline-danger border-0 small opacity-50" (click)="clearAll()">
-          <i class="bi bi-trash3"></i>
+        <button *ngIf="events().length > 0" class="btn btn-sm text-danger border-0 small opacity-50" (click)="clearAll()">
+          Delete All
         </button>
       </div>
       
       <div *ngFor="let group of groupedEvents()" class="mb-5">
-        <div class="d-flex align-items-center mb-4 px-2">
-          <span class="text-primary fw-bold small text-uppercase me-3">{{ group.date }}</span>
-          <div class="flex-grow-1 border-bottom border-light border-opacity-10"></div>
+        <div class="mb-4 px-2">
+          <span class="text-white fw-bold fs-4">{{ group.date }}</span>
         </div>
 
-        <!-- Daily Briefing Card (Only for Today) -->
+        <!-- Daily Briefing Card -->
         <div *ngIf="group.date === 'Today' && briefing()" 
-             class="fintech-card p-4 mb-5 border-0 shadow-lg animate-fade-in" 
-             style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(168, 85, 247, 0.2) !important;">
+             class="fintech-card p-4 mb-5 animate-fade-in" 
+             style="background: #1c1c1e; border: 1px solid var(--border-color);">
           <div class="d-flex align-items-center mb-3">
-            <div class="bg-primary rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);">
-              <i class="bi bi-lightning-charge-fill text-white small"></i>
-            </div>
-            <h6 class="m-0 fw-bold small text-white text-uppercase" style="letter-spacing: 2px;">Daily Performance Coach</h6>
+            <i class="bi bi-quote text-secondary fs-4 me-2"></i>
+            <h6 class="m-0 fw-bold small text-secondary text-uppercase" style="letter-spacing: 1px;">Briefing</h6>
           </div>
-          <p class="text-white m-0 lh-lg" style="font-size: 1.15rem; font-weight: 500; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+          <p class="text-white m-0 lh-base" style="font-size: 1.2rem; font-weight: 500;">
             {{ briefing() }}
           </p>
         </div>
 
-        <div *ngFor="let event of group.items" class="fintech-card p-3 mb-3 event-card" 
-             [ngClass]="event.type.toLowerCase()">
-          
-          <div *ngIf="editingEvent?.timestamp !== event.timestamp">
-            <div class="d-flex align-items-center">
-              <!-- Human-Centric Icon & Category -->
-              <div class="event-icon me-3">
-                <i class="bi" [ngClass]="{
-                  'bi-cash-stack text-success': event.type === 'FINANCE',
-                  'bi-heart-pulse text-info': event.type === 'HEALTH',
-                  'bi-pc-display text-warning': event.type === 'WORK',
-                  'bi-sticky text-primary': event.type === 'NOTE'
-                }"></i>
-              </div>
-
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="text-white fw-bold fs-5">{{ event.content }}</span>
-                  
-                  <!-- Main Action Value -->
-                  <div class="event-main-value">
-                    <span *ngIf="event.type === 'FINANCE'" class="text-white">{{ event.payload.amount }} €</span>
-                    <span *ngIf="event.type === 'HEALTH'" class="text-info">{{ event.payload.value }} {{ event.payload.unit }}</span>
-                    <span *ngIf="event.type === 'WORK'" class="text-warning">{{ event.payload.duration_min }} min</span>
-                  </div>
-                </div>
-                
-                <div class="d-flex align-items-center mt-1">
-                  <small class="text-secondary opacity-50 me-2">{{ event.timestamp | date:'HH:mm' }}</small>
-                  <span class="text-muted small">•</span>
-                  <small class="text-muted small ms-2 text-uppercase me-3">{{ event.payload.category || event.payload.project || event.type }}</small>
-                  
-                  <!-- Sentiment Indicator -->
-                  <span *ngIf="event.payload.emotion" 
-                        class="badge rounded-pill border border-light border-opacity-10 py-1"
-                        [ngClass]="{
-                          'text-success bg-success bg-opacity-10': event.payload.sentiment === 'POSITIVE',
-                          'text-danger bg-danger bg-opacity-10': event.payload.sentiment === 'NEGATIVE',
-                          'text-secondary bg-dark': event.payload.sentiment === 'NEUTRAL'
-                        }" style="font-size: 0.65rem; letter-spacing: 0.5px;">
-                    <i class="bi me-1" [ngClass]="{
-                      'bi-emoji-smile-fill': event.payload.sentiment === 'POSITIVE',
-                      'bi-emoji-frown-fill': event.payload.sentiment === 'NEGATIVE',
-                      'bi-emoji-neutral-fill': event.payload.sentiment === 'NEUTRAL'
-                    }"></i>
-                    {{ event.payload.emotion }}
-                  </span>
+        <div *ngFor="let event of group.items" class="fintech-card p-4 mb-3 event-card">
+          <div *ngIf="editingEvent?.timestamp !== event.timestamp" class="d-flex align-items-center">
+            <div class="rounded-3 p-2 me-3 d-flex align-items-center justify-content-center" 
+                 style="width: 40px; height: 40px; background: rgba(255,255,255,0.05);">
+              <i class="bi" [ngClass]="{
+                'bi-credit-card text-white': event.type === 'FINANCE',
+                'bi-figure-run text-white': event.type === 'HEALTH',
+                'bi-macbook text-white': event.type === 'WORK',
+                'bi-text-left text-white': event.type === 'NOTE'
+              }"></i>
+            </div>
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-white fw-semibold fs-5">{{ event.content }}</span>
+                <div class="text-white fw-bold fs-5">
+                  <span *ngIf="event.type === 'FINANCE'">{{ event.payload.amount }}€</span>
+                  <span *ngIf="event.type === 'HEALTH'">{{ event.payload.value }}{{ event.payload.unit }}</span>
+                  <span *ngIf="event.type === 'WORK'">{{ event.payload.duration_min }}m</span>
                 </div>
               </div>
-
-              <!-- Quick Edit Toggle -->
-              <div class="ms-3 d-flex flex-column gap-2">
-                <button class="btn btn-sm text-secondary opacity-25 hover-opacity-100 p-0" (click)="startEdit(event)">
-                  <i class="bi bi-pencil"></i>
-                </button>
+              <div class="d-flex align-items-center mt-1">
+                <small class="text-secondary small me-2">{{ event.timestamp | date:'HH:mm' }}</small>
+                <span *ngIf="event.payload.emotion" class="badge rounded-pill border border-white border-opacity-10 text-secondary fw-normal py-1" style="font-size: 0.7rem;">
+                  {{ event.payload.emotion }}
+                </span>
               </div>
             </div>
-
-            <!-- Technical Debug Panel (Hidden by default) -->
-            <div *ngIf="showDebug" class="mt-3 p-3 debug-panel animate-fade-in border border-light border-opacity-10">
-              <div class="d-flex justify-content-between mb-2">
-                <span class="text-primary fw-bold">RAW DATA</span>
-                <span class="text-muted">{{ event.userId }}</span>
-              </div>
-              <pre class="m-0 text-secondary" style="white-space: pre-wrap;">{{ event.payload | json }}</pre>
+            <div class="ms-3">
+              <button class="btn btn-sm text-secondary opacity-25 p-0" (click)="startEdit(event)">
+                <i class="bi bi-chevron-right"></i>
+              </button>
             </div>
           </div>
 
-          <!-- Edit Mode -->
-          <div *ngIf="editingEvent?.timestamp === event.timestamp" class="p-2">
+          <!-- Edit Mode (Apple Style) -->
+          <div *ngIf="editingEvent?.timestamp === event.timestamp" class="py-2">
+            <input type="text" class="form-control fs-4 fw-bold p-0 mb-3" [(ngModel)]="editingEvent!.content" style="background: transparent;">
             <div class="row g-3">
-              <div class="col-12">
-                <label class="form-label small text-secondary fw-bold">DESCRIPTION</label>
-                <input type="text" class="form-control" [(ngModel)]="editingEvent!.content">
-              </div>
               <div class="col-md-6" *ngIf="event.type === 'FINANCE'">
-                <label class="form-label small text-secondary fw-bold">AMOUNT (€)</label>
-                <input type="text" class="form-control" [(ngModel)]="editingEvent!.payload.amount">
+                <label class="form-label small text-secondary">Amount (€)</label>
+                <input type="text" class="form-control bg-dark border-secondary border-opacity-25" [(ngModel)]="editingEvent!.payload.amount">
               </div>
-              <div class="col-12 d-flex justify-content-end gap-2 mt-4">
-                <button class="btn btn-sm btn-outline-secondary" (click)="cancelEdit()">Cancel</button>
-                <button class="btn btn-sm btn-primary-fintech px-4" (click)="saveEdit()">Update</button>
-              </div>
+            </div>
+            <div class="d-flex gap-2 mt-4">
+              <button class="btn btn-primary-fintech px-4" (click)="saveEdit()">Save</button>
+              <button class="btn btn-sm text-secondary px-3" (click)="cancelEdit()">Cancel</button>
             </div>
           </div>
         </div>
@@ -183,36 +140,36 @@
   </div>
 </main>
 
-<!-- Undo Notification Bar -->
-<div *ngIf="undoVisible()" class="fixed-bottom mb-5 pb-5 px-3 animate-fade-in" style="bottom: 80px; z-index: 1050;">
+<!-- Apple Pill Input (Fixed Bottom) -->
+<div class="fixed-bottom p-4 pb-5">
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-lg-6">
-        <div class="fintech-card p-3 d-flex justify-content-between align-items-center shadow-lg" style="background: var(--primary); border: none;">
-          <span class="text-white fw-medium">Entry saved successfully.</span>
-          <button class="btn btn-sm btn-light fw-bold px-3" (click)="undoSave()">
-            <i class="bi bi-arrow-counterclockwise me-1"></i> UNDO
+      <div class="col-lg-7">
+        
+        <!-- Undo Banner (Minimal) -->
+        <div *ngIf="undoVisible()" class="mb-3 animate-fade-in text-center">
+          <button class="btn btn-dark rounded-pill border border-white border-opacity-10 px-4 py-2 small" (click)="undoSave()">
+            <span class="text-white-50">Entry saved.</span> <span class="text-white fw-bold ms-2">UNDO</span>
           </button>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- Fixed Bottom Input -->
-<div class="fixed-bottom p-3 bg-dark bg-opacity-25" style="backdrop-filter: blur(15px); border-top: 1px solid var(--border-color);">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="fintech-card p-1 shadow-lg" [ngStyle]="{'border': speechService.isListening() ? '2px solid var(--accent)' : '1px solid rgba(99, 102, 241, 0.2)'}">
-          <div class="input-group">
-            <button class="btn border-0 px-3" [ngClass]="speechService.isListening() ? 'text-accent pulse-mic' : 'text-secondary'" (click)="toggleListening()"><i class="bi" [ngClass]="speechService.isListening() ? 'bi-mic-fill' : 'bi-mic'"></i></button>
-            <input type="text" class="form-control border-0 bg-transparent py-2" 
+        <div class="pill-input-container shadow-2xl">
+          <div class="input-group align-items-center">
+            <button class="btn border-0 text-secondary px-3" (click)="toggleListening()">
+              <i class="bi fs-5" [ngClass]="speechService.isListening() ? 'bi-mic-fill text-danger pulse-mic' : 'bi-mic'"></i>
+            </button>
+
+            <input type="text" 
+                   class="form-control border-0 bg-transparent py-2 fs-5" 
                    [placeholder]="speechService.isListening() ? 'Listening...' : placeholderSignal()" 
                    [(ngModel)]="magicText" (keyup.enter)="processMagic()" [disabled]="loading">
-            <button class="btn btn-primary-fintech px-4" type="button" (click)="processMagic()" [disabled]="loading || !magicText">
-              <span *ngIf="!loading"><i class="bi bi-send-fill"></i></span>
-              <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+
+            <button class="btn bg-white rounded-circle d-flex align-items-center justify-content-center me-1" 
+                    style="width: 38px; height: 38px;"
+                    (click)="processMagic()"
+                    [disabled]="loading || !magicText">
+              <i *ngIf="!loading" class="bi bi-arrow-up text-black fs-5"></i>
+              <span *ngIf="loading" class="spinner-border spinner-border-sm text-black"></span>
             </button>
           </div>
         </div>

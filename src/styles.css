@@ -85,19 +85,18 @@ body {
 
 /* Signature Pill Input */
 .pill-input-wrapper {
-  background: rgba(22, 23, 28, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: #1C1E24 !important; /* Use the elevated surface color, solid */
   border-radius: var(--radius-input);
   padding: 6px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .form-control {
-  background: transparent;
+  background: transparent !important; /* Force transparent to see the dark wrapper */
   border: none;
   color: white !important;
   font-size: 1rem;
+  box-shadow: none !important;
 }
 
 .form-control::placeholder {

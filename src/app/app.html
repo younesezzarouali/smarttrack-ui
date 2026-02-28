@@ -55,7 +55,14 @@
   <!-- Timeline of Events -->
   <div class="row justify-content-center">
     <div class="col-lg-10">
-      <h6 class="text-secondary text-uppercase fw-bold mb-4" style="letter-spacing: 1px;">Live Timeline</h6>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h6 class="text-secondary text-uppercase fw-bold m-0" style="letter-spacing: 1px;">Live Timeline</h6>
+        <button *ngIf="events.length > 0" 
+                class="btn btn-sm btn-outline-danger border-0 small opacity-75 hover-opacity-100" 
+                (click)="clearAll()">
+          <i class="bi bi-trash3 me-1"></i> Clear Data
+        </button>
+      </div>
       
       <div class="timeline">
         <div *ngFor="let event of events" class="fintech-card p-4 mb-3 animate-fade-in">

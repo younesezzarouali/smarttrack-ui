@@ -63,6 +63,15 @@ export class AppComponent implements OnInit {
       });
   }
 
+  clearAll() {
+    if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+      this.lifeService.clearEvents().subscribe({
+        next: () => this.refreshData(),
+        error: (err) => console.error('Clear failed', err)
+      });
+    }
+  }
+
   refreshData() {
     this.lifeService.getEvents().subscribe({
       next: (data) => {

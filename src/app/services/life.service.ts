@@ -24,4 +24,8 @@ export class LifeService {
   getEvents(): Observable<LifeEvent[]> {
     return this.http.get<LifeEvent[]>(`${this.apiUrl}/events`);
   }
+
+  clearEvents(): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/events`);
+  }
 }

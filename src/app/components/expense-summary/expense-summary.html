@@ -1,101 +1,51 @@
-<div class="row g-3 section-gap">
-  <!-- Key Metrics -->
+<div class="row g-3 mb-4">
   <div class="col-4">
-    <div class="apple-card h-100 d-flex flex-column justify-content-center text-center">
-      <div class="kpi-title">Spent</div>
-      <div class="kpi-value text-white">{{ totalSpent() | number:'1.0-0' }}€</div>
+    <div class="card-rev d-flex flex-column align-items-center justify-content-center p-3">
+      <span class="kpi-label" style="font-size: 10px;">Spent</span>
+      <div class="text-white fw-bold fs-3 mt-1">{{ totalSpent() | number:'1.0-0' }}€</div>
     </div>
   </div>
 
   <div class="col-4">
-    <div class="apple-card h-100 d-flex flex-column justify-content-center text-center">
-      <div class="kpi-title">Work</div>
-      <div class="kpi-value text-white">{{ workHoursStr() }}h</div>
+    <div class="card-rev d-flex flex-column align-items-center justify-content-center p-3">
+      <span class="kpi-label" style="font-size: 10px;">Work</span>
+      <div class="text-white fw-bold fs-3 mt-1">{{ workHoursStr() }}h</div>
     </div>
   </div>
 
   <div class="col-4">
-    <div class="apple-card h-100 d-flex flex-column justify-content-center text-center">
-      <div class="kpi-title">Vitality</div>
-      <div class="kpi-value text-white">{{ vitalityScore() }}%</div>
+    <div class="card-rev d-flex flex-column align-items-center justify-content-center p-3">
+      <span class="kpi-label" style="font-size: 10px;">Vitality</span>
+      <div class="fw-bold fs-3 mt-1" [style.color]="vitalityScore() > 70 ? 'var(--rev-success)' : 'white'">{{ vitalityScore() }}%</div>
     </div>
   </div>
 </div>
 
-<!-- Daily Habits Section -->
-<div class="row section-gap" *ngIf="habitService.habits().length > 0">
-  <div class="col-12">
-    <div class="apple-card">
-      <h6 class="kpi-title mb-4 opacity-50">Daily Habits</h6>
-      <div class="d-flex flex-column" style="gap: 20px !important;">
-        <div *ngFor="let habit of habitService.habits()">
-          <div class="d-flex justify-content-between mb-2 align-items-center">
-            <span class="kpi-label-refined">{{ habit.name }}</span>
-            <div class="kpi-value-refined">
-              {{ habitService.getHabitProgress(habit.id) | number:'1.0-1' }} / {{ habit.targetValue }} {{ habit.unit }}
-              <span class="percentage-dim">{{ habitService.getHabitPercentage(habit) | number:'1.0-0' }}%</span>
-              <span *ngIf="habit.streak > 0" class="ms-2 badge bg-white bg-opacity-10 text-white fw-bold" style="font-size: 0.6rem;">
-                <i class="bi bi-fire text-warning me-1"></i>{{ habit.streak }}
-              </span>
-            </div>
-          </div>
-          <div class="progress">
-            <div class="progress-bar" [style.width.%]="habitService.getHabitPercentage(habit)"></div>
-          </div>
-        </div>
+<!-- Weekly Target (High Contrast) -->
+<div class="card-rev mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h6 class="kpi-label m-0">Weekly Goal</h6>
+    <span class="badge bg-white bg-opacity-10 text-white rounded-pill px-2" style="font-size: 10px;">PRO</span>
+  </div>
+  
+  <div class="d-flex flex-column gap-4">
+    <div>
+      <div class="d-flex justify-content-between align-items-end mb-2">
+        <span class="text-white fw-bold">Budget Plan</span>
+        <span class="text-grey small">{{ totalSpent() | number:'1.0-0' }} / {{ GOALS.budget }}€</span>
+      </div>
+      <div class="prog-container">
+        <div class="prog-fill" [style.width.%]="budgetProgress()" [class.success]="budgetProgress() <= 100" [style.background]="budgetProgress() > 90 ? 'var(--rev-danger)' : 'var(--rev-blue)'"></div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Weekly Focus Card -->
-<div class="row section-gap">
-  <div class="col-12">
-    <div class="apple-card">
-      <h6 class="kpi-title mb-4 opacity-50">Weekly Objectives</h6>
-      
-      <div class="d-flex flex-column" style="gap: 20px !important;">
-        <!-- Budget -->
-        <div>
-          <div class="d-flex justify-content-between mb-2 align-items-center">
-            <span class="kpi-label-refined">Budget Control</span>
-            <div class="kpi-value-refined">
-              {{ totalSpent() | number:'1.0-0' }} / {{ GOALS.budget }}€
-              <span class="percentage-dim">{{ budgetProgress() | number:'1.0-0' }}%</span>
-            </div>
-          </div>
-          <div class="progress">
-            <div class="progress-bar" [style.width.%]="budgetProgress()"></div>
-          </div>
-        </div>
-
-        <!-- Health -->
-        <div>
-          <div class="d-flex justify-content-between mb-2 align-items-center">
-            <span class="kpi-label-refined">Health Activity</span>
-            <div class="kpi-value-refined">
-              {{ healthActivities() }} / {{ GOALS.sport }}
-              <span class="percentage-dim">{{ sportProgress() | number:'1.0-0' }}%</span>
-            </div>
-          </div>
-          <div class="progress">
-            <div class="progress-bar" [style.width.%]="sportProgress()"></div>
-          </div>
-        </div>
-
-        <!-- Productivity -->
-        <div>
-          <div class="d-flex justify-content-between mb-2 align-items-center">
-            <span class="kpi-label-refined">Deep Work</span>
-            <div class="kpi-value-refined">
-              {{ workHoursStr() }} / {{ GOALS.work }}h
-              <span class="percentage-dim">{{ workProgress() | number:'1.0-0' }}%</span>
-            </div>
-          </div>
-          <div class="progress">
-            <div class="progress-bar" [style.width.%]="workProgress()"></div>
-          </div>
-        </div>
+    <div>
+      <div class="d-flex justify-content-between align-items-end mb-2">
+        <span class="text-white fw-bold">Deep Work Focus</span>
+        <span class="text-grey small">{{ workHoursStr() }} / {{ GOALS.work }}h</span>
+      </div>
+      <div class="prog-container">
+        <div class="prog-fill" [style.width.%]="workProgress()"></div>
       </div>
     </div>
   </div>

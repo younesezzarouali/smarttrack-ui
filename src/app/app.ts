@@ -27,31 +27,21 @@ export class AppComponent implements OnInit, OnDestroy {
   editingEvent: LifeEvent | null = null;
   showDebug: boolean = false;
   
-  pendingEvents: LifeEvent[] | null = null;
-  pendingUpdates: any[] | null = null;
+  pendingEvents: LifeEvent[] = [];
+  pendingUpdates: any[] = [];
   aiAnswer: string | null = null;
 
-  // Undo System
   recentlySavedEvents: LifeEvent[] = [];
   undoVisible = signal<boolean>(false);
   private undoTimer: any;
 
-  // Dynamic Placeholder Logic
   placeholderSignal = signal<string>('How was your day?');
-  private placeholderInterval: any;
-  private placeholders = [
-    { hour: [5, 11], tips: ["How did you sleep?", "Coffee 2.50€", "Morning run 5km", "Daily goals..."] },
-    { hour: [11, 15], tips: ["Lunch with team 15€", "Worked 2h on project X", "Feeling productive", "Bought a book 20€"] },
-    { hour: [15, 20], tips: ["Gym session 1h", "Grocery shopping 40€", "Finished report", "Call parents"] },
-    { hour: [20, 5], tips: ["Dinner 25€", "Read 20 pages", "Weight: 75kg", "Evening walk 30min"] }
-  ];
 
   readonly events = this.lifeService.events;
   readonly groupedEvents = computed(() => {
     const groups: { date: string, items: LifeEvent[] }[] = [];
-    const events = this.lifeService.events();
-    events.forEach(event => {
-      const dateLabel = this.getRelativeDateLabel(event.timestamp);
+    this.lifeService.events().forEach(event => {
+      const dateLabel = new Date(event.timestamp).toLocaleDateString();
       let group = groups.find(g => g.date === dateLabel);
       if (!group) {
         group = { date: dateLabel, items: [] };
@@ -65,55 +55,17 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.lifeService.sync();
     this.habitService.fetchHabits();
-    this.startPlaceholderRotation();
   }
 
   ngOnDestroy() {
-    if (this.placeholderInterval) clearInterval(this.placeholderInterval);
     if (this.undoTimer) clearTimeout(this.undoTimer);
-  }
-
-  private startPlaceholderRotation() {
-    this.updatePlaceholder();
-    this.placeholderInterval = setInterval(() => this.updatePlaceholder(), 5000);
-  }
-
-  private updatePlaceholder() {
-    const hour = new Date().getHours();
-    const group = this.placeholders.find(p => {
-      const [start, end] = p.hour;
-      return start < end ? (hour >= start && hour < end) : (hour >= start || hour < end);
-    }) || this.placeholders[0];
-    const randomTip = group.tips[Math.floor(Math.random() * group.tips.length)];
-    this.placeholderSignal.set(`Ex: "${randomTip}"`);
-  }
-
-  openCreateHabit() {
-    const modalRef = this.modalService.open(CreateHabitModalComponent, { 
-      centered: true, 
-      backdropClass: 'bg-black bg-opacity-50 backdrop-blur' 
-    });
-    modalRef.result.then((result) => {
-      if (result === 'success') {
-        this.habitService.fetchHabits();
-      }
-    }, () => {});
-  }
-
-  deleteHabit(id: string) {
-    if (confirm('Are you sure you want to delete this habit?')) {
-      this.habitService.deleteHabit(id).subscribe();
-    }
   }
 
   toggleListening() {
     if (this.speechService.isListening()) {
       this.speechService.stopListening();
     } else {
-      this.speechService.startListening(
-        (text) => this.magicText = text,
-        () => console.log('Capture ended')
-      );
+      this.speechService.startListening((text) => this.magicText = text, () => {});
     }
   }
 
@@ -123,8 +75,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.loading = true;
     this.aiAnswer = null;
-    this.pendingEvents = null;
-    this.pendingUpdates = null;
+    this.pendingEvents = [];
+    this.pendingUpdates = [];
 
     this.lifeService.interact(textInput)
       .pipe(finalize(() => this.loading = false))
@@ -138,27 +90,22 @@ export class AppComponent implements OnInit, OnDestroy {
             this.pendingUpdates = response.habitUpdates || [];
           }
         },
-        error: (err: any) => {
-          console.error('Magic failed', err);
-          alert('AI processing failed.');
-        }
+        error: (err: any) => console.error('Magic failed', err)
       });
   }
 
   confirmPending() {
-    if (this.pendingEvents) {
+    if (this.pendingEvents.length > 0 || this.pendingUpdates.length > 0) {
       this.loading = true;
       const eventsToSave = [...this.pendingEvents];
-      this.lifeService.saveBatch(eventsToSave) // Corrected to send events array
+      this.lifeService.saveBatch(eventsToSave)
         .pipe(finalize(() => {
           this.loading = false;
-          this.pendingEvents = null;
-          this.pendingUpdates = null;
+          this.pendingEvents = [];
+          this.pendingUpdates = [];
           this.showUndo(eventsToSave);
         }))
-        .subscribe({
-          error: (err: any) => console.error('Save failed', err)
-        });
+        .subscribe();
     }
   }
 
@@ -170,49 +117,30 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   undoSave() {
-    if (this.recentlySavedEvents.length > 0) {
-      this.recentlySavedEvents.forEach(e => {
-        this.lifeService.deleteEvent(e.timestamp).subscribe();
-      });
-      this.recentlySavedEvents = [];
-      this.undoVisible.set(false);
-    }
+    this.recentlySavedEvents.forEach(e => this.lifeService.deleteEvent(e.timestamp).subscribe());
+    this.undoVisible.set(false);
   }
 
   cancelPending() { 
-    this.pendingEvents = null;
-    this.pendingUpdates = null;
+    this.pendingEvents = [];
+    this.pendingUpdates = [];
   }
 
-  dismissAnswer() { this.aiAnswer = null; }
-  startEdit(event: LifeEvent) { this.editingEvent = { ...event, payload: { ...event.payload } }; }
-  
-  saveEdit() {
-    if (this.editingEvent) {
-      this.lifeService.updateEvent(this.editingEvent).subscribe({
-        next: () => this.editingEvent = null,
-        error: (err: any) => console.error('Update failed', err)
-      });
+  openCreateHabit() {
+    this.modalService.open(CreateHabitModalComponent, { centered: true });
+  }
+
+  deleteHabit(id: string) {
+    if (confirm('Delete this habit?')) {
+      this.habitService.deleteHabit(id).subscribe();
     }
   }
 
-  cancelEdit() { this.editingEvent = null; }
-  
   clearAll() { 
     if (confirm('Clear all data?')) {
-      this.lifeService.clearAll().subscribe({
-        next: () => this.lifeService.sync()
-      });
+      this.lifeService.clearAll().subscribe();
     }
   }
 
-  private getRelativeDateLabel(timestamp: number): string {
-    const date = new Date(timestamp);
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(today.getDate() - 1);
-    if (date.toDateString() === today.toDateString()) return 'Today';
-    if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
-    return date.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
-  }
+  placeholderSignalValue = computed(() => this.placeholderSignal());
 }

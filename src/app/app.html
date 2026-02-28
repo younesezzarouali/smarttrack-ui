@@ -18,16 +18,16 @@
 
 <main class="container mb-5 pb-5" style="padding-top: 100px;">
   
-  <!-- AI Pending Preview - CRITICAL: PLACED AT THE VERY TOP -->
+  <!-- AI Pending Preview - COMPACT & CENTERED -->
   <div *ngIf="pendingEvents" class="row justify-content-center section-gap apple-entry">
-    <div class="col-lg-10">
-      <div class="apple-card-elevated">
+    <div class="col-lg-12 px-3">
+      <div class="apple-card-elevated review-card shadow-2xl">
         <h6 class="kpi-title mb-4">Review Entry</h6>
         <div class="list-group list-group-flush mb-4">
           <div *ngFor="let p of pendingEvents" class="list-group-item bg-transparent border-white border-opacity-5 py-3 px-0">
             <div class="d-flex justify-content-between align-items-center">
-              <span class="text-white fw-medium fs-5">{{ p.content }}</span>
-              <div class="text-white fw-bold fs-5">
+              <span class="text-white fw-medium">{{ p.content }}</span>
+              <div class="text-white fw-bold">
                 <span *ngIf="p.payload.amount">{{ p.payload.amount }}€</span>
                 <span *ngIf="p.payload.duration_min && !p.payload.amount">{{ p.payload.duration_min }}m</span>
               </div>
@@ -35,10 +35,10 @@
           </div>
         </div>
         <div class="d-flex gap-3">
-          <button class="btn btn-primary-fintech flex-grow-1 py-3 fw-bold" (click)="confirmPending()" [disabled]="loading">
+          <button class="btn btn-primary-fintech flex-grow-1 py-2 fw-bold" (click)="confirmPending()" [disabled]="loading">
             Confirm & Save
           </button>
-          <button class="btn btn-sm text-secondary px-4" (click)="cancelPending()" [disabled]="loading">
+          <button class="btn btn-sm text-secondary px-3" (click)="cancelPending()" [disabled]="loading">
             Discard
           </button>
         </div>
@@ -127,7 +127,7 @@
     <div class="row justify-content-center">
       <div class="col-lg-8">
         
-        <div *ngIf="undoVisible()" class="mb-3 text-center apple-entry">
+        <div *ngIf="undoVisible()" class="mb-3 text-center fade-in">
           <button class="btn btn-dark rounded-pill border border-white border-opacity-10 px-4 py-2 small" (click)="undoSave()">
             <span class="text-secondary">Action completed.</span> <span class="text-white fw-bold ms-2">UNDO</span>
           </button>

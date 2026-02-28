@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, signal, inject } from '@angular/core';
 import { Observable, tap, forkJoin } from 'rxjs';
 import { environment } from '../environments/environment';
+import { HabitService } from './habit.service';
 
 export type LifeEventType = 'FINANCE' | 'HEALTH' | 'WORK' | 'HABIT' | 'NOTE';
 
@@ -25,8 +26,8 @@ export interface MagicResponse {
 @Injectable({ providedIn: 'root' })
 export class LifeService {
   private apiUrl = `${environment.apiUrl}/life`;
+  private habitService = inject(HabitService);
   
-  // App State Signals
   readonly activeTab = signal<'journal' | 'habits'>('journal');
   
   private eventsSignal = signal<LifeEvent[]>([]);
@@ -60,13 +61,15 @@ export class LifeService {
       next: (res) => {
         this.eventsSignal.set(res.events);
         this.briefing.set(res.briefing.briefing);
+        this.habitService.fetchHabits();
       },
       error: (err) => console.error('Sync failed', err)
     });
   }
 
-  saveBatch(payload: any): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/events/batch`, payload.events).pipe(
+  saveBatch(events: LifeEvent[]): Observable<void> {
+    // Send list directly as expected by the backend
+    return this.http.post<void>(`${this.apiUrl}/events/batch`, events).pipe(
       tap(() => this.sync())
     );
   }
@@ -88,6 +91,7 @@ export class LifeService {
       tap(() => {
         this.eventsSignal.set([]);
         this.briefing.set('');
+        this.habitService.fetchHabits();
       })
     );
   }

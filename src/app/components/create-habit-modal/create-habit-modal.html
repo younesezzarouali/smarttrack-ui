@@ -1,54 +1,36 @@
-<div class="modal-body p-4" style="background: #1C1E24; color: white;">
+<div class="modal-body p-4" style="background: #1C1E24; color: white; border-radius: 24px;">
   <h6 class="kpi-title mb-4">New Habit</h6>
   
   <div class="mb-4">
-    <label class="label-dim mb-2 uppercase">Name</label>
-    <div class="pill-container">
+    <label class="label-dim mb-2">Name</label>
+    <div class="bottom-pill-bar" style="height: 44px; background: rgba(255,255,255,0.05) !important;">
       <input type="text" class="form-control" placeholder="e.g. Meditation" 
              [ngModel]="name()" (ngModelChange)="name.set($event)" autofocus>
     </div>
   </div>
 
-  <div class="row g-3 mb-4">
+  <div class="row g-3 mb-5">
     <div class="col-6">
-      <label class="label-dim mb-2 uppercase">Type</label>
+      <label class="label-dim mb-2">Type</label>
       <select class="form-select bg-dark text-white border-0 py-2 rounded-3" 
-              [ngModel]="type()" (ngModelChange)="type.set($event)" style="height: 52px;">
+              [ngModel]="type()" (ngModelChange)="type.set($event)" style="height: 44px; background: rgba(255,255,255,0.05);">
         <option value="TIME">Time (min)</option>
-        <option value="COUNT">Count (times)</option>
+        <option value="COUNT">Count</option>
       </select>
     </div>
     <div class="col-6">
-      <label class="label-dim mb-2 uppercase">Target</label>
-      <div class="pill-container">
+      <label class="label-dim mb-2">Target</label>
+      <div class="bottom-pill-bar" style="height: 44px; background: rgba(255,255,255,0.05) !important;">
         <input type="number" class="form-control" [ngModel]="target()" (ngModelChange)="target.set($event)">
       </div>
     </div>
   </div>
 
-  <div class="mb-5">
-    <label class="label-dim mb-2 uppercase">Category</label>
-    <div class="d-flex gap-2">
-      <button class="btn btn-sm rounded-pill border border-white border-opacity-10 px-3"
-              [class.bg-white]="category() === 'HEALTH'" [class.text-black]="category() === 'HEALTH'"
-              [class.text-white]="category() !== 'HEALTH'"
-              (click)="category.set('HEALTH')">Health</button>
-      <button class="btn btn-sm rounded-pill border border-white border-opacity-10 px-3"
-              [class.bg-white]="category() === 'WORK'" [class.text-black]="category() === 'WORK'"
-              [class.text-white]="category() !== 'WORK'"
-              (click)="category.set('WORK')">Work</button>
-      <button class="btn btn-sm rounded-pill border border-white border-opacity-10 px-3"
-              [class.bg-white]="category() === 'LIFE'" [class.text-black]="category() === 'LIFE'"
-              [class.text-white]="category() !== 'LIFE'"
-              (click)="category.set('LIFE')">Life</button>
-    </div>
-  </div>
-
-  <div class="d-flex gap-3">
-    <button class="btn btn-primary-fintech flex-grow-1 py-2" (click)="create()" [disabled]="loading() || !name()">
-      <span *ngIf="!loading()">Create Habit</span>
+  <div class="d-flex justify-content-end gap-3 align-items-center">
+    <button class="btn btn-link text-secondary text-decoration-none small" (click)="activeModal.dismiss()">Cancel</button>
+    <button class="btn-text-only fs-5" (click)="create()" [disabled]="loading() || !name()">
+      <span *ngIf="!loading()">Create</span>
       <span *ngIf="loading()" class="spinner-border spinner-border-sm"></span>
     </button>
-    <button class="btn btn-sm text-secondary px-3" (click)="activeModal.dismiss()">Cancel</button>
   </div>
 </div>

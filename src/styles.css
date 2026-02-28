@@ -1,22 +1,19 @@
 :root {
-  /* Strict Apple-Style Minimalism */
+  /* Strict Apple-Style Dark System */
   --bg-base: #0B0B0F;
-  --bg-card: #16171C;
+  --bg-card: #15161B;
   --bg-elevated: #1C1E24;
-  --bg-input: #1A1B20;
   
-  --text-main: #FFFFFF;
-  --text-secondary: #8E8E93;
-  --text-tertiary: #48484A;
+  --text-main: #F2F2F7;
+  --text-secondary: rgba(255, 255, 255, 0.62);
+  --text-tertiary: rgba(255, 255, 255, 0.4);
   
-  /* Primary Accent: Teal/Muted Blue */
-  --accent: #5EEAD4;
+  --accent-soft: #EAEAF0;
+  --border-subtle: rgba(255, 255, 255, 0.06);
   
-  /* Precision Geometry */
   --radius-card: 16px;
-  --radius-input: 24px;
-  --spacing-main: 32px; 
-  --card-padding: 20px;
+  --radius-pill: 24px;
+  --radius-sm: 12px;
   
   --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
 }
@@ -30,229 +27,181 @@ body {
   line-height: 1.6;
 }
 
-/* Header & Navigation */
-.nav-fixed-apple {
-  background: rgba(0, 0, 0, 0.8) !important;
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  z-index: 1060;
-  padding: 16px 0;
-}
-
-.segmented-control {
-  background: #1C1E24;
-  border-radius: 12px;
-  padding: 3px;
-  display: inline-flex;
-}
-
-.segment-btn {
-  padding: 6px 20px;
-  border-radius: 9px;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  font-weight: 500;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
-}
-
-.segment-btn.active {
-  background: #3A3A3C;
-  color: var(--text-main);
-}
-
-/* Layout Padding */
+/* Layout Spacing */
 .main-layout {
-  padding-top: 180px;
+  padding-top: 120px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 32px; /* Gap between main sections */
 }
 
-/* Cards */
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 16px;
+}
+
+/* Structural Components */
 .apple-card {
   background-color: var(--bg-card);
   border-radius: var(--radius-card);
-  padding: var(--card-padding);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border: 1px solid var(--border-subtle);
 }
 
 .apple-card-elevated {
   background-color: var(--bg-elevated);
   border-radius: var(--radius-card);
   padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
 }
 
-.section-gap {
-  margin-bottom: 32px !important;
-}
-
-/* KPI Typography */
-.kpi-title {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 4px;
-}
-
-.kpi-value {
-  font-size: 2.2rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-/* Buttons - FIXED FOR VISIBILITY */
-.btn-primary-fintech {
-  background-color: #FFFFFF !important;
-  color: #000000 !important;
-  border: none !important;
-  border-radius: 12px !important;
-  font-weight: 600 !important;
-  padding: 12px 24px !important;
-  transition: opacity 0.2s !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
-}
-
-.btn-primary-fintech:hover:not(:disabled) {
-  opacity: 0.9 !important;
-}
-
-.btn-primary-fintech:active:not(:disabled) {
-  transform: scale(0.96) !important;
-}
-
-.btn-primary-fintech:disabled {
-  background-color: #3A3A3C !important;
-  color: #8E8E93 !important;
-  opacity: 0.5;
-}
-
-/* History Rows */
-.event-row {
+/* Segmented Control */
+.segmented-control-wrapper {
   display: flex;
-  align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  justify-content: center;
+  margin-top: 16px;
+  margin-bottom: 8px;
 }
 
-.event-row:last-child {
-  border-bottom: none;
+.segmented-control {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 4px;
+  display: flex;
+  height: 36px;
+  width: 100%;
+  max-width: 240px;
+}
+
+.segment-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-main);
+  opacity: 0.65;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 14px;
+  transition: all 0.2s ease;
+}
+
+.segment-btn.active {
+  background: rgba(255, 255, 255, 0.14);
+  opacity: 1;
+}
+
+/* Daily Habits List */
+.habit-row {
+  margin-bottom: 12px;
+}
+
+.habit-row:last-child {
+  margin-bottom: 0;
+}
+
+.habit-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.habit-progress-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Progress Bars */
+.progress {
+  height: 6px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progress-bar {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-radius: 3px;
+  transition: width 0.3s ease;
 }
 
 /* Bottom Input Bar */
-.bottom-pill-bar {
-  background-color: var(--bg-input) !important;
+.bottom-input-container {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
   height: 52px;
-  border-radius: var(--radius-input);
-  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   padding: 0 8px 0 16px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  backdrop-filter: blur(20px);
 }
 
 .form-control {
   background: transparent !important;
   border: none !important;
   color: white !important;
-  font-size: 1rem;
+  box-shadow: none !important;
 }
 
 .form-control::placeholder {
-  color: #636366 !important;
-  opacity: 1 !important;
+  color: var(--text-secondary);
 }
 
 .btn-send-circle {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: white;
+  background: var(--accent-soft);
   color: black;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
 }
 
-/* Progress Bars */
-.progress {
-  height: 4px !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-radius: 10px;
-  overflow: hidden;
+/* Modal Redesign */
+.apple-modal {
+  background-color: var(--bg-elevated);
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+  max-width: 520px;
+  width: 92vw;
+  margin: auto;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
-.progress-bar {
-  background-color: white !important;
-  border-radius: 10px;
-  transition: width 300ms ease;
-}
+.modal-header { border-bottom: none; padding: 24px 24px 8px; }
+.modal-body { padding: 24px; }
+.modal-footer { border-top: none; padding: 16px 24px 24px; }
 
-/* Animations */
-.fade-up {
-  animation: apple-rise 400ms cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-@keyframes apple-rise {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Settings Menu */
-.settings-menu {
-  background: #1C1E24;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  padding: 8px;
-}
-
-.settings-item {
-  color: white;
-  padding: 10px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.settings-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.settings-item.danger {
-  color: #FF453A;
-}
-
-.label-dim {
-  font-size: 0.7rem;
-  opacity: 0.6;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.kpi-label-refined {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: white;
-  opacity: 0.6;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.kpi-value-refined {
-  font-size: 0.85rem;
+.btn-primary-apple {
+  background-color: var(--accent-soft);
+  color: #0B0B0F;
+  border: none;
+  border-radius: 12px;
   font-weight: 600;
-  color: white;
+  padding: 12px 24px;
+  transition: background 0.2s;
 }
 
-.percentage-dim {
-  font-size: 0.7rem;
-  opacity: 0.4;
-  margin-left: 4px;
+.btn-primary-apple:hover { background-color: #FFFFFF; }
+
+.btn-secondary-apple {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-weight: 500;
+  padding: 12px 24px;
+}
+
+/* Utility */
+.label-dim { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.kpi-value { font-size: 32px; font-weight: 600; letter-spacing: -0.5px; }
+.animate-entry { animation: slideUp 240ms ease-out; }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

@@ -143,7 +143,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.pendingEvents) {
       this.loading = true;
       const eventsToSave = [...this.pendingEvents];
-      this.lifeService.saveBatch({ events: eventsToSave })
+      this.lifeService.saveBatch(eventsToSave) // Corrected to send events array
         .pipe(finalize(() => {
           this.loading = false;
           this.pendingEvents = null;
@@ -151,10 +151,6 @@ export class AppComponent implements OnInit, OnDestroy {
           this.showUndo(eventsToSave);
         }))
         .subscribe({
-          next: () => {
-            this.lifeService.sync();
-            this.habitService.fetchHabits();
-          },
           error: (err: any) => console.error('Save failed', err)
         });
     }

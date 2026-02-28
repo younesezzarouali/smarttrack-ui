@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { LifeService, LifeEvent } from './services/life.service';
 import { SpeechService } from './services/speech.service';
 import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -36,29 +37,33 @@ export class AppComponent implements OnInit {
           this.magicText = text;
         },
         () => {
-          if (this.magicText.trim()) {
-            this.processMagic();
-          }
+          // Small timeout to let UI stabilize before auto-processing
+          setTimeout(() => {
+            if (this.magicText.trim()) {
+              this.processMagic();
+            }
+          }, 500);
         }
       );
     }
   }
 
   processMagic() {
-    if (!this.magicText.trim()) return;
+    if (!this.magicText.trim() || this.loading) return;
 
     this.loading = true;
-    this.lifeService.sendMagicInput(this.magicText).subscribe({
-      next: (newEvents) => {
-        this.magicText = '';
-        this.loading = false;
-        this.refreshData();
-      },
-      error: (err) => {
-        console.error('Magic failed', err);
-        this.loading = false;
-      }
-    });
+    this.lifeService.sendMagicInput(this.magicText)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (newEvents) => {
+          this.magicText = '';
+          this.refreshData();
+        },
+        error: (err) => {
+          console.error('Magic failed', err);
+          alert('AI processing failed. Check your API key or connection.');
+        }
+      });
   }
 
   refreshData() {

@@ -1,17 +1,17 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, NgZone } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class SpeechService {
   private recognition: any;
   isListening = signal<boolean>(false);
 
-  constructor() {
+  constructor(private zone: NgZone) {
     const { webkitSpeechRecognition }: any = window as any;
     if (webkitSpeechRecognition) {
       this.recognition = new webkitSpeechRecognition();
       this.recognition.continuous = false;
-      this.recognition.interimResults = true;
-      this.recognition.lang = 'fr-FR'; // Default to French
+      this.recognition.interimResults = false; // Set to false for more stable final results
+      this.recognition.lang = 'fr-FR';
     }
   }
 
@@ -21,18 +21,26 @@ export class SpeechService {
       return;
     }
 
-    this.isListening.set(true);
+    this.zone.run(() => this.isListening.set(true));
+
     this.recognition.onresult = (event: any) => {
-      const transcript = Array.from(event.results)
-        .map((result: any) => result[0])
-        .map((result: any) => result.transcript)
-        .join('');
-      onResult(transcript);
+      const transcript = event.results[0][0].transcript;
+      this.zone.run(() => onResult(transcript));
     };
 
     this.recognition.onend = () => {
-      this.isListening.set(false);
-      onEnd();
+      this.zone.run(() => {
+        this.isListening.set(false);
+        onEnd();
+      });
+    };
+
+    this.recognition.onerror = (event: any) => {
+      console.error('Speech recognition error', event.error);
+      this.zone.run(() => {
+        this.isListening.set(false);
+        onEnd();
+      });
     };
 
     this.recognition.start();
@@ -41,7 +49,6 @@ export class SpeechService {
   stopListening() {
     if (this.recognition) {
       this.recognition.stop();
-      this.isListening.set(false);
     }
   }
 }

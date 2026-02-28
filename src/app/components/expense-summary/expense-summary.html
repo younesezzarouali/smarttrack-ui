@@ -17,7 +17,7 @@
     <div class="fintech-card p-4 h-100 d-flex flex-column justify-content-center border-start border-4 border-warning">
       <div class="text-secondary small fw-bold text-uppercase mb-2" style="letter-spacing: 0.05em;">Work Focus</div>
       <div class="display-5 fw-extrabold text-white mb-1">
-        {{ workHours() }} <span class="text-warning">h</span>
+        {{ workHoursStr() }} <span class="text-warning">h</span>
       </div>
       <div class="text-warning small d-flex align-items-center fw-medium mt-2">
         <i class="bi bi-clock-history me-2"></i> Time Invested
@@ -34,6 +34,54 @@
       </div>
       <div class="text-info small d-flex align-items-center fw-medium mt-2" title="Based on activities and your mood">
         <i class="bi bi-info-circle me-2"></i> Activity & Mood Base
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Weekly Goals Section -->
+<div class="row g-4 mb-4">
+  <div class="col-12">
+    <div class="fintech-card p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h6 class="m-0 fw-bold"><i class="bi bi-target me-2 text-primary"></i>Weekly Focus</h6>
+        <span class="text-muted small">Target vs Actual</span>
+      </div>
+      
+      <div class="row g-4">
+        <!-- Budget Goal -->
+        <div class="col-md-4">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="small text-secondary fw-medium">Weekly Budget</span>
+            <span class="small text-white fw-bold">{{ totalSpent() | number:'1.0-0' }} / {{ GOALS.budget }}€</span>
+          </div>
+          <div class="progress" style="height: 8px; background: rgba(255,255,255,0.05);">
+            <div class="progress-bar" [style.width.%]="budgetProgress()" 
+                 [ngClass]="budgetProgress() > 90 ? 'bg-danger' : 'bg-primary'"></div>
+          </div>
+        </div>
+
+        <!-- Sport Goal -->
+        <div class="col-md-4">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="small text-secondary fw-medium">Sport Sessions</span>
+            <span class="small text-white fw-bold">{{ healthActivities() }} / {{ GOALS.sport }}</span>
+          </div>
+          <div class="progress" style="height: 8px; background: rgba(255,255,255,0.05);">
+            <div class="progress-bar bg-info" [style.width.%]="sportProgress()"></div>
+          </div>
+        </div>
+
+        <!-- Deep Work Goal -->
+        <div class="col-md-4">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="small text-secondary fw-medium">Deep Work</span>
+            <span class="small text-white fw-bold">{{ workHoursStr() }} / {{ GOALS.work }}h</span>
+          </div>
+          <div class="progress" style="height: 8px; background: rgba(255,255,255,0.05);">
+            <div class="progress-bar bg-warning" [style.width.%]="workProgress()"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

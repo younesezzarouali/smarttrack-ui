@@ -29,14 +29,17 @@
   <div class="mb-5">
     <label class="label-dim mb-2 uppercase">Category</label>
     <div class="d-flex gap-2">
-      <button class="btn btn-sm rounded-pill border border-white border-opacity-10 text-white px-3"
+      <button class="btn btn-sm rounded-pill border border-white border-opacity-10 px-3"
               [class.bg-white]="category() === 'HEALTH'" [class.text-black]="category() === 'HEALTH'"
+              [class.text-white]="category() !== 'HEALTH'"
               (click)="category.set('HEALTH')">Health</button>
-      <button class="btn btn-sm rounded-pill border border-white border-opacity-10 text-white px-3"
+      <button class="btn btn-sm rounded-pill border border-white border-opacity-10 px-3"
               [class.bg-white]="category() === 'WORK'" [class.text-black]="category() === 'WORK'"
+              [class.text-white]="category() !== 'WORK'"
               (click)="category.set('WORK')">Work</button>
-      <button class="btn btn-sm rounded-pill border border-white border-opacity-10 text-white px-3"
+      <button class="btn btn-sm rounded-pill border border-white border-opacity-10 px-3"
               [class.bg-white]="category() === 'LIFE'" [class.text-black]="category() === 'LIFE'"
+              [class.text-white]="category() !== 'LIFE'"
               (click)="category.set('LIFE')">Life</button>
     </div>
   </div>

@@ -6,7 +6,7 @@ import { LifeService, LifeEvent } from './services/life.service';
 import { SpeechService } from './services/speech.service';
 import { HabitService } from './services/habit.service';
 import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary';
-import { CreateHabitModalComponent } from './components/create-habit-modal/create-habit-modal.ts';
+import { CreateHabitModalComponent } from './components/create-habit-modal/create-habit-modal';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -64,7 +64,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.lifeService.sync();
-    this.habitService.fetchHabits(); // Load habits on init
+    this.habitService.fetchHabits();
     this.startPlaceholderRotation();
   }
 
@@ -95,7 +95,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     modalRef.result.then((result) => {
       if (result === 'success') {
-        // Toast logic could go here
+        this.habitService.fetchHabits();
       }
     }, () => {});
   }
@@ -153,7 +153,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.lifeService.sync();
-            this.habitService.fetchHabits(); // Refresh habits too
+            this.habitService.fetchHabits();
           },
           error: (err: any) => console.error('Save failed', err)
         });

@@ -18,14 +18,24 @@
   <!-- Magic Input Section -->
   <div class="row justify-content-center mb-5">
     <div class="col-lg-8">
-      <div class="fintech-card p-2 shadow-lg" style="border: 1px solid rgba(99, 102, 241, 0.3);">
+      <div class="fintech-card p-2 shadow-lg" 
+           [ngStyle]="{'border': speechService.isListening() ? '2px solid var(--accent)' : '1px solid rgba(99, 102, 241, 0.3)'}">
         <div class="input-group">
+          <!-- Mic Button -->
+          <button class="btn border-0 px-3" 
+                  [ngClass]="speechService.isListening() ? 'text-accent pulse-mic' : 'text-muted'"
+                  (click)="toggleListening()">
+            <i class="bi" [ngClass]="speechService.isListening() ? 'bi-mic-fill' : 'bi-mic'"></i>
+          </button>
+
           <input type="text" 
-                 class="form-control border-0 bg-transparent fs-5 py-3 ps-4" 
-                 placeholder="How was your day? (ex: Spent 10€ on coffee, ran 5km...)"
+                 class="form-control border-0 bg-transparent fs-5 py-3" 
+                 [placeholder]="speechService.isListening() ? 'Listening...' : 'How was your day?'"
                  [(ngModel)]="magicText"
                  (keyup.enter)="processMagic()"
                  [disabled]="loading">
+
+          <!-- Send Button -->
           <button class="btn btn-primary-fintech px-4" 
                   type="button" 
                   (click)="processMagic()"
@@ -36,7 +46,8 @@
         </div>
       </div>
       <div class="text-center mt-3">
-        <small class="text-muted">Powered by Gemini 2.0 Flash</small>
+        <small class="text-muted" *ngIf="!speechService.isListening()">Powered by Gemini 2.0 Flash</small>
+        <small class="text-accent fw-bold" *ngIf="speechService.isListening()">AI is listening to your voice...</small>
       </div>
     </div>
   </div>
@@ -44,7 +55,7 @@
   <!-- Timeline of Events -->
   <div class="row justify-content-center">
     <div class="col-lg-10">
-      <h6 class="text-muted text-uppercase fw-bold mb-4" style="letter-spacing: 1px;">Live Timeline</h6>
+      <h6 class="text-secondary text-uppercase fw-bold mb-4" style="letter-spacing: 1px;">Live Timeline</h6>
       
       <div class="timeline">
         <div *ngFor="let event of events" class="fintech-card p-4 mb-3 animate-fade-in">
@@ -82,7 +93,7 @@
         
         <div *ngIf="events.length === 0" class="text-center py-5">
           <div class="opacity-25 mb-3">
-            <i class="bi bi-chat-dots display-1"></i>
+            <i class="bi bi-chat-dots display-1 text-muted"></i>
           </div>
           <p class="text-muted">No events recorded. Type something above to begin.</p>
         </div>

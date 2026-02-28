@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LifeService, LifeEvent } from './services/life.service';
+import { SpeechService } from './services/speech.service';
 import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary';
 
 @Component({
@@ -17,10 +18,30 @@ export class AppComponent implements OnInit {
   loading: boolean = false;
   events: LifeEvent[] = [];
 
-  constructor(private lifeService: LifeService) {}
+  constructor(
+    private lifeService: LifeService,
+    public speechService: SpeechService
+  ) {}
 
   ngOnInit() {
     this.refreshData();
+  }
+
+  toggleListening() {
+    if (this.speechService.isListening()) {
+      this.speechService.stopListening();
+    } else {
+      this.speechService.startListening(
+        (text) => {
+          this.magicText = text;
+        },
+        () => {
+          if (this.magicText.trim()) {
+            this.processMagic();
+          }
+        }
+      );
+    }
   }
 
   processMagic() {
@@ -31,12 +52,11 @@ export class AppComponent implements OnInit {
       next: (newEvents) => {
         this.magicText = '';
         this.loading = false;
-        this.refreshData(); // Reload all events to see updates
+        this.refreshData();
       },
       error: (err) => {
         console.error('Magic failed', err);
         this.loading = false;
-        alert('AI processing failed. Check your API key or connection.');
       }
     });
   }
@@ -44,7 +64,6 @@ export class AppComponent implements OnInit {
   refreshData() {
     this.lifeService.getEvents().subscribe({
       next: (data) => {
-        // Sort by timestamp descending
         this.events = data.sort((a, b) => b.timestamp - a.timestamp);
       },
       error: (err) => console.error('Failed to fetch events', err)

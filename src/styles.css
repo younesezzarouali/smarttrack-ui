@@ -111,6 +111,11 @@ h1, h2, h3, h4, .navbar-brand {
   background-color: var(--surface);
   border: 1px solid var(--border-color);
   border-radius: 16px;
+  color: var(--text-main);
+}
+
+.modal-title {
+  color: var(--text-main);
 }
 
 .modal-header, .modal-footer {

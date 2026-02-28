@@ -1,6 +1,6 @@
 <div class="modal-body p-4">
   <div class="mb-4">
-    <label class="form-label small fw-bold text-muted text-uppercase mb-2">Description</label>
+    <label class="form-label small fw-bold text-secondary text-uppercase mb-2">Description</label>
     <input type="text"
            class="form-control"
            placeholder="e.g. Cloud Subscription"
@@ -10,18 +10,18 @@
 
   <div class="row g-3 mb-4">
     <div class="col-6">
-      <label class="form-label small fw-bold text-muted text-uppercase mb-2">Amount</label>
+      <label class="form-label small fw-bold text-secondary text-uppercase mb-2">Amount</label>
       <div class="input-group">
         <input type="number"
                class="form-control border-end-0"
                placeholder="0.00"
                [value]="amount()"
                (input)="amount.set($any($event.target).value)" />
-        <span class="input-group-text bg-transparent border-start-0 text-muted">€</span>
+        <span class="input-group-text bg-transparent border-start-0 text-secondary">€</span>
       </div>
     </div>
     <div class="col-6">
-      <label class="form-label small fw-bold text-muted text-uppercase mb-2">Category</label>
+      <label class="form-label small fw-bold text-secondary text-uppercase mb-2">Category</label>
       <select class="form-select"
               [value]="category()"
               (change)="category.set($any($event.target).value)">

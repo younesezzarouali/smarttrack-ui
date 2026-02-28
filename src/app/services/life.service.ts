@@ -17,10 +17,8 @@ export interface LifeEvent {
 export class LifeService {
   private apiUrl = `${environment.apiUrl}/life`;
   
-  // Le signal source qui contient tous les événements
   private eventsSignal = signal<LifeEvent[]>([]);
 
-  // Signaux dérivés (Computed) qui se mettent à jour seuls
   readonly events = computed(() => [...this.eventsSignal()].sort((a, b) => b.timestamp - a.timestamp));
   readonly financeEvents = computed(() => this.eventsSignal().filter(e => e.type === 'FINANCE'));
 
@@ -28,7 +26,13 @@ export class LifeService {
 
   sendMagicInput(text: string): Observable<LifeEvent[]> {
     return this.http.post<LifeEvent[]>(`${this.apiUrl}/magic`, { text }).pipe(
-      tap(() => this.fetchAll()) // Déclenche la mise à jour globale
+      tap(() => this.fetchAll())
+    );
+  }
+
+  updateEvent(event: LifeEvent): Observable<LifeEvent> {
+    return this.http.put<LifeEvent>(`${this.apiUrl}/events`, event).pipe(
+      tap(() => this.fetchAll())
     );
   }
 

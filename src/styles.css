@@ -15,7 +15,7 @@
   /* Precision Geometry */
   --radius-card: 16px;
   --radius-input: 24px;
-  --spacing-main: 32px;
+  --spacing-main: 24px; /* Reduced gap to avoid excessive scrolling but keeping air */
   --card-padding: 20px;
   
   --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
@@ -27,73 +27,115 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
-/* Segmented Control */
+/* Header & Navigation Fixes */
+.nav-fixed-apple {
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 1060;
+  padding: 16px 0;
+}
+
 .segmented-control {
-  background: var(--bg-card);
+  background: #1C1E24;
   border-radius: 12px;
-  padding: 4px;
+  padding: 3px;
   display: inline-flex;
-  border: 1px solid rgba(255,255,255,0.03);
 }
 
 .segment-btn {
-  padding: 6px 24px;
-  border-radius: 8px;
+  padding: 6px 20px;
+  border-radius: 9px;
   border: none;
   background: transparent;
   color: var(--text-secondary);
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.2s ease;
 }
 
 .segment-btn.active {
-  background: var(--bg-elevated);
+  background: #3A3A3C;
   color: var(--text-main);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* Layout */
+/* Layout Padding */
 .main-layout {
-  padding-top: 120px;
+  padding-top: 160px; /* Increased to avoid header overlap */
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-main);
+  gap: 32px;
 }
 
-/* Cards */
+/* Cards & Components */
 .apple-card {
   background-color: var(--bg-card);
   border-radius: var(--radius-card);
   padding: var(--card-padding);
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .apple-card-elevated {
   background-color: var(--bg-elevated);
   border-radius: var(--radius-card);
-  padding: 24px; /* Insight/Weekly get more padding */
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Bottom Input Bar */
+/* KPI Typography */
+.kpi-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* History Rows */
+.event-row {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.event-row:last-child {
+  border-bottom: none;
+}
+
+/* Bottom Input Bar Fixes */
 .bottom-pill-bar {
-  background-color: var(--bg-input);
+  background-color: var(--bg-input) !important;
   height: 52px;
   border-radius: var(--radius-input);
-  border: 1px solid rgba(255,255,255,0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   padding: 0 8px 0 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
 }
 
 .form-control {
   background: transparent !important;
   border: none !important;
   color: white !important;
-  box-shadow: none !important;
+  font-size: 1rem;
+}
+
+.form-control::placeholder {
+  color: #636366 !important; /* Visible Apple Gray */
+  opacity: 1 !important;
 }
 
 .btn-send-circle {
@@ -106,19 +148,57 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.2s ease;
 }
 
-/* Typography Scale */
-.kpi-value { font-size: 32px; font-weight: 600; letter-spacing: -0.5px; }
-.section-title { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
-.label-dim { font-size: 13px; opacity: 0.6; }
+.btn-send-circle:active {
+  transform: scale(0.9);
+}
 
-/* Micro-animations */
+/* Progress Bars */
+.progress {
+  height: 4px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background-color: white !important;
+  border-radius: 10px;
+  transition: width 300ms ease;
+}
+
+/* Animations */
 .fade-up {
-  animation: apple-rise 300ms ease-out;
+  animation: apple-rise 400ms cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 @keyframes apple-rise {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Settings Menu */
+.settings-menu {
+  background: #1C1E24;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 8px;
+}
+
+.settings-item {
+  color: white;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.settings-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.settings-item.danger {
+  color: #FF453A;
 }

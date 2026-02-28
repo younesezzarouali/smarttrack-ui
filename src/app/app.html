@@ -1,4 +1,4 @@
-<nav class="navbar fixed-top bg-black bg-opacity-80 py-3" style="backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.03); z-index: 1060;">
+<nav class="navbar fixed-top nav-fixed-apple">
   <div class="container d-flex flex-column align-items-center gap-3">
     <div class="w-100 d-flex justify-content-between align-items-center px-2">
       <span class="fw-bold fs-5" style="letter-spacing: -0.03em;">SmartTrack</span>
@@ -13,6 +13,7 @@
         </ul>
       </div>
     </div>
+
     <div class="segmented-control">
       <button class="segment-btn" [class.active]="lifeService.activeTab() === 'journal'" (click)="lifeService.setTab('journal')">Journal</button>
       <button class="segment-btn" [class.active]="lifeService.activeTab() === 'habits'" (click)="lifeService.setTab('habits')">Habits</button>
@@ -20,43 +21,33 @@
   </div>
 </nav>
 
-<!-- DYNAMIC ISLAND REVIEW MODAL - EXTENDED FOR HABITS -->
+<!-- DYNAMIC ISLAND REVIEW MODAL -->
 <div *ngIf="pendingEvents || pendingUpdates" class="fixed-top mt-5 pt-5 px-3" style="z-index: 1100;">
-  <div class="apple-card-elevated review-island fade-up shadow-2xl" style="max-width: 500px; margin: 0 auto; background: #1C1E24; border: 1px solid rgba(255,255,255,0.1);">
-    
+  <div class="apple-card-elevated fade-up shadow-2xl" style="max-width: 500px; margin: 0 auto; background: #1C1E24; border: 1px solid rgba(255,255,255,0.1); border-radius: 32px;">
     <div class="mb-4">
-      <h6 class="kpi-label-refined mb-3">Reviewing your entry</h6>
+      <h6 class="kpi-title mb-3 opacity-50">Review Entry</h6>
       
-      <!-- New Events List -->
       <div *ngIf="pendingEvents && pendingEvents.length > 0" class="mb-4">
-        <div class="label-dim mb-2 uppercase">New Events</div>
-        <div class="list-group list-group-flush">
-          <div *ngFor="let p of pendingEvents" class="list-group-item bg-transparent border-white border-opacity-5 py-2 px-0 d-flex justify-content-between align-items-center">
-            <span class="text-white fw-medium">{{ p.content }}</span>
-            <span class="text-white opacity-50 fw-bold">{{ p.payload.amount || p.payload.duration_min + 'm' }}</span>
-          </div>
+        <div *ngFor="let p of pendingEvents" class="d-flex justify-content-between align-items-center py-2 border-bottom border-white border-opacity-5">
+          <span class="text-white fw-medium">{{ p.content }}</span>
+          <span class="text-white opacity-50 fw-bold">{{ p.payload.amount || p.payload.duration_min + 'm' }}</span>
         </div>
       </div>
 
-      <!-- Habit Updates List -->
       <div *ngIf="pendingUpdates && pendingUpdates.length > 0">
-        <div class="label-dim mb-2 uppercase">Habit Progression</div>
-        <div class="list-group list-group-flush">
-          <div *ngFor="let u of pendingUpdates" class="list-group-item bg-transparent border-white border-opacity-5 py-2 px-0">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <span class="text-white fw-medium">{{ u.habitName || 'Matching Habit' }}</span>
-              <span class="text-accent fw-bold small">+{{ u.progressDelta }}</span>
-            </div>
-            <div class="progress" style="height: 2px !important;">
-              <div class="progress-bar bg-accent" style="width: 100%; opacity: 0.3;"></div>
-            </div>
+        <div class="label-dim mb-2 uppercase">Habit Progress</div>
+        <div *ngFor="let u of pendingUpdates" class="py-2">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="text-white fw-medium small">{{ u.habitName || 'Habit' }}</span>
+            <span class="text-accent fw-bold small">+{{ u.progressDelta }}</span>
           </div>
+          <div class="progress"><div class="progress-bar bg-accent" style="width: 100%; opacity: 0.3;"></div></div>
         </div>
       </div>
     </div>
 
     <div class="d-flex gap-3 pt-3 border-top border-white border-opacity-5">
-      <button class="btn btn-primary-fintech flex-grow-1 py-2" (click)="confirmPending()" [disabled]="loading">Log Data</button>
+      <button class="btn btn-primary-fintech flex-grow-1 py-3 fw-bold" (click)="confirmPending()" [disabled]="loading">Log Data</button>
       <button class="btn btn-sm text-secondary px-3" (click)="cancelPending()" [disabled]="loading">Discard</button>
     </div>
   </div>
@@ -64,7 +55,7 @@
 
 <main class="container main-layout pb-5">
   
-  <!-- JOURNAL TAB -->
+  <!-- TAB 1: JOURNAL -->
   <ng-container *ngIf="lifeService.activeTab() === 'journal'">
     <app-expense-summary class="fade-up"></app-expense-summary>
 
@@ -73,7 +64,7 @@
         <div class="apple-card-elevated">
           <div class="d-flex align-items-center mb-2 opacity-40">
             <i class="bi bi-chat-right-quote-fill me-2 small"></i>
-            <span class="kpi-label m-0">Insight</span>
+            <span class="kpi-title m-0">Insight</span>
           </div>
           <p class="text-white m-0 fs-5 fw-medium lh-base">" {{ lifeService.briefing() }} "</p>
         </div>
@@ -86,7 +77,7 @@
         <div *ngFor="let group of groupedEvents()" class="mb-5">
           <div class="label-dim mb-3 px-1">{{ group.date }}</div>
           <div class="apple-card p-0 overflow-hidden shadow-sm">
-            <div *ngFor="let event of group.items" class="px-4 py-3 event-row">
+            <div *ngFor="let event of group.items" class="event-row">
               <div class="w-100 d-flex justify-content-between align-items-center">
                 <div>
                   <div class="text-white fw-medium">{{ event.content }}</div>
@@ -94,7 +85,7 @@
                 </div>
                 <div class="text-white fw-bold">
                   <span *ngIf="event.type === 'FINANCE'">{{ event.payload.amount }}€</span>
-                  <span *ngIf="event.type === 'HEALTH'">{{ event.payload.duration_min }}m</span>
+                  <span *ngIf="event.type === 'HEALTH'">{{ event.payload.value }}{{ event.payload.unit || 'm' }}</span>
                 </div>
               </div>
             </div>
@@ -104,11 +95,15 @@
     </div>
   </ng-container>
 
-  <!-- HABITS TAB -->
+  <!-- TAB 2: HABITS -->
   <ng-container *ngIf="lifeService.activeTab() === 'habits'">
     <div class="row justify-content-center fade-up">
       <div class="col-lg-10">
-        <h6 class="section-title">Today's Goals</h6>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h6 class="section-title m-0">Today's Habits</h6>
+          <button class="btn btn-sm btn-dark rounded-pill border-white border-opacity-10 px-3">+ New</button>
+        </div>
+        
         <div class="apple-card mb-5">
           <div class="d-flex flex-column gap-4">
             <div *ngFor="let habit of habitService.habits()">
@@ -120,15 +115,18 @@
                 <div class="progress-bar" [style.width.%]="habitService.getHabitPercentage(habit)"></div>
               </div>
             </div>
+            <div *ngIf="habitService.habits().length === 0" class="text-center py-4 opacity-30">
+              No active habits. Create one to begin.
+            </div>
           </div>
         </div>
 
-        <h6 class="section-title">Consistency</h6>
+        <h6 class="section-title opacity-40">Weekly Consistency</h6>
         <div class="apple-card">
-          <div class="d-flex justify-content-between text-center">
+          <div class="d-flex justify-content-between text-center opacity-40">
             <div *ngFor="let d of ['M','T','W','T','F','S','S']" class="d-flex flex-column gap-2">
               <span class="label-dim">{{ d }}</span>
-              <div class="rounded-1" style="width: 20px; height: 40px; background: rgba(255,255,255,0.05);"></div>
+              <div class="rounded-1" style="width: 24px; height: 48px; background: rgba(255,255,255,0.05);"></div>
             </div>
           </div>
         </div>
@@ -138,12 +136,10 @@
 
 </main>
 
-<!-- BOTTOM INPUT -->
 <div class="fixed-bottom p-4 pb-5" style="z-index: 1050;">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        
         <div *ngIf="undoVisible()" class="mb-3 text-center fade-up">
           <button class="btn btn-dark rounded-pill border border-white border-opacity-10 px-4 py-2 small" (click)="undoSave()">
             <span class="text-secondary">Saved.</span> <span class="text-white fw-bold ms-2">UNDO</span>

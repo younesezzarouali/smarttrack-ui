@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LifeService } from './services/life.service';
@@ -10,21 +9,20 @@ import { finalize } from 'rxjs';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, FormsModule, ExpenseSummaryComponent],
+  imports: [CommonModule, FormsModule, ExpenseSummaryComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class AppComponent implements OnInit {
+  // Use inject() for modern, safer dependency injection
+  private lifeService = inject(LifeService);
+  public speechService = inject(SpeechService);
+
   magicText: string = '';
   loading: boolean = false;
 
-  // Delegate event list to the service signals
+  // Now lifeService is guaranteed to be initialized
   readonly events = this.lifeService.events;
-
-  constructor(
-    private lifeService: LifeService,
-    public speechService: SpeechService
-  ) {}
 
   ngOnInit() {
     this.lifeService.fetchAll();

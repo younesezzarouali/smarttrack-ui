@@ -1,45 +1,43 @@
 <div class="modal-body p-4">
   <div class="mb-4">
-    <label class="form-label text-uppercase small fw-bold" style="color: var(--neon-cyan); letter-spacing: 1px;">DESCRIPTION</label>
+    <label class="form-label small fw-bold text-muted text-uppercase mb-2">Description</label>
     <input type="text"
-           class="form-control form-control-lg rounded-0"
-           placeholder="Ex: Cyber-Implants"
+           class="form-control"
+           placeholder="e.g. Cloud Subscription"
            [value]="label()"
-           (input)="label.set($any($event.target).value)" 
-           style="background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white;"/>
+           (input)="label.set($any($event.target).value)" />
   </div>
 
-  <div class="mb-4">
-    <label class="form-label text-uppercase small fw-bold" style="color: var(--neon-cyan); letter-spacing: 1px;">AMOUNT</label>
-    <div class="input-group">
-      <input type="number"
-             class="form-control form-control-lg rounded-0"
-             placeholder="0.00"
-             [value]="amount()"
-             (input)="amount.set($any($event.target).value)"
-             style="background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; font-family: var(--font-display);"/>
-      <span class="input-group-text bg-transparent border-0 text-white fw-bold">€</span>
+  <div class="row g-3 mb-4">
+    <div class="col-6">
+      <label class="form-label small fw-bold text-muted text-uppercase mb-2">Amount</label>
+      <div class="input-group">
+        <input type="number"
+               class="form-control border-end-0"
+               placeholder="0.00"
+               [value]="amount()"
+               (input)="amount.set($any($event.target).value)" />
+        <span class="input-group-text bg-transparent border-start-0 text-muted">€</span>
+      </div>
+    </div>
+    <div class="col-6">
+      <label class="form-label small fw-bold text-muted text-uppercase mb-2">Category</label>
+      <select class="form-select"
+              [value]="category()"
+              (change)="category.set($any($event.target).value)">
+        <option value="FOOD">Food</option>
+        <option value="TRANSPORT">Transport</option>
+        <option value="HOUSING">Housing</option>
+        <option value="ENTERTAINMENT">Entertainment</option>
+        <option value="HEALTH">Health</option>
+        <option value="OTHER">Other</option>
+      </select>
     </div>
   </div>
 
-  <div class="mb-5">
-    <label class="form-label text-uppercase small fw-bold" style="color: var(--neon-cyan); letter-spacing: 1px;">CATEGORY</label>
-    <select class="form-select form-select-lg rounded-0"
-            [value]="category()"
-            (change)="category.set($any($event.target).value)"
-            style="background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white;">
-      <option value="FOOD">NOURRITURE</option>
-      <option value="TRANSPORT">TRANSPORT</option>
-      <option value="HOUSING">LOGEMENT</option>
-      <option value="ENTERTAINMENT">DIVERTISSEMENT</option>
-      <option value="HEALTH">SANTÉ</option>
-      <option value="OTHER">AUTRE</option>
-    </select>
-  </div>
-
-  <div class="d-grid">
-    <button class="btn-neon w-100" (click)="addExpense()">
-      CONFIRM UPLOAD
+  <div class="d-grid mt-5">
+    <button class="btn btn-primary-fintech py-3 fs-6" (click)="addExpense()">
+      Save Transaction
     </button>
   </div>
 </div>

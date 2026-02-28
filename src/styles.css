@@ -1,165 +1,122 @@
 :root {
-  /* Cyberpunk Palette */
-  --bg-dark: #050505;
-  --bg-panel: rgba(20, 20, 30, 0.6);
-  --neon-cyan: #00f3ff;
-  --neon-purple: #bc13fe;
-  --neon-pink: #ff0055;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-  --font-display: 'Orbitron', sans-serif;
-  --font-body: 'Rajdhani', sans-serif;
+  /* Fintech Slate Palette */
+  --app-bg: #0f172a; /* Deep Slate */
+  --surface: #1e293b;
+  --surface-hover: #334155;
+  --primary: #6366f1; /* Indigo */
+  --primary-hover: #4f46e5;
+  --accent: #10b981; /* Emerald for success/money */
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 body {
-  background-color: var(--bg-dark);
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.1), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.1), transparent 25%);
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  min-height: 100vh;
-  margin: 0;
-  overflow-x: hidden;
+  background-color: var(--app-bg);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6, .navbar-brand {
-  font-family: var(--font-display);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-/* Glassmorphism Card */
-.glass-panel {
-  background: var(--bg-panel);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: var(--glass-border);
-  border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.glass-panel:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
-  border-color: rgba(0, 243, 255, 0.3);
-}
-
-/* Neon Button */
-.btn-neon {
-  background: transparent;
-  color: var(--neon-cyan);
-  border: 1px solid var(--neon-cyan);
-  font-family: var(--font-display);
+/* Typography */
+h1, h2, h3, h4, .navbar-brand {
   font-weight: 700;
-  padding: 10px 25px;
-  text-transform: uppercase;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 5px var(--neon-cyan);
+  letter-spacing: -0.025em;
 }
 
-.btn-neon:hover {
-  background: var(--neon-cyan);
-  color: #000;
-  box-shadow: 0 0 20px var(--neon-cyan);
-}
-
-.btn-neon-secondary {
-  border-color: var(--neon-purple);
-  color: var(--neon-purple);
-  box-shadow: 0 0 5px var(--neon-purple);
-}
-
-.btn-neon-secondary:hover {
-  background: var(--neon-purple);
-  color: #fff;
-  box-shadow: 0 0 20px var(--neon-purple);
-}
-
-/* Table Overrides */
-.table-futuristic {
-  color: var(--text-primary);
-  border-collapse: separate;
-  border-spacing: 0 10px;
-}
-
-.table-futuristic thead th {
-  background: transparent;
-  color: var(--neon-cyan);
-  border-bottom: 1px solid var(--neon-cyan);
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  padding: 15px;
-}
-
-.table-futuristic tbody tr {
-  background: rgba(255, 255, 255, 0.03);
+/* Professional Cards */
+.fintech-card {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: all 0.2s ease;
 }
 
-.table-futuristic tbody tr:hover {
-  background: rgba(255, 255, 255, 0.08);
-  transform: scale(1.01);
-}
-
-.table-futuristic td {
+/* Buttons */
+.btn-primary-fintech {
+  background-color: var(--primary);
   border: none;
-  padding: 15px;
-  vertical-align: middle;
-}
-
-.table-futuristic td:first-child {
-  border-radius: 10px 0 0 10px;
-}
-
-.table-futuristic td:last-child {
-  border-radius: 0 10px 10px 0;
-}
-
-/* Tags / Badges */
-.badge-neon {
-  background: rgba(0, 243, 255, 0.1);
-  border: 1px solid var(--neon-cyan);
-  color: var(--neon-cyan);
-  font-family: var(--font-display);
-  font-size: 0.7rem;
-  letter-spacing: 1px;
-}
-
-/* Modal Override */
-.modal-content {
-  background: #0a0a0a;
-  border: 1px solid var(--neon-purple);
-  box-shadow: 0 0 30px rgba(188, 19, 254, 0.3);
   color: white;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
-.modal-header {
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+.btn-primary-fintech:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
-.modal-footer {
-  border-top: 1px solid rgba(255,255,255,0.1);
+/* Modern Table */
+.fintech-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--text-main);
 }
 
-.btn-close {
-  filter: invert(1) grayscale(100%) brightness(200%);
+.fintech-table th {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
 }
 
+.fintech-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.fintech-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+/* Badges */
+.fintech-badge {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--primary);
+}
+
+/* Forms */
 .form-control, .form-select {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: #0f172a;
+  border: 1px solid var(--border-color);
   color: white;
-  transition: all 0.3s ease;
+  border-radius: 8px;
+  padding: 10px 14px;
 }
 
 .form-control:focus, .form-select:focus {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--neon-cyan);
-  box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+  background-color: #0f172a;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
   color: white;
+}
+
+/* Modal */
+.modal-content {
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+}
+
+.modal-header, .modal-footer {
+  border-color: var(--border-color);
+}
+
+.btn-close {
+  filter: invert(1);
 }

@@ -1,55 +1,52 @@
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top p-4" style="background: transparent;">
+<nav class="navbar navbar-dark py-4">
   <div class="container">
-    <a class="navbar-brand fs-3 text-uppercase" href="#">
-      <i class="bi bi-cpu-fill me-2" style="color: var(--neon-cyan);"></i>SmartTrack
+    <a class="navbar-brand d-flex align-items-center fw-bold fs-4" href="#">
+      <div class="bg-primary rounded-3 p-2 me-2 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+        <i class="bi bi-graph-up-arrow fs-6"></i>
+      </div>
+      SmartTrack
     </a>
+    <button class="btn btn-primary-fintech d-flex align-items-center" (click)="openModal(content)">
+      <i class="bi bi-plus-lg me-2"></i> New Transaction
+    </button>
   </div>
 </nav>
 
-<div class="d-flex flex-column justify-content-center align-items-center text-center text-white" style="min-height: 50vh; padding-top: 80px;">
-  <h1 class="display-1 fw-bold mb-3" style="text-shadow: 0 0 20px rgba(0, 243, 255, 0.5);">
-    FUTURE FINANCE
-  </h1>
-  <p class="lead mb-5 text-secondary" style="max-width: 600px;">
-    Vision Serverless 100% Fonctionnelle.
-  </p>
-  
-  <button class="btn-neon rounded-pill px-5 py-3" (click)="openModal(content)">
-    <i class="bi bi-plus-lg me-2"></i>ADD DATA
-  </button>
-</div>
-
-<main class="container mb-5 pb-5">
-  <div class="row g-4 mb-5">
-    <div class="col-md-12">
-      <!-- Summary Component injected here -->
-      <app-expense-summary></app-expense-summary>
-    </div>
+<main class="container mt-4 mb-5">
+  <!-- Statistics Row -->
+  <div class="mb-5">
+    <app-expense-summary></app-expense-summary>
   </div>
 
-  <div class="glass-panel p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3 class="m-0" style="color: var(--neon-purple);">TRANSACTIONS</h3>
-      <span class="badge badge-neon px-3 py-2">LIVE FEED</span>
+  <!-- Recent Transactions Section -->
+  <div class="fintech-card overflow-hidden">
+    <div class="p-4 border-bottom border-light border-opacity-10 d-flex justify-content-between align-items-center">
+      <h5 class="m-0 fw-bold">Recent Transactions</h5>
+      <a href="#" class="text-primary text-decoration-none small fw-semibold">View all</a>
     </div>
     
     <div class="table-responsive">
-      <table class="table table-futuristic align-middle">
+      <table class="fintech-table">
         <thead>
           <tr>
-            <th>LABEL</th>
-            <th>CATEGORY</th>
-            <th class="text-end">AMOUNT</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th class="text-end">Amount</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let ex of expenses">
-            <td class="fw-bold">{{ ex.label }}</td>
+            <td class="fw-medium text-white">{{ ex.label }}</td>
             <td>
-              <span class="badge badge-neon rounded-0">{{ ex.category }}</span>
+              <span class="fintech-badge">{{ ex.category }}</span>
             </td>
-            <td class="text-end" style="color: var(--neon-cyan); font-family: var(--font-display); font-size: 1.2rem;">
-              {{ ex.amount }} €
+            <td class="text-end fw-bold text-white">
+              {{ ex.amount | number:'1.2-2' }} €
+            </td>
+          </tr>
+          <tr *ngIf="expenses.length === 0">
+            <td colspan="3" class="text-center py-5 text-muted">
+              No transactions recorded yet.
             </td>
           </tr>
         </tbody>
@@ -60,8 +57,8 @@
 
 <ng-template #content let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" style="color: var(--neon-cyan);">NEW ENTRY</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    <h5 class="modal-title fw-bold">Add Transaction</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
   </div>
   <app-expense-modal></app-expense-modal>
 </ng-template>

@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
   pendingEvents: LifeEvent[] | null = null;
   aiAnswer: string | null = null;
 
+  readonly events = this.lifeService.events;
   readonly groupedEvents = computed(() => {
     const groups: { date: string, items: LifeEvent[] }[] = [];
     const events = this.lifeService.events();

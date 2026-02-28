@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LifeService, LifeEvent } from './services/life.service';
+import { LifeService } from './services/life.service';
 import { SpeechService } from './services/speech.service';
 import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary';
 import { finalize } from 'rxjs';
@@ -17,7 +17,9 @@ import { finalize } from 'rxjs';
 export class AppComponent implements OnInit {
   magicText: string = '';
   loading: boolean = false;
-  events: LifeEvent[] = [];
+
+  // Delegate event list to the service signals
+  readonly events = this.lifeService.events;
 
   constructor(
     private lifeService: LifeService,
@@ -25,7 +27,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.refreshData();
+    this.lifeService.fetchAll();
   }
 
   toggleListening() {
@@ -33,29 +35,21 @@ export class AppComponent implements OnInit {
       this.speechService.stopListening();
     } else {
       this.speechService.startListening(
-        (text) => {
-          this.magicText = text;
-        },
-        () => {
-          // On end, we DO NOT auto-process. 
-          // We let the user review and click send manually.
-          console.log('Voice capture ended. Waiting for user to send manually.');
-        }
+        (text) => this.magicText = text,
+        () => console.log('Capture ended')
       );
     }
   }
 
   processMagic() {
-    if (!this.magicText.trim() || this.loading) return;
+    const textInput = this.magicText.trim();
+    if (!textInput || this.loading) return;
 
     this.loading = true;
-    this.lifeService.sendMagicInput(this.magicText)
+    this.lifeService.sendMagicInput(textInput)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
-        next: (newEvents) => {
-          this.magicText = '';
-          this.refreshData();
-        },
+        next: () => this.magicText = '',
         error: (err) => {
           console.error('Magic failed', err);
           alert('AI processing failed. Check your API key or connection.');
@@ -65,19 +59,9 @@ export class AppComponent implements OnInit {
 
   clearAll() {
     if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
-      this.lifeService.clearEvents().subscribe({
-        next: () => this.refreshData(),
+      this.lifeService.clearAll().subscribe({
         error: (err) => console.error('Clear failed', err)
       });
     }
-  }
-
-  refreshData() {
-    this.lifeService.getEvents().subscribe({
-      next: (data) => {
-        this.events = data.sort((a, b) => b.timestamp - a.timestamp);
-      },
-      error: (err) => console.error('Failed to fetch events', err)
-    });
   }
 }

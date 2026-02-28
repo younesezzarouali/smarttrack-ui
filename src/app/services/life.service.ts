@@ -1,12 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, computed, signal } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 import { environment } from '../environments/environment';
+
+export type LifeEventType = 'FINANCE' | 'HEALTH' | 'WORK' | 'HABIT' | 'NOTE';
 
 export interface LifeEvent {
   userId: string;
   timestamp: number;
-  type: 'FINANCE' | 'HEALTH' | 'WORK' | 'HABIT' | 'NOTE';
+  type: LifeEventType;
   content: string;
   payload: any;
 }
@@ -14,18 +16,30 @@ export interface LifeEvent {
 @Injectable({ providedIn: 'root' })
 export class LifeService {
   private apiUrl = `${environment.apiUrl}/life`;
+  
+  // Use a signal to store events globally for reactivity
+  private eventsSignal = signal<LifeEvent[]>([]);
+  readonly events = computed(() => this.eventsSignal().sort((a, b) => b.timestamp - a.timestamp));
+  readonly financeEvents = computed(() => this.eventsSignal().filter(e => e.type === 'FINANCE'));
 
   constructor(private http: HttpClient) {}
 
   sendMagicInput(text: string): Observable<LifeEvent[]> {
-    return this.http.post<LifeEvent[]>(`${this.apiUrl}/magic`, { text });
+    return this.http.post<LifeEvent[]>(`${this.apiUrl}/magic`, { text }).pipe(
+      tap(() => this.fetchAll()) // Refresh state after addition
+    );
   }
 
-  getEvents(): Observable<LifeEvent[]> {
-    return this.http.get<LifeEvent[]>(`${this.apiUrl}/events`);
+  fetchAll(): void {
+    this.http.get<LifeEvent[]>(`${this.apiUrl}/events`).subscribe({
+      next: (data) => this.eventsSignal.set(data),
+      error: (err) => console.error('Failed to sync events', err)
+    });
   }
 
-  clearEvents(): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/events`);
+  clearAll(): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/events`).pipe(
+      tap(() => this.eventsSignal.set([]))
+    );
   }
 }

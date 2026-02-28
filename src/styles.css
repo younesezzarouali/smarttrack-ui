@@ -127,6 +127,56 @@ h1, h2, h3, h4, .navbar-brand {
   opacity: 0.8;
 }
 
+/* Smart Cards Styling */
+.event-card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-left: 4px solid transparent;
+}
+
+.event-card:hover {
+  background: var(--surface-hover) !important;
+  transform: translateX(4px);
+}
+
+.event-card.finance { border-left-color: var(--accent); }
+.event-card.health { border-left-color: #38bdf8; }
+.event-card.work { border-left-color: #fbbf24; }
+.event-card.note { border-left-color: var(--primary); }
+
+.event-icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.event-main-value {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Debug / Technical view */
+.debug-panel {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 0.75rem;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .btn-close {
   filter: invert(1);
 }

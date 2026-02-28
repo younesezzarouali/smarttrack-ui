@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   magicText: string = '';
   loading: boolean = false;
   editingEvent: LifeEvent | null = null;
+  showDebug: boolean = false;
   
   pendingEvents: LifeEvent[] | null = null;
   aiAnswer: string | null = null;

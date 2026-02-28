@@ -6,6 +6,9 @@
       </div>
       SmartTrack
     </a>
+    <button class="btn btn-sm btn-outline-secondary opacity-50" (click)="showDebug = !showDebug">
+      <i class="bi bi-code-slash"></i>
+    </button>
   </div>
 </nav>
 
@@ -32,13 +35,13 @@
     </div>
   </div>
 
-  <!-- AI Pending Preview (Draft) -->
+  <!-- AI Pending Preview -->
   <div *ngIf="pendingEvents" class="row justify-content-center mb-5 animate-fade-in">
     <div class="col-lg-8">
       <div class="fintech-card p-4 border-primary shadow-lg" style="background: rgba(99, 102, 241, 0.1);">
-        <h6 class="text-primary text-uppercase fw-bold mb-3 small">AI Suggestion - Please verify</h6>
+        <h6 class="text-primary text-uppercase fw-bold mb-3 small">Review Entry</h6>
         <div class="list-group list-group-flush mb-4 bg-transparent">
-          <div *ngFor="let p of pendingEvents" class="list-group-item bg-transparent border-light border-opacity-10 py-3">
+          <div *ngFor="let p of pendingEvents" class="list-group-item bg-transparent border-light border-opacity-10 py-3 px-0">
             <div class="d-flex align-items-center">
               <span class="badge fintech-badge me-3">{{ p.type }}</span>
               <span class="text-white fw-medium">{{ p.content }}</span>
@@ -48,7 +51,7 @@
         </div>
         <div class="d-flex gap-2">
           <button class="btn btn-primary-fintech flex-grow-1 py-2" (click)="confirmPending()" [disabled]="loading">
-            <i class="bi bi-check-lg me-2"></i>Confirm & Save
+            Confirm & Save
           </button>
           <button class="btn btn-outline-secondary px-4 py-2" (click)="cancelPending()" [disabled]="loading">
             Cancel
@@ -58,51 +61,89 @@
     </div>
   </div>
 
-  <!-- Grouped Timeline -->
+  <!-- History Timeline -->
   <div class="row justify-content-center">
     <div class="col-lg-10">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h6 class="text-secondary text-uppercase fw-bold m-0 small">History</h6>
-        <button *ngIf="groupedEvents().length > 0" class="btn btn-sm btn-outline-danger border-0 small opacity-50" (click)="clearAll()">
-          <i class="bi bi-trash3 me-1"></i> Clear All
+      <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+        <h6 class="text-secondary text-uppercase fw-bold m-0 small" style="letter-spacing: 1px;">History</h6>
+        <button *ngIf="events().length > 0" class="btn btn-sm btn-outline-danger border-0 small opacity-50" (click)="clearAll()">
+          <i class="bi bi-trash3"></i>
         </button>
       </div>
       
       <div *ngFor="let group of groupedEvents()" class="mb-5">
-        <div class="d-flex align-items-center mb-3">
+        <div class="d-flex align-items-center mb-4 px-2">
           <span class="text-primary fw-bold small text-uppercase me-3">{{ group.date }}</span>
           <div class="flex-grow-1 border-bottom border-light border-opacity-10"></div>
         </div>
-        <div *ngFor="let event of group.items" class="fintech-card p-4 mb-3">
-          <div *ngIf="editingEvent?.timestamp !== event.timestamp" class="d-flex align-items-start">
-            <div class="rounded-circle p-3 me-3 d-flex align-items-center justify-content-center" 
-                 [ngClass]="{
-                   'bg-success-subtle text-success': event.type === 'FINANCE',
-                   'bg-info-subtle text-info': event.type === 'HEALTH',
-                   'bg-warning-subtle text-warning': event.type === 'WORK',
-                   'bg-primary-subtle text-primary': event.type === 'NOTE'
-                 }" style="width: 45px; height: 45px; background: rgba(255,255,255,0.05);">
-              <i class="bi" [ngClass]="{'bi-currency-euro': event.type === 'FINANCE', 'bi-heart-pulse': event.type === 'HEALTH', 'bi-briefcase': event.type === 'WORK', 'bi-sticky': event.type === 'NOTE'}"></i>
+
+        <div *ngFor="let event of group.items" class="fintech-card p-3 mb-3 event-card" 
+             [ngClass]="event.type.toLowerCase()">
+          
+          <div *ngIf="editingEvent?.timestamp !== event.timestamp">
+            <div class="d-flex align-items-center">
+              <!-- Human-Centric Icon & Category -->
+              <div class="event-icon me-3">
+                <i class="bi" [ngClass]="{
+                  'bi-cash-stack text-success': event.type === 'FINANCE',
+                  'bi-heart-pulse text-info': event.type === 'HEALTH',
+                  'bi-pc-display text-warning': event.type === 'WORK',
+                  'bi-sticky text-primary': event.type === 'NOTE'
+                }"></i>
+              </div>
+
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="text-white fw-bold fs-5">{{ event.content }}</span>
+                  
+                  <!-- Main Action Value -->
+                  <div class="event-main-value">
+                    <span *ngIf="event.type === 'FINANCE'" class="text-white">{{ event.payload.amount }} €</span>
+                    <span *ngIf="event.type === 'HEALTH'" class="text-info">{{ event.payload.value }} {{ event.payload.unit }}</span>
+                    <span *ngIf="event.type === 'WORK'" class="text-warning">{{ event.payload.duration_min }} min</span>
+                  </div>
+                </div>
+                
+                <div class="d-flex align-items-center mt-1">
+                  <small class="text-secondary opacity-50 me-2">{{ event.timestamp | date:'HH:mm' }}</small>
+                  <span class="text-muted small">•</span>
+                  <small class="text-muted small ms-2 text-uppercase">{{ event.payload.category || event.payload.project || event.type }}</small>
+                </div>
+              </div>
+
+              <!-- Quick Edit Toggle -->
+              <div class="ms-3 d-flex flex-column gap-2">
+                <button class="btn btn-sm text-secondary opacity-25 hover-opacity-100 p-0" (click)="startEdit(event)">
+                  <i class="bi bi-pencil"></i>
+                </button>
+              </div>
             </div>
-            <div class="flex-grow-1">
-              <div class="d-flex justify-content-between align-items-center mb-1">
-                <div><small class="text-secondary opacity-75">{{ event.timestamp | date:'shortTime' }}</small></div>
-                <button class="btn btn-sm text-secondary p-0" (click)="startEdit(event)"><i class="bi bi-pencil-square"></i></button>
+
+            <!-- Technical Debug Panel (Hidden by default) -->
+            <div *ngIf="showDebug" class="mt-3 p-3 debug-panel animate-fade-in border border-light border-opacity-10">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-primary fw-bold">RAW DATA</span>
+                <span class="text-muted">{{ event.userId }}</span>
               </div>
-              <p class="m-0 fw-medium text-white">{{ event.content }}</p>
-              <div class="mt-2 d-flex flex-wrap gap-2">
-                <small *ngFor="let entry of event.payload | keyvalue" class="text-white bg-dark px-2 py-1 rounded border border-light border-opacity-10" style="background: rgba(255,255,255,0.05) !important;">
-                  <span class="text-secondary">{{ entry.key }}:</span> {{ entry.value }}
-                </small>
-              </div>
+              <pre class="m-0 text-secondary" style="white-space: pre-wrap;">{{ event.payload | json }}</pre>
             </div>
           </div>
-          <!-- Edit mode (unchanged) -->
-          <div *ngIf="editingEvent?.timestamp === event.timestamp" class="edit-mode">
+
+          <!-- Edit Mode -->
+          <div *ngIf="editingEvent?.timestamp === event.timestamp" class="p-2">
             <div class="row g-3">
-              <div class="col-12"><label class="form-label small text-secondary fw-bold">DESCRIPTION</label><input type="text" class="form-control" [(ngModel)]="editingEvent!.content"></div>
-              <div class="col-md-6" *ngIf="event.type === 'FINANCE'"><label class="form-label small text-secondary fw-bold">AMOUNT (€)</label><input type="text" class="form-control" [(ngModel)]="editingEvent!.payload.amount"></div>
-              <div class="col-12 d-flex justify-content-end gap-2 mt-4"><button class="btn btn-sm btn-outline-secondary px-3" (click)="cancelEdit()">Cancel</button><button class="btn btn-sm btn-primary-fintech px-4" (click)="saveEdit()">Save</button></div>
+              <div class="col-12">
+                <label class="form-label small text-secondary fw-bold">DESCRIPTION</label>
+                <input type="text" class="form-control" [(ngModel)]="editingEvent!.content">
+              </div>
+              <div class="col-md-6" *ngIf="event.type === 'FINANCE'">
+                <label class="form-label small text-secondary fw-bold">AMOUNT (€)</label>
+                <input type="text" class="form-control" [(ngModel)]="editingEvent!.payload.amount">
+              </div>
+              <div class="col-12 d-flex justify-content-end gap-2 mt-4">
+                <button class="btn btn-sm btn-outline-secondary" (click)="cancelEdit()">Cancel</button>
+                <button class="btn btn-sm btn-primary-fintech px-4" (click)="saveEdit()">Update</button>
+              </div>
             </div>
           </div>
         </div>
@@ -111,6 +152,7 @@
   </div>
 </main>
 
+<!-- Fixed Bottom Input -->
 <div class="fixed-bottom p-3 bg-dark bg-opacity-25" style="backdrop-filter: blur(15px); border-top: 1px solid var(--border-color);">
   <div class="container">
     <div class="row justify-content-center">
@@ -118,7 +160,7 @@
         <div class="fintech-card p-1 shadow-lg" [ngStyle]="{'border': speechService.isListening() ? '2px solid var(--accent)' : '1px solid rgba(99, 102, 241, 0.2)'}">
           <div class="input-group">
             <button class="btn border-0 px-3" [ngClass]="speechService.isListening() ? 'text-accent pulse-mic' : 'text-secondary'" (click)="toggleListening()"><i class="bi" [ngClass]="speechService.isListening() ? 'bi-mic-fill' : 'bi-mic'"></i></button>
-            <input type="text" class="form-control border-0 bg-transparent py-2" [placeholder]="speechService.isListening() ? 'Listening...' : 'What happened? Or ask me anything!'" [(ngModel)]="magicText" (keyup.enter)="processMagic()" [disabled]="loading">
+            <input type="text" class="form-control border-0 bg-transparent py-2" [placeholder]="speechService.isListening() ? 'Listening...' : 'Record an event or ask a question...'" [(ngModel)]="magicText" (keyup.enter)="processMagic()" [disabled]="loading">
             <button class="btn btn-primary-fintech px-4" type="button" (click)="processMagic()" [disabled]="loading || !magicText">
               <span *ngIf="!loading"><i class="bi bi-send-fill"></i></span>
               <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>

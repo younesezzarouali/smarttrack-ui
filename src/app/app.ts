@@ -116,7 +116,7 @@ export class AppComponent implements OnInit, OnDestroy {
             this.pendingUpdates = response.habitUpdates || [];
           }
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Magic failed', err);
           alert('AI processing failed.');
         }
@@ -134,7 +134,10 @@ export class AppComponent implements OnInit, OnDestroy {
           this.pendingUpdates = null;
           this.showUndo(eventsToSave);
         }))
-        .subscribe();
+        .subscribe({
+          next: () => this.lifeService.sync(),
+          error: (err: any) => console.error('Save failed', err)
+        });
     }
   }
 
@@ -167,7 +170,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.editingEvent) {
       this.lifeService.updateEvent(this.editingEvent).subscribe({
         next: () => this.editingEvent = null,
-        error: (err) => console.error('Update failed', err)
+        error: (err: any) => console.error('Update failed', err)
       });
     }
   }
@@ -176,7 +179,9 @@ export class AppComponent implements OnInit, OnDestroy {
   
   clearAll() { 
     if (confirm('Clear all data?')) {
-      this.lifeService.clearAll().subscribe();
+      this.lifeService.clearAll().subscribe({
+        next: () => this.lifeService.sync()
+      });
     }
   }
 

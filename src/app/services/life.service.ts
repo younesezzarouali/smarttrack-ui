@@ -71,6 +71,18 @@ export class LifeService {
     );
   }
 
+  updateEvent(event: LifeEvent): Observable<LifeEvent> {
+    return this.http.put<LifeEvent>(`${this.apiUrl}/events`, event).pipe(
+      tap(() => this.sync())
+    );
+  }
+
+  deleteEvent(timestamp: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/events/${timestamp}`).pipe(
+      tap(() => this.sync())
+    );
+  }
+
   clearAll(): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/events`).pipe(
       tap(() => {

@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LifeService, LifeEvent } from './services/life.service';
 import { SpeechService } from './services/speech.service';
 import { HabitService } from './services/habit.service';
 import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary';
+import { CreateHabitModalComponent } from './components/create-habit-modal/create-habit-modal.ts';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -18,6 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public lifeService = inject(LifeService);
   public speechService = inject(SpeechService);
   public habitService = inject(HabitService);
+  private modalService = inject(NgbModal);
 
   magicText: string = '';
   loading: boolean = false;
@@ -61,6 +64,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.lifeService.sync();
+    this.habitService.fetchHabits(); // Load habits on init
     this.startPlaceholderRotation();
   }
 
@@ -82,6 +86,18 @@ export class AppComponent implements OnInit, OnDestroy {
     }) || this.placeholders[0];
     const randomTip = group.tips[Math.floor(Math.random() * group.tips.length)];
     this.placeholderSignal.set(`Ex: "${randomTip}"`);
+  }
+
+  openCreateHabit() {
+    const modalRef = this.modalService.open(CreateHabitModalComponent, { 
+      centered: true, 
+      backdropClass: 'bg-black bg-opacity-50 backdrop-blur' 
+    });
+    modalRef.result.then((result) => {
+      if (result === 'success') {
+        // Toast logic could go here
+      }
+    }, () => {});
   }
 
   toggleListening() {
@@ -135,7 +151,10 @@ export class AppComponent implements OnInit, OnDestroy {
           this.showUndo(eventsToSave);
         }))
         .subscribe({
-          next: () => this.lifeService.sync(),
+          next: () => {
+            this.lifeService.sync();
+            this.habitService.fetchHabits(); // Refresh habits too
+          },
           error: (err: any) => console.error('Save failed', err)
         });
     }

@@ -169,7 +169,9 @@
         <div class="fintech-card p-1 shadow-lg" [ngStyle]="{'border': speechService.isListening() ? '2px solid var(--accent)' : '1px solid rgba(99, 102, 241, 0.2)'}">
           <div class="input-group">
             <button class="btn border-0 px-3" [ngClass]="speechService.isListening() ? 'text-accent pulse-mic' : 'text-secondary'" (click)="toggleListening()"><i class="bi" [ngClass]="speechService.isListening() ? 'bi-mic-fill' : 'bi-mic'"></i></button>
-            <input type="text" class="form-control border-0 bg-transparent py-2" [placeholder]="speechService.isListening() ? 'Listening...' : 'Record an event or ask a question...'" [(ngModel)]="magicText" (keyup.enter)="processMagic()" [disabled]="loading">
+            <input type="text" class="form-control border-0 bg-transparent py-2" 
+                   [placeholder]="speechService.isListening() ? 'Listening...' : placeholderSignal()" 
+                   [(ngModel)]="magicText" (keyup.enter)="processMagic()" [disabled]="loading">
             <button class="btn btn-primary-fintech px-4" type="button" (click)="processMagic()" [disabled]="loading || !magicText">
               <span *ngIf="!loading"><i class="bi bi-send-fill"></i></span>
               <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>

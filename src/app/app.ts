@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LifeService, LifeEvent } from './services/life.service';
@@ -13,7 +13,7 @@ import { finalize } from 'rxjs';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   private lifeService = inject(LifeService);
   public speechService = inject(SpeechService);
 
@@ -24,6 +24,16 @@ export class AppComponent implements OnInit {
   
   pendingEvents: LifeEvent[] | null = null;
   aiAnswer: string | null = null;
+
+  // Dynamic Placeholder Logic
+  placeholderSignal = signal<string>('What happened?');
+  private placeholderInterval: any;
+  private placeholders = [
+    { hour: [5, 11], tips: ["How did you sleep?", "Coffee 2.50€", "Morning run 5km", "Daily goals..."] },
+    { hour: [11, 15], tips: ["Lunch with team 15€", "Worked 2h on project X", "Feeling productive", "Bought a book 20€"] },
+    { hour: [15, 20], tips: ["Gym session 1h", "Grocery shopping 40€", "Finished report", "Call parents"] },
+    { hour: [20, 5], tips: ["Dinner 25€", "Read 20 pages", "Weight: 75kg", "Evening walk 30min"] }
+  ];
 
   readonly events = this.lifeService.events;
   readonly briefing = this.lifeService.briefing;
@@ -47,6 +57,27 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.lifeService.fetchAll();
     this.lifeService.fetchBriefing();
+    this.startPlaceholderRotation();
+  }
+
+  ngOnDestroy() {
+    if (this.placeholderInterval) clearInterval(this.placeholderInterval);
+  }
+
+  private startPlaceholderRotation() {
+    this.updatePlaceholder();
+    this.placeholderInterval = setInterval(() => this.updatePlaceholder(), 5000);
+  }
+
+  private updatePlaceholder() {
+    const hour = new Date().getHours();
+    const group = this.placeholders.find(p => {
+      const [start, end] = p.hour;
+      return start < end ? (hour >= start && hour < end) : (hour >= start || hour < end);
+    }) || this.placeholders[0];
+
+    const randomTip = group.tips[Math.floor(Math.random() * group.tips.length)];
+    this.placeholderSignal.set(`Ex: "${randomTip}"`);
   }
 
   toggleListening() {
@@ -74,7 +105,7 @@ export class AppComponent implements OnInit {
         next: (response) => {
           this.magicText = '';
           if (response.intent === 'ANALYSE') {
-            this.aiAnswer = response.answer || 'I parsed your data but have no specific answer.';
+            this.aiAnswer = response.answer || 'Analyzed.';
           } else {
             this.pendingEvents = response.events || [];
           }
@@ -98,18 +129,10 @@ export class AppComponent implements OnInit {
     }
   }
 
-  cancelPending() {
-    this.pendingEvents = null;
-  }
-
-  dismissAnswer() {
-    this.aiAnswer = null;
-  }
-
-  startEdit(event: LifeEvent) {
-    this.editingEvent = { ...event, payload: { ...event.payload } };
-  }
-
+  cancelPending() { this.pendingEvents = null; }
+  dismissAnswer() { this.aiAnswer = null; }
+  startEdit(event: LifeEvent) { this.editingEvent = { ...event, payload: { ...event.payload } }; }
+  
   saveEdit() {
     if (this.editingEvent) {
       this.lifeService.updateEvent(this.editingEvent).subscribe({
@@ -119,15 +142,8 @@ export class AppComponent implements OnInit {
     }
   }
 
-  cancelEdit() {
-    this.editingEvent = null;
-  }
-
-  clearAll() {
-    if (confirm('Are you sure you want to clear all data?')) {
-      this.lifeService.clearAll().subscribe();
-    }
-  }
+  cancelEdit() { this.editingEvent = null; }
+  clearAll() { if (confirm('Clear all data?')) this.lifeService.clearAll().subscribe(); }
 
   private getRelativeDateLabel(timestamp: number): string {
     const date = new Date(timestamp);

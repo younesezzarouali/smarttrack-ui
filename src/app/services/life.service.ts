@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../environments/environment';
@@ -33,7 +33,7 @@ export class LifeService {
 
   interact(text: string): Observable<MagicResponse> {
     return this.http.post<MagicResponse>(`${this.apiUrl}/magic`, { text }).pipe(
-      tap(() => this.fetchBriefing()) // Refresh briefing after input
+      tap(() => this.fetchBriefing())
     );
   }
 
@@ -56,7 +56,10 @@ export class LifeService {
   }
 
   fetchBriefing(): void {
-    this.http.get<{briefing: string}>(`${this.apiUrl}/briefing`).subscribe({
+    const offset = new Date().getTimezoneOffset();
+    const params = new HttpParams().set('timezoneOffset', offset.toString());
+    
+    this.http.get<{briefing: string}>(`${this.apiUrl}/briefing`, { params }).subscribe({
       next: (res) => this.briefing.set(res.briefing),
       error: (err) => console.error('Briefing failed', err)
     });

@@ -26,6 +26,8 @@ export class AppComponent implements OnInit {
   aiAnswer: string | null = null;
 
   readonly events = this.lifeService.events;
+  readonly briefing = this.lifeService.briefing;
+
   readonly groupedEvents = computed(() => {
     const groups: { date: string, items: LifeEvent[] }[] = [];
     const events = this.lifeService.events();
@@ -44,6 +46,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.lifeService.fetchAll();
+    this.lifeService.fetchBriefing();
   }
 
   toggleListening() {

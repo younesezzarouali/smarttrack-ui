@@ -24,6 +24,7 @@ export class LifeService {
   private apiUrl = `${environment.apiUrl}/life`;
   
   private eventsSignal = signal<LifeEvent[]>([]);
+  readonly briefing = signal<string>('');
 
   readonly events = computed(() => [...this.eventsSignal()].sort((a, b) => b.timestamp - a.timestamp));
   readonly financeEvents = computed(() => this.eventsSignal().filter(e => e.type === 'FINANCE'));
@@ -31,19 +32,34 @@ export class LifeService {
   constructor(private http: HttpClient) {}
 
   interact(text: string): Observable<MagicResponse> {
-    return this.http.post<MagicResponse>(`${this.apiUrl}/magic`, { text });
+    return this.http.post<MagicResponse>(`${this.apiUrl}/magic`, { text }).pipe(
+      tap(() => this.fetchBriefing()) // Refresh briefing after input
+    );
   }
 
   saveEvents(events: LifeEvent[]): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/events/batch`, events).pipe(
-      tap(() => this.fetchAll())
+      tap(() => {
+        this.fetchAll();
+        this.fetchBriefing();
+      })
     );
   }
 
   updateEvent(event: LifeEvent): Observable<LifeEvent> {
     return this.http.put<LifeEvent>(`${this.apiUrl}/events`, event).pipe(
-      tap(() => this.fetchAll())
+      tap(() => {
+        this.fetchAll();
+        this.fetchBriefing();
+      })
     );
+  }
+
+  fetchBriefing(): void {
+    this.http.get<{briefing: string}>(`${this.apiUrl}/briefing`).subscribe({
+      next: (res) => this.briefing.set(res.briefing),
+      error: (err) => console.error('Briefing failed', err)
+    });
   }
 
   fetchAll(): void {
@@ -55,7 +71,10 @@ export class LifeService {
 
   clearAll(): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/events`).pipe(
-      tap(() => this.eventsSignal.set([]))
+      tap(() => {
+        this.eventsSignal.set([]);
+        this.briefing.set('');
+      })
     );
   }
 }

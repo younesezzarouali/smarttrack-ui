@@ -11,7 +11,7 @@ import { LifeService } from '../../services/life.service';
 export class ExpenseSummaryComponent {
   private lifeService = inject(LifeService);
   
-  // Calcul automatique du total
+  // FINANCE Metrics
   readonly totalSpent = computed(() => {
     return this.lifeService.financeEvents().reduce((acc, e) => {
       const amt = parseFloat(e.payload.amount);
@@ -19,7 +19,6 @@ export class ExpenseSummaryComponent {
     }, 0);
   });
 
-  // Calcul automatique de la répartition par catégorie
   readonly categoriesBreakdown = computed(() => {
     const breakdown: Record<string, number> = {};
     this.lifeService.financeEvents().forEach(e => {
@@ -32,10 +31,21 @@ export class ExpenseSummaryComponent {
     return breakdown;
   });
 
-  // Signal pour la liste des noms de catégories
+  // WORK Metrics (Total Duration in hours)
+  readonly workHours = computed(() => {
+    const totalMinutes = this.lifeService.events()
+      .filter(e => e.type === 'WORK')
+      .reduce((acc, e) => acc + (parseInt(e.payload.duration_min) || 0), 0);
+    return (totalMinutes / 60).toFixed(1);
+  });
+
+  // HEALTH Metrics (Count activities)
+  readonly healthActivities = computed(() => {
+    return this.lifeService.events().filter(e => e.type === 'HEALTH').length;
+  });
+
   readonly categoryNames = computed(() => Object.keys(this.categoriesBreakdown()));
 
-  // Calcul du pourcentage pour les barres de progression
   getPercentage(amount: number): number {
     const total = this.totalSpent();
     return total > 0 ? (amount / total) * 100 : 0;

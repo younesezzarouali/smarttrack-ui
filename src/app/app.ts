@@ -37,12 +37,9 @@ export class AppComponent implements OnInit {
           this.magicText = text;
         },
         () => {
-          // Small timeout to let UI stabilize before auto-processing
-          setTimeout(() => {
-            if (this.magicText.trim()) {
-              this.processMagic();
-            }
-          }, 500);
+          // On end, we DO NOT auto-process. 
+          // We let the user review and click send manually.
+          console.log('Voice capture ended. Waiting for user to send manually.');
         }
       );
     }

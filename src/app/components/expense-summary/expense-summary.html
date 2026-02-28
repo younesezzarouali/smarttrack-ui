@@ -1,46 +1,38 @@
-<div class="row g-4 section-spacer row-kpi">
-  <!-- Total Spent -->
-  <div class="col-lg-4">
-    <div class="p-2">
-      <div class="label-secondary mb-2">Spent</div>
-      <div class="display-kpi text-white">
-        {{ totalSpent() | number:'1.0-0' }}<span class="text-secondary opacity-50" style="font-size: 1.2rem; margin-left: 4px;">€</span>
-      </div>
+<div class="row g-3 section-spacer">
+  <!-- KPI Metrics -->
+  <div class="col-4">
+    <div class="apple-card h-100 d-flex flex-column justify-content-center text-center">
+      <div class="kpi-label">Spent</div>
+      <div class="kpi-value text-white">{{ totalSpent() | number:'1.0-0' }}€</div>
     </div>
   </div>
 
-  <!-- Work Focus -->
-  <div class="col-lg-4">
-    <div class="p-2">
-      <div class="label-secondary mb-2">Focus</div>
-      <div class="display-kpi text-white">
-        {{ workHoursStr() }}<span class="text-secondary opacity-50" style="font-size: 1.2rem; margin-left: 4px;">h</span>
-      </div>
+  <div class="col-4">
+    <div class="apple-card h-100 d-flex flex-column justify-content-center text-center">
+      <div class="kpi-label">Work</div>
+      <div class="kpi-value text-white">{{ workHoursStr() }}h</div>
     </div>
   </div>
 
-  <!-- Vitality -->
-  <div class="col-lg-4">
-    <div class="p-2">
-      <div class="label-secondary mb-2">Vitality</div>
-      <div class="display-kpi text-white">
-        {{ vitalityScore() }}<span class="text-secondary opacity-50" style="font-size: 1.2rem; margin-left: 4px;">%</span>
-      </div>
+  <div class="col-4">
+    <div class="apple-card h-100 d-flex flex-column justify-content-center text-center">
+      <div class="kpi-label">Vitality</div>
+      <div class="kpi-value text-white">{{ vitalityScore() }}%</div>
     </div>
   </div>
 </div>
 
-<!-- Weekly Focus - Refined -->
-<div class="row g-4 section-spacer">
+<!-- Weekly Focus -->
+<div class="row section-spacer">
   <div class="col-12">
-    <div class="fintech-card p-4 shadow-sm" style="background: #1c1c1e;">
-      <h6 class="label-secondary mb-4">Weekly Objectives</h6>
+    <div class="apple-card">
+      <h6 class="kpi-label mb-4">Weekly Objectives</h6>
       
-      <div class="row g-5">
+      <div class="row g-4">
         <div class="col-md-4">
-          <div class="d-flex justify-content-between mb-3 align-items-end">
-            <span class="small text-secondary fw-medium">Budget</span>
-            <span class="small text-white fw-bold">{{ totalSpent() | number:'1.0-0' }} / {{ GOALS.budget }}€</span>
+          <div class="d-flex justify-content-between mb-2">
+            <span class="small text-secondary">Budget</span>
+            <span class="small text-white opacity-75">{{ totalSpent() | number:'1.0-0' }} / {{ GOALS.budget }}€</span>
           </div>
           <div class="progress">
             <div class="progress-bar" [style.width.%]="budgetProgress()" 
@@ -49,22 +41,22 @@
         </div>
 
         <div class="col-md-4">
-          <div class="d-flex justify-content-between mb-3 align-items-end">
-            <span class="small text-secondary fw-medium">Health</span>
-            <span class="small text-white fw-bold">{{ healthActivities() }} sessions</span>
+          <div class="d-flex justify-content-between mb-2">
+            <span class="small text-secondary">Health</span>
+            <span class="small text-white opacity-75">{{ healthActivities() }} acts</span>
           </div>
           <div class="progress">
-            <div class="progress-bar bg-white" [style.width.%]="sportProgress()"></div>
+            <div class="progress-bar" [style.width.%]="sportProgress()"></div>
           </div>
         </div>
 
         <div class="col-md-4">
-          <div class="d-flex justify-content-between mb-3 align-items-end">
-            <span class="small text-secondary fw-medium">Productivity</span>
-            <span class="small text-white fw-bold">{{ workHoursStr() }} / {{ GOALS.work }}h</span>
+          <div class="d-flex justify-content-between mb-2">
+            <span class="small text-secondary">Productivity</span>
+            <span class="small text-white opacity-75">{{ workHoursStr() }} / {{ GOALS.work }}h</span>
           </div>
           <div class="progress">
-            <div class="progress-bar bg-white" [style.width.%]="workProgress()"></div>
+            <div class="progress-bar" [style.width.%]="workProgress()"></div>
           </div>
         </div>
       </div>

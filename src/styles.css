@@ -1,16 +1,23 @@
 :root {
-  /* Apple Signature Palette - Precision & Warmth */
-  --app-bg: #000000;
-  --surface: #1c1c1e;
-  --surface-hover: #2c2c2e;
-  --text-main: #ffffff;
-  --text-secondary: #8e8e93; /* Apple standard gray */
-  --text-tertiary: #48484a;
-  --ios-blue: #007aff;
-  --ios-red: #ff453a;
-  --ios-green: #32d74b;
-  --border-color: rgba(255, 255, 255, 0.06);
-  --font-sans: 'Inter', -apple-system, sans-serif;
+  /* Strict Apple-Style Palette */
+  --app-bg: #0B0B0F;
+  --surface: #16171C;
+  --surface-elevated: #1C1E24;
+  
+  --text-main: #FFFFFF;
+  --text-secondary: #8E8E93;
+  --text-tertiary: #48484A;
+  
+  --ios-blue: #007AFF;
+  --ios-red: #FF453A;
+  
+  /* Precision Geometry */
+  --radius-card: 16px;
+  --radius-input: 24px;
+  --card-padding: 20px;
+  --section-gap: 24px;
+  
+  --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
 }
 
 body {
@@ -18,133 +25,113 @@ body {
   color: var(--text-main);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+/* Hierarchy & Spacing */
+.main-content {
+  padding-top: 100px;
+  display: flex;
+  flex-column: column;
+  gap: var(--section-gap);
+}
+
+.section-spacer {
+  margin-bottom: var(--section-gap) !important;
+}
+
+/* Minimalist Cards */
+.apple-card {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  padding: var(--card-padding);
+  border: none;
+}
+
+.apple-card-elevated {
+  background: var(--surface-elevated);
+  border-radius: var(--radius-card);
+  padding: var(--card-padding);
+  border: none;
+}
+
+/* History Items */
+.event-row {
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.event-row:last-child {
+  border-bottom: none;
+}
+
+/* KPI Typography */
+.kpi-value {
+  font-size: 2.2rem;
+  font-weight: 600;
   letter-spacing: -0.02em;
 }
 
-/* Luxury Spacing */
-.section-spacer {
-  margin-bottom: 4rem !important;
-}
-
-/* Apple Pro Cards */
-.fintech-card {
-  background: var(--surface);
-  border-radius: 24px;
-  border: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.event-card {
-  background: transparent !important;
-  border-bottom: 1px solid var(--border-color) !important;
-  border-radius: 0 !important;
-}
-
-.event-card:hover {
-  background: rgba(255, 255, 255, 0.03) !important;
-}
-
-.event-card:last-child {
-  border-bottom: none !important;
-}
-
-/* Typography Mastery */
-.display-kpi {
-  font-size: 3rem;
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1;
-}
-
-.label-secondary {
+.kpi-label {
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  margin-bottom: 4px;
 }
 
-/* The Briefing - Signature Element */
-.briefing-signature {
-  background: transparent;
-  border: none;
-  padding: 0;
-}
-
-.briefing-text {
-  font-size: 1.4rem;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-main);
-  letter-spacing: -0.01em;
-}
-
-/* Minimalist Pill Input */
-.pill-input-container {
-  background: rgba(30, 30, 32, 0.9) !important;
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
-  border-radius: 100px;
-  padding: 4px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-.form-control::placeholder {
-  color: #636366 !important;
-  opacity: 1;
+/* Signature Pill Input */
+.pill-input-wrapper {
+  background: rgba(22, 23, 28, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius-input);
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .form-control {
   background: transparent;
   border: none;
-  color: #ffffff !important; /* Force pure white for input text */
-  padding: 12px 20px;
-  font-weight: 400;
+  color: white !important;
+  font-size: 1rem;
 }
 
-.form-control:focus {
-  box-shadow: none;
-  background: transparent;
+.form-control::placeholder {
+  color: var(--text-tertiary);
 }
 
-.btn-send-apple {
+.btn-send-minimal {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--text-main);
+  background: white;
   color: black;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
-  transition: transform 0.2s ease;
-}
-
-.btn-send-apple:hover {
-  transform: scale(1.1);
 }
 
 /* Progress Bars */
 .progress {
+  height: 2px !important;
   background: rgba(255, 255, 255, 0.05);
-  height: 3px !important;
-  border-radius: 10px;
 }
 
 .progress-bar {
-  border-radius: 10px;
+  background-color: white;
 }
 
-/* Responsive Fixes */
-@media (max-width: 768px) {
-  .display-kpi {
-    font-size: 2rem;
-  }
-  .row-kpi {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    text-align: center;
-  }
+/* Animations */
+.animate-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

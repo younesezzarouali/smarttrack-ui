@@ -2,7 +2,7 @@
   /* Strict 3-Layer Background System */
   --bg-base: #0B0B0F;
   --bg-card: #16171C;
-  --bg-elevated: #1C1E24;
+  --bg-elevated: #24262D; /* Lighter for visibility */
   --bg-input: #1A1B20;
   
   /* Typography */
@@ -44,14 +44,15 @@ body {
   background-color: var(--bg-elevated);
   border-radius: var(--radius-card);
   padding: var(--card-padding);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Visible border for hierarchy */
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
 .section-gap {
   margin-bottom: var(--spacing-main) !important;
 }
 
-/* Unified Typography */
+/* KPI Typography */
 .kpi-title {
   font-size: 0.7rem;
   font-weight: 600;
@@ -67,7 +68,7 @@ body {
   letter-spacing: -0.02em;
 }
 
-/* Event List */
+/* Event Rows */
 .event-row {
   display: flex;
   align-items: center;
@@ -79,7 +80,7 @@ body {
   border-bottom: none;
 }
 
-/* Pill Input */
+/* Signature Pill Input */
 .pill-container {
   background-color: var(--bg-input) !important;
   height: 52px;
@@ -113,18 +114,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.2s, transform 0.2s ease; /* Smooth hover and active */
+  transition: transform 0.2s ease;
 }
 
 .btn-circle:active:not(:disabled) {
-  transform: scale(0.92); /* Soft press animation */
+  transform: scale(0.92);
 }
 
-.btn-circle:disabled {
-  opacity: 0.2;
-}
-
-/* Progress Bars (Refined for State Indication) */
+/* Progress Bars */
 .progress {
   height: 6px !important;
   background: rgba(255, 255, 255, 0.05) !important;
@@ -135,58 +132,29 @@ body {
 .progress-bar {
   border-radius: 6px;
   background-color: white !important;
-  transition: width 300ms ease; /* Smooth state change animation */
+  transition: width 300ms ease;
 }
 
-/* Typography Opacity Hierarchy */
-.kpi-label-refined {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: white;
-  opacity: 0.6;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.kpi-value-refined {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: white;
-}
-
-.percentage-dim {
-  font-size: 0.7rem;
-  opacity: 0.4;
-  margin-left: 4px;
-}
-
-/* Apple-Style Micro-interactions */
+/* Animation */
 .apple-entry {
   animation: apple-fade-up 400ms cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 @keyframes apple-fade-up {
-  from { 
-    opacity: 0; 
-    transform: translateY(8px); 
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Dropdown Menu Styles */
+/* Settings Menu */
 .settings-menu {
-  background: var(--bg-elevated);
+  background: #1C1E24;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .settings-item {
-  color: var(--text-main);
+  color: white;
   padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;

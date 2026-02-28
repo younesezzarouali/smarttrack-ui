@@ -55,6 +55,15 @@ export class LifeService {
     );
   }
 
+  deleteEvent(timestamp: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/events/${timestamp}`).pipe(
+      tap(() => {
+        this.fetchAll();
+        this.fetchBriefing();
+      })
+    );
+  }
+
   fetchBriefing(): void {
     const offset = new Date().getTimezoneOffset();
     const params = new HttpParams().set('timezoneOffset', offset.toString());

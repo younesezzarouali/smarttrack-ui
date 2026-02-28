@@ -25,6 +25,11 @@ export class AppComponent implements OnInit, OnDestroy {
   pendingEvents: LifeEvent[] | null = null;
   aiAnswer: string | null = null;
 
+  // Undo System
+  recentlySavedEvents: LifeEvent[] = [];
+  undoVisible = signal<boolean>(false);
+  private undoTimer: any;
+
   // Dynamic Placeholder Logic
   placeholderSignal = signal<string>('What happened?');
   private placeholderInterval: any;
@@ -62,6 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.placeholderInterval) clearInterval(this.placeholderInterval);
+    if (this.undoTimer) clearTimeout(this.undoTimer);
   }
 
   private startPlaceholderRotation() {
@@ -120,12 +126,31 @@ export class AppComponent implements OnInit, OnDestroy {
   confirmPending() {
     if (this.pendingEvents) {
       this.loading = true;
-      this.lifeService.saveEvents(this.pendingEvents)
+      const eventsToSave = [...this.pendingEvents];
+      this.lifeService.saveEvents(eventsToSave)
         .pipe(finalize(() => {
           this.loading = false;
           this.pendingEvents = null;
+          this.showUndo(eventsToSave);
         }))
         .subscribe();
+    }
+  }
+
+  private showUndo(events: LifeEvent[]) {
+    this.recentlySavedEvents = events;
+    this.undoVisible.set(true);
+    if (this.undoTimer) clearTimeout(this.undoTimer);
+    this.undoTimer = setTimeout(() => this.undoVisible.set(false), 5000);
+  }
+
+  undoSave() {
+    if (this.recentlySavedEvents.length > 0) {
+      this.recentlySavedEvents.forEach(e => {
+        this.lifeService.deleteEvent(e.timestamp).subscribe();
+      });
+      this.recentlySavedEvents = [];
+      this.undoVisible.set(false);
     }
   }
 

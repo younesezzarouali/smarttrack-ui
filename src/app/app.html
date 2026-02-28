@@ -177,6 +177,22 @@
   </div>
 </main>
 
+<!-- Undo Notification Bar -->
+<div *ngIf="undoVisible()" class="fixed-bottom mb-5 pb-5 px-3 animate-fade-in" style="bottom: 80px; z-index: 1050;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="fintech-card p-3 d-flex justify-content-between align-items-center shadow-lg" style="background: var(--primary); border: none;">
+          <span class="text-white fw-medium">Entry saved successfully.</span>
+          <button class="btn btn-sm btn-light fw-bold px-3" (click)="undoSave()">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> UNDO
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Fixed Bottom Input -->
 <div class="fixed-bottom p-3 bg-dark bg-opacity-25" style="backdrop-filter: blur(15px); border-top: 1px solid var(--border-color);">
   <div class="container">

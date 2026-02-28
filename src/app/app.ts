@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LifeService, LifeEvent } from './services/life.service';
 import { SpeechService } from './services/speech.service';
+import { HabitService } from './services/habit.service';
 import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary';
 import { finalize } from 'rxjs';
 
@@ -14,8 +15,9 @@ import { finalize } from 'rxjs';
   styleUrl: './app.css'
 })
 export class AppComponent implements OnInit, OnDestroy {
-  private lifeService = inject(LifeService);
+  public lifeService = inject(LifeService);
   public speechService = inject(SpeechService);
+  public habitService = inject(HabitService);
 
   magicText: string = '';
   loading: boolean = false;
@@ -23,6 +25,7 @@ export class AppComponent implements OnInit, OnDestroy {
   showDebug: boolean = false;
   
   pendingEvents: LifeEvent[] | null = null;
+  pendingUpdates: any[] | null = null;
   aiAnswer: string | null = null;
 
   // Undo System
@@ -31,7 +34,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private undoTimer: any;
 
   // Dynamic Placeholder Logic
-  placeholderSignal = signal<string>('What happened?');
+  placeholderSignal = signal<string>('How was your day?');
   private placeholderInterval: any;
   private placeholders = [
     { hour: [5, 11], tips: ["How did you sleep?", "Coffee 2.50€", "Morning run 5km", "Daily goals..."] },
@@ -41,12 +44,9 @@ export class AppComponent implements OnInit, OnDestroy {
   ];
 
   readonly events = this.lifeService.events;
-  readonly briefing = this.lifeService.briefing;
-
   readonly groupedEvents = computed(() => {
     const groups: { date: string, items: LifeEvent[] }[] = [];
     const events = this.lifeService.events();
-    
     events.forEach(event => {
       const dateLabel = this.getRelativeDateLabel(event.timestamp);
       let group = groups.find(g => g.date === dateLabel);
@@ -80,7 +80,6 @@ export class AppComponent implements OnInit, OnDestroy {
       const [start, end] = p.hour;
       return start < end ? (hour >= start && hour < end) : (hour >= start || hour < end);
     }) || this.placeholders[0];
-
     const randomTip = group.tips[Math.floor(Math.random() * group.tips.length)];
     this.placeholderSignal.set(`Ex: "${randomTip}"`);
   }
@@ -103,6 +102,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.aiAnswer = null;
     this.pendingEvents = null;
+    this.pendingUpdates = null;
 
     this.lifeService.interact(textInput)
       .pipe(finalize(() => this.loading = false))
@@ -113,6 +113,7 @@ export class AppComponent implements OnInit, OnDestroy {
             this.aiAnswer = response.answer || 'Analyzed.';
           } else {
             this.pendingEvents = response.events || [];
+            this.pendingUpdates = response.habitUpdates || [];
           }
         },
         error: (err) => {
@@ -126,19 +127,14 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.pendingEvents) {
       this.loading = true;
       const eventsToSave = [...this.pendingEvents];
-      this.lifeService.saveEvents(eventsToSave)
+      this.lifeService.saveBatch({ events: eventsToSave })
         .pipe(finalize(() => {
           this.loading = false;
           this.pendingEvents = null;
+          this.pendingUpdates = null;
           this.showUndo(eventsToSave);
         }))
-        .subscribe({
-          next: () => {
-            // Force a refresh after saving to see the updates in dashboard and timeline
-            this.lifeService.sync();
-          },
-          error: (err) => console.error('Save failed', err)
-        });
+        .subscribe();
     }
   }
 
@@ -159,7 +155,11 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  cancelPending() { this.pendingEvents = null; }
+  cancelPending() { 
+    this.pendingEvents = null;
+    this.pendingUpdates = null;
+  }
+
   dismissAnswer() { this.aiAnswer = null; }
   startEdit(event: LifeEvent) { this.editingEvent = { ...event, payload: { ...event.payload } }; }
   
@@ -176,9 +176,7 @@ export class AppComponent implements OnInit, OnDestroy {
   
   clearAll() { 
     if (confirm('Clear all data?')) {
-      this.lifeService.clearAll().subscribe({
-        next: () => this.lifeService.sync()
-      });
+      this.lifeService.clearAll().subscribe();
     }
   }
 

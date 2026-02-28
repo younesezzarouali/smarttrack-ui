@@ -1,4 +1,5 @@
 :root {
+  /* Strict Apple-Style Minimalism */
   --bg-base: #0B0B0F;
   --bg-card: #16171C;
   --bg-elevated: #1C1E24;
@@ -8,12 +9,13 @@
   --text-secondary: #8E8E93;
   --text-tertiary: #48484A;
   
-  --accent: #FFFFFF;
-  --system-red: #FF453A;
+  /* Primary Accent: Teal/Muted Blue */
+  --accent: #5EEAD4; /* Muted Teal */
   
+  /* Precision Geometry */
   --radius-card: 16px;
-  --radius-input: 26px;
-  --spacing-main: 24px;
+  --radius-input: 24px;
+  --spacing-main: 32px;
   --card-padding: 20px;
   
   --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
@@ -25,73 +27,98 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
-/* Apple "Dynamic Island" Style for Confirmation */
-.review-island {
-  background: #000000;
-  border-radius: 32px;
-  padding: 16px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-  max-width: 450px;
-  margin: 0 auto;
+/* Segmented Control */
+.segmented-control {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 4px;
+  display: inline-flex;
+  border: 1px solid rgba(255,255,255,0.03);
 }
 
-.review-item {
-  color: white;
-  font-weight: 500;
-  font-size: 1rem;
-}
-
-.btn-confirm-pill {
-  background: white;
-  color: black;
-  border-radius: 20px;
-  padding: 6px 20px;
-  font-weight: 600;
-  font-size: 0.85rem;
+.segment-btn {
+  padding: 6px 24px;
+  border-radius: 8px;
   border: none;
-}
-
-.btn-discard-link {
-  color: #8E8E93;
-  font-size: 0.85rem;
-  text-decoration: none;
-  font-weight: 500;
   background: transparent;
-  border: none;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
 }
 
-/* Rest of the Design System */
-.apple-card { background-color: var(--bg-card); border-radius: var(--radius-card); padding: var(--card-padding); border: none; }
-.apple-card-elevated { background-color: var(--bg-elevated); border-radius: var(--radius-card); padding: var(--card-padding); border: none; }
-.section-gap { margin-bottom: var(--spacing-main) !important; }
-.kpi-title { font-size: 0.7rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-.kpi-value { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
-.event-row { display: flex; align-items: center; padding: 16px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.03); }
-.event-row:last-child { border-bottom: none; }
+.segment-btn.active {
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
 
-.pill-container {
-  background-color: var(--bg-input) !important;
+/* Layout */
+.main-layout {
+  padding-top: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-main);
+}
+
+/* Cards */
+.apple-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-card);
+  padding: var(--card-padding);
+}
+
+.apple-card-elevated {
+  background-color: var(--bg-elevated);
+  border-radius: var(--radius-card);
+  padding: 24px; /* Insight/Weekly get more padding */
+}
+
+/* Bottom Input Bar */
+.bottom-pill-bar {
+  background-color: var(--bg-input);
   height: 52px;
   border-radius: var(--radius-input);
-  padding: 0 8px 0 16px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255,255,255,0.03);
   display: flex;
   align-items: center;
+  padding: 0 8px 0 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-.form-control { background: transparent !important; border: none !important; color: white !important; font-size: 1rem; box-shadow: none !important; }
-.form-control::placeholder { color: white !important; opacity: 0.5 !important; }
-.btn-circle { width: 36px; height: 36px; border-radius: 50%; background: white; color: black; border: none; display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease; }
-.btn-circle:active:not(:disabled) { transform: scale(0.92); }
-.progress { height: 6px !important; background: rgba(255, 255, 255, 0.05) !important; border-radius: 6px; overflow: hidden; }
-.progress-bar { border-radius: 6px; background-color: white !important; transition: width 300ms ease; }
-.apple-entry { animation: apple-fade-up 400ms cubic-bezier(0.25, 0.1, 0.25, 1); }
-@keyframes apple-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-.settings-menu { background: #1C1E24; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 8px; }
-.settings-item { color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
-.settings-item:hover { background: rgba(255, 255, 255, 0.05); }
-.settings-item.danger { color: #FF453A; }
+.form-control {
+  background: transparent !important;
+  border: none !important;
+  color: white !important;
+  box-shadow: none !important;
+}
+
+.btn-send-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: white;
+  color: black;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Typography Scale */
+.kpi-value { font-size: 32px; font-weight: 600; letter-spacing: -0.5px; }
+.section-title { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
+.label-dim { font-size: 13px; opacity: 0.6; }
+
+/* Micro-animations */
+.fade-up {
+  animation: apple-rise 300ms ease-out;
+}
+
+@keyframes apple-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

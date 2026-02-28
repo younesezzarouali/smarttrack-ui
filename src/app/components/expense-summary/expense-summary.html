@@ -22,46 +22,43 @@
   </div>
 </div>
 
-<!-- Weekly Focus Card - Redesigned -->
+<!-- Weekly Focus -->
 <div class="row section-gap">
   <div class="col-12">
     <div class="apple-card">
-      <h6 class="kpi-title mb-4">Weekly Objectives</h6>
+      <h6 class="kpi-title mb-4 opacity-50">Weekly Objectives</h6>
       
       <div class="d-flex flex-column gap-3" style="gap: 16px !important;">
-        <!-- Budget Goal -->
+        <!-- Budget -->
         <div>
           <div class="d-flex justify-content-between mb-2">
             <span class="small text-secondary fw-medium">Budget Control</span>
             <span class="small text-white opacity-50">{{ totalSpent() | number:'1.0-0' }} / {{ GOALS.budget }}€</span>
           </div>
-          <div class="progress" style="height: 4px !important; border-radius: 4px;">
-            <div class="progress-bar" 
-                 [style.width.%]="budgetProgress()" 
-                 [style.border-radius]="'4px'"
-                 [style.background-color]="budgetProgress() > 90 ? 'var(--system-red)' : 'white'"></div>
+          <div class="progress">
+            <div class="progress-bar" [style.width.%]="budgetProgress()"></div>
           </div>
         </div>
 
-        <!-- Sport Goal -->
+        <!-- Health -->
         <div>
           <div class="d-flex justify-content-between mb-2">
             <span class="small text-secondary fw-medium">Health Activity</span>
             <span class="small text-white opacity-50">{{ healthActivities() }} / {{ GOALS.sport }}</span>
           </div>
-          <div class="progress" style="height: 4px !important; border-radius: 4px;">
-            <div class="progress-bar bg-white" [style.width.%]="sportProgress()" [style.border-radius]="'4px'"></div>
+          <div class="progress">
+            <div class="progress-bar" [style.width.%]="sportProgress()"></div>
           </div>
         </div>
 
-        <!-- Deep Work Goal -->
+        <!-- Productivity -->
         <div>
           <div class="d-flex justify-content-between mb-2">
             <span class="small text-secondary fw-medium">Deep Work</span>
             <span class="small text-white opacity-50">{{ workHoursStr() }} / {{ GOALS.work }}h</span>
           </div>
-          <div class="progress" style="height: 4px !important; border-radius: 4px;">
-            <div class="progress-bar bg-white" [style.width.%]="workProgress()" [style.border-radius]="'4px'"></div>
+          <div class="progress">
+            <div class="progress-bar" [style.width.%]="workProgress()"></div>
           </div>
         </div>
       </div>

@@ -1,22 +1,20 @@
 :root {
-  /* Strict 3-Layer Background System */
+  /* Ultra-Minimalist Palette */
   --bg-base: #0B0B0F;
   --bg-card: #16171C;
   --bg-elevated: #1C1E24;
-  --bg-input: #1A1B20; /* Specifically for the pill input */
+  --bg-input: #1A1B20;
   
-  /* Typography */
   --text-main: #FFFFFF;
   --text-secondary: #8E8E93;
   --text-tertiary: #48484A;
   
-  /* System Colors */
+  /* Single Accent: White */
   --accent: #FFFFFF;
-  --system-red: #FF453A;
   
   /* Precision Geometry */
   --radius-card: 16px;
-  --radius-input: 26px; /* Fully rounded for 52px height */
+  --radius-input: 26px;
   --spacing-main: 24px;
   --card-padding: 20px;
   
@@ -51,17 +49,7 @@ body {
   margin-bottom: var(--spacing-main) !important;
 }
 
-.event-row {
-  display: flex;
-  align-items: center;
-  padding: 16px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-}
-
-.event-row:last-child {
-  border-bottom: none;
-}
-
+/* Unified Typography */
 .kpi-title {
   font-size: 0.7rem;
   font-weight: 600;
@@ -77,14 +65,25 @@ body {
   letter-spacing: -0.02em;
 }
 
-/* Signature Pill Input - Redesigned */
+/* Event List */
+.event-row {
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.event-row:last-child {
+  border-bottom: none;
+}
+
+/* Pill Input */
 .pill-container {
   background-color: var(--bg-input) !important;
   height: 52px;
   border-radius: var(--radius-input);
   padding: 0 8px 0 16px;
   border: 1px solid rgba(255, 255, 255, 0.03);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
   display: flex;
   align-items: center;
 }
@@ -95,7 +94,6 @@ body {
   color: white !important;
   font-size: 1rem;
   box-shadow: none !important;
-  padding: 0;
 }
 
 .form-control::placeholder {
@@ -113,15 +111,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-circle:hover:not(:disabled) {
-  transform: scale(1.05);
-}
-
-.btn-circle:active:not(:disabled) {
-  transform: scale(0.95);
+  transition: opacity 0.2s;
 }
 
 .btn-circle:disabled {
@@ -131,13 +121,20 @@ body {
 /* Progress Bars */
 .progress {
   height: 4px !important;
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
   border-radius: 4px;
+  overflow: hidden;
 }
 
 .progress-bar {
   border-radius: 4px;
-  background-color: white;
+  background-color: white !important; /* Force all bars to white */
+}
+
+/* Minimal Icons */
+.icon-subtle {
+  opacity: 0.4;
+  color: white;
 }
 
 .fade-in {
@@ -147,4 +144,29 @@ body {
 @keyframes apple-entry {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dropdown Menu Styles */
+.settings-menu {
+  background: var(--bg-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.settings-item {
+  color: var(--text-main);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.settings-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.settings-item.danger {
+  color: #FF453A;
 }

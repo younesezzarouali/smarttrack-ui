@@ -16,36 +16,34 @@
   </div>
 </nav>
 
-<main class="container mb-5 pb-5" style="padding-top: 100px;">
-  
-  <!-- AI Pending Preview - COMPACT & CENTERED -->
-  <div *ngIf="pendingEvents" class="row justify-content-center section-gap apple-entry">
-    <div class="col-lg-12 px-3">
-      <div class="apple-card-elevated review-card shadow-2xl">
-        <h6 class="kpi-title mb-4">Review Entry</h6>
-        <div class="list-group list-group-flush mb-4">
-          <div *ngFor="let p of pendingEvents" class="list-group-item bg-transparent border-white border-opacity-5 py-3 px-0">
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="text-white fw-medium">{{ p.content }}</span>
-              <div class="text-white fw-bold">
-                <span *ngIf="p.payload.amount">{{ p.payload.amount }}€</span>
-                <span *ngIf="p.payload.duration_min && !p.payload.amount">{{ p.payload.duration_min }}m</span>
-              </div>
-            </div>
+<!-- DYNAMIC ISLAND STYLE CONFIRMATION - FLOATING AT TOP -->
+<div *ngIf="pendingEvents" class="fixed-top mt-5 pt-4 px-3" style="z-index: 1100;">
+  <div class="review-island apple-entry">
+    <div class="d-flex flex-column gap-3">
+      <div *ngFor="let p of pendingEvents" class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+          <div class="bg-white bg-opacity-10 rounded-circle p-1 me-2 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+            <i class="bi bi-stars text-white" style="font-size: 0.7rem;"></i>
           </div>
+          <span class="review-item">{{ p.content }}</span>
         </div>
-        <div class="d-flex gap-3">
-          <button class="btn btn-primary-fintech flex-grow-1 py-2 fw-bold" (click)="confirmPending()" [disabled]="loading">
-            Confirm & Save
-          </button>
-          <button class="btn btn-sm text-secondary px-3" (click)="cancelPending()" [disabled]="loading">
-            Discard
-          </button>
-        </div>
+        <span *ngIf="p.payload.amount" class="text-white fw-bold">{{ p.payload.amount }}€</span>
+        <span *ngIf="p.payload.duration_min && !p.payload.amount" class="text-white fw-bold">{{ p.payload.duration_min }}m</span>
+      </div>
+      
+      <div class="d-flex align-items-center justify-content-between mt-1 pt-2 border-top border-white border-opacity-10">
+        <button class="btn-discard-link" (click)="cancelPending()" [disabled]="loading">Discard</button>
+        <button class="btn-confirm-pill" (click)="confirmPending()" [disabled]="loading">
+          <span *ngIf="!loading">Confirm & Save</span>
+          <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+        </button>
       </div>
     </div>
   </div>
+</div>
 
+<main class="container mb-5 pb-5" style="padding-top: 100px;">
+  
   <app-expense-summary></app-expense-summary>
 
   <!-- DAILY BRIEFING -->
@@ -127,7 +125,7 @@
     <div class="row justify-content-center">
       <div class="col-lg-8">
         
-        <div *ngIf="undoVisible()" class="mb-3 text-center fade-in">
+        <div *ngIf="undoVisible()" class="mb-3 text-center apple-entry">
           <button class="btn btn-dark rounded-pill border border-white border-opacity-10 px-4 py-2 small" (click)="undoSave()">
             <span class="text-secondary">Action completed.</span> <span class="text-white fw-bold ms-2">UNDO</span>
           </button>

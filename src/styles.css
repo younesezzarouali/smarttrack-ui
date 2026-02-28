@@ -10,7 +10,7 @@
   --text-tertiary: #48484A;
   
   /* Primary Accent: Teal/Muted Blue */
-  --accent: #5EEAD4; /* Muted Teal */
+  --accent: #5EEAD4;
   
   /* Precision Geometry */
   --radius-card: 16px;
@@ -30,7 +30,7 @@ body {
   line-height: 1.6;
 }
 
-/* Header & Navigation Fixes */
+/* Header & Navigation */
 .nav-fixed-apple {
   background: rgba(0, 0, 0, 0.8) !important;
   backdrop-filter: blur(30px) saturate(180%);
@@ -65,13 +65,13 @@ body {
 
 /* Layout Padding */
 .main-layout {
-  padding-top: 180px; /* Increased to avoid header overlap */
+  padding-top: 180px;
   display: flex;
   flex-direction: column;
-  gap: 40px; /* Increased spacing between main sections */
+  gap: 40px;
 }
 
-/* Cards & Components */
+/* Cards */
 .apple-card {
   background-color: var(--bg-card);
   border-radius: var(--radius-card);
@@ -87,7 +87,7 @@ body {
 }
 
 .section-gap {
-  margin-bottom: 32px !important; /* Force more air below blocks */
+  margin-bottom: 32px !important;
 }
 
 /* KPI Typography */
@@ -106,6 +106,32 @@ body {
   letter-spacing: -0.02em;
 }
 
+/* Buttons - FIXED FOR VISIBILITY */
+.btn-primary-fintech {
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  padding: 12px 24px !important;
+  transition: opacity 0.2s !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+}
+
+.btn-primary-fintech:hover:not(:disabled) {
+  opacity: 0.9 !important;
+}
+
+.btn-primary-fintech:active:not(:disabled) {
+  transform: scale(0.96) !important;
+}
+
+.btn-primary-fintech:disabled {
+  background-color: #3A3A3C !important;
+  color: #8E8E93 !important;
+  opacity: 0.5;
+}
+
 /* History Rows */
 .event-row {
   display: flex;
@@ -118,7 +144,7 @@ body {
   border-bottom: none;
 }
 
-/* Bottom Input Bar Fixes */
+/* Bottom Input Bar */
 .bottom-pill-bar {
   background-color: var(--bg-input) !important;
   height: 52px;
@@ -128,12 +154,6 @@ body {
   align-items: center;
   padding: 0 8px 0 16px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-}
-
-.pill-container {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 4px 12px;
 }
 
 .form-control {
@@ -159,10 +179,6 @@ body {
   align-items: center;
   justify-content: center;
   transition: transform 0.2s ease;
-}
-
-.btn-send-circle:active {
-  transform: scale(0.9);
 }
 
 /* Progress Bars */

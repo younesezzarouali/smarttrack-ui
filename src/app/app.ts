@@ -46,6 +46,17 @@ export class AppComponent implements OnInit {
     this.lifeService.fetchAll();
   }
 
+  toggleListening() {
+    if (this.speechService.isListening()) {
+      this.speechService.stopListening();
+    } else {
+      this.speechService.startListening(
+        (text) => this.magicText = text,
+        () => console.log('Voice capture ended')
+      );
+    }
+  }
+
   processMagic() {
     const textInput = this.magicText.trim();
     if (!textInput || this.loading) return;

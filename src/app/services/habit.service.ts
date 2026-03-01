@@ -22,15 +22,28 @@ export interface HabitProgress {
   completedIds: string[];
 }
 
+export interface DaySummary {
+  date: string;
+  label: string;
+  ratio: number;
+}
+
+export interface WeeklySummary {
+  days: DaySummary[];
+  totalScore: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class HabitService {
   private apiUrl = `${environment.apiUrl}/habits`;
   
   private habitsSignal = signal<Habit[]>([]);
   private progressSignal = signal<HabitProgress | null>(null);
+  private weeklySummarySignal = signal<WeeklySummary | null>(null);
 
   readonly habits = computed(() => this.habitsSignal().filter(h => h.active));
   readonly progress = computed(() => this.progressSignal());
+  readonly weeklySummary = computed(() => this.weeklySummarySignal());
 
   constructor(private http: HttpClient) {}
 
@@ -38,8 +51,8 @@ export class HabitService {
     this.http.get<Habit[]>(this.apiUrl + '/active').subscribe({
         next: (habits) => {
             this.habitsSignal.set(habits || []);
-            // After habits, fetch progress
             this.fetchProgress();
+            this.fetchWeeklySummary();
         },
         error: (err) => console.error('Habit fetch failed', err)
     });
@@ -49,6 +62,13 @@ export class HabitService {
     this.http.get<HabitProgress>(this.apiUrl + '/progress/daily').subscribe({
       next: (prog) => this.progressSignal.set(prog),
       error: (err) => console.error('Progress fetch failed', err)
+    });
+  }
+
+  fetchWeeklySummary(): void {
+    this.http.get<WeeklySummary>(this.apiUrl + '/summary').subscribe({
+      next: (summary) => this.weeklySummarySignal.set(summary),
+      error: (err) => console.error('Summary fetch failed', err)
     });
   }
 

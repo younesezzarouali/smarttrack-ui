@@ -1,7 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-expense-modal',
@@ -9,6 +9,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './expense-modal.html'
 })
 export class ExpenseModalComponent {
+  public activeModal = inject(NgbActiveModal);
   // ⚡ Signals pour les champs
   label = signal<string>('');
   amount = signal<number>(0);
@@ -25,7 +26,7 @@ export class ExpenseModalComponent {
     }).subscribe({
       next: res =>  {
         console.log('Expense added', res);
-        this.modalService.dismissAll();
+        this.activeModal.close('success');
       },
       error: err => console.error('Error', err)
     });

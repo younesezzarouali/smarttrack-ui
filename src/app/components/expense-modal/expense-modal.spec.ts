@@ -1,18 +1,23 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ExpenseModalComponent } from './expense-modal';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { provideHttpClient } from '@angular/common/http';
 
-import { ExpenseModal } from './expense-modal';
-
-describe('ExpenseModal', () => {
-  let component: ExpenseModal;
-  let fixture: ComponentFixture<ExpenseModal>;
+describe('ExpenseModalComponent', () => {
+  let component: ExpenseModalComponent;
+  let fixture: ComponentFixture<ExpenseModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ExpenseModal]
+      imports: [ExpenseModalComponent],
+      providers: [
+        NgbActiveModal,
+        provideHttpClient()
+      ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ExpenseModal);
+    fixture = TestBed.createComponent(ExpenseModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

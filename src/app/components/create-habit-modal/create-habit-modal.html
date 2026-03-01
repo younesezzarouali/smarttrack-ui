@@ -1,41 +1,75 @@
-<div class="modal-body p-4" style="background: #1C1C1E; color: white; border-radius: 28px;">
-  <div class="rev-modal-title-mini" style="font-size: 20px;">New Habit</div>
+<div class="p-4" style="background: var(--elevated-surface); color: var(--primary-text); border-radius: 32px; border: var(--border);">
+  <!-- HEADER WITH CENTERED TITLE AND CLOSE ICON -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div style="width: 24px;"></div> <!-- Spacer for centering -->
+    <h4 class="mb-0 fw-bold" style="font-size: 19px; letter-spacing: -0.3px;">Create Habit</h4>
+    <button (click)="activeModal.dismiss()" class="btn p-0 border-0 text-secondary opacity-50 hover-opacity-100">
+      <i class="bi bi-x-lg" style="font-size: 18px;"></i>
+    </button>
+  </div>
   
-  <div class="mb-3">
-    <label class="text-secondary small fw-bold uppercase mb-2 px-1" style="font-size: 10px; letter-spacing: 0.5px;">Habit Name</label>
-    <div class="rev-input-mini">
-      <input type="text" class="form-control border-0 bg-transparent text-white p-0 fw-bold" 
-             style="font-size: 16px;" placeholder="e.g. Reading" 
+  <div class="mb-4">
+    <p class="mb-2" style="font-size: 13px; color: var(--muted-text); font-weight: 500;">Habit Update</p>
+    <div style="background: rgba(255, 255, 255, 0.04); border-radius: 18px; padding: 14px 18px; border: 1px solid rgba(255,255,255,0.02);">
+      <input type="text" class="form-control border-0 bg-transparent text-white p-0" 
+             style="font-size: 16px; font-weight: 500; outline: none; box-shadow: none;" 
+             placeholder="ex: Sport" 
              [ngModel]="name()" (ngModelChange)="name.set($event)" autofocus>
     </div>
   </div>
 
-  <div class="row g-3 mb-4">
-    <div class="col-6">
-      <label class="text-secondary small fw-bold uppercase mb-2 px-1" style="font-size: 10px; letter-spacing: 0.5px;">Measure</label>
-      <div class="rev-input-mini">
-        <select class="form-select border-0 bg-transparent text-white p-0 small fw-bold" 
-                style="font-size: 15px;" [ngModel]="type()" (ngModelChange)="type.set($event)">
-          <option value="TIME">Time (min)</option>
-          <option value="COUNT">Count</option>
+  <!-- INPUT ROWS STYLE -->
+  <div class="mb-5 d-flex flex-column gap-1">
+    
+    <div class="d-flex justify-content-between align-items-center py-3 border-bottom border-white border-opacity-5">
+      <span style="font-size: 15px; font-weight: 500; color: var(--primary-text);">Type</span>
+      <div class="d-flex align-items-center gap-2 text-secondary">
+        <select class="border-0 bg-transparent text-secondary p-0 text-end" 
+                style="font-size: 15px; font-weight: 500; outline: none; cursor: pointer; appearance: none; width: 100px;"
+                [ngModel]="type()" (ngModelChange)="type.set($event)">
+          <option value="TIME" style="background: var(--elevated-surface);">Time (min)</option>
+          <option value="COUNT" style="background: var(--elevated-surface);">Count</option>
         </select>
+        <i class="bi bi-chevron-right opacity-40" style="font-size: 12px;"></i>
       </div>
     </div>
-    <div class="col-6">
-      <label class="text-secondary small fw-bold uppercase mb-2 px-1" style="font-size: 10px; letter-spacing: 0.5px;">Goal</label>
-      <div class="rev-input-mini">
-        <input type="number" class="form-control border-0 bg-transparent text-white p-0 fw-bold" 
-               style="font-size: 15px;" [ngModel]="target()" (ngModelChange)="target.set($event)">
+
+    <div class="d-flex justify-content-between align-items-center py-3 border-bottom border-white border-opacity-5">
+      <span style="font-size: 15px; font-weight: 500; color: var(--primary-text);">Target</span>
+      <div class="d-flex align-items-center gap-2 text-secondary">
+        <input type="number" class="border-0 bg-transparent text-secondary p-0 text-end" 
+               style="width: 60px; font-size: 15px; font-weight: 500; outline: none;"
+               [ngModel]="target()" (ngModelChange)="target.set($event)">
+        <i class="bi bi-chevron-right opacity-40" style="font-size: 12px;"></i>
       </div>
     </div>
+
+    <div class="d-flex justify-content-between align-items-center py-3">
+      <span style="font-size: 15px; font-weight: 500; color: var(--primary-text);">Frequency</span>
+      <div class="d-flex align-items-center gap-2 text-secondary">
+        <span style="font-size: 15px; font-weight: 500;">{{ frequency() }}</span>
+        <i class="bi bi-chevron-right opacity-40" style="font-size: 12px;"></i>
+      </div>
+    </div>
+
   </div>
 
-  <div class="d-flex flex-column gap-2">
-    <button class="btn-rev-main-mini" style="padding: 14px !important;" (click)="create()" [disabled]="loading() || !name()">
-      <span *ngIf="!loading()">Create Habit</span>
-      <span *ngIf="loading()" class="spinner-border spinner-border-sm text-black"></span>
-    </button>
-    <button class="btn btn-link text-secondary text-decoration-none py-2 fw-bold" 
-            style="font-size: 14px;" (click)="activeModal.dismiss()">Cancel</button>
+  <!-- ACTION BUTTONS SIDE-BY-SIDE -->
+  <div class="row g-3">
+    <div class="col-6">
+      <button class="btn w-100 py-3" 
+              style="background: rgba(255,255,255,0.05); color: var(--primary-text); border-radius: 16px; font-weight: 600; font-size: 15px; border: none;" 
+              (click)="activeModal.dismiss()">
+        Cancel
+      </button>
+    </div>
+    <div class="col-6">
+      <button class="btn-premium-primary w-100 py-3" 
+              style="border-radius: 16px; font-size: 15px; font-weight: 600;"
+              (click)="create()" [disabled]="loading() || !name()">
+        <span *ngIf="!loading()">Create</span>
+        <span *ngIf="loading()" class="spinner-border spinner-border-sm text-white"></span>
+      </button>
+    </div>
   </div>
 </div>

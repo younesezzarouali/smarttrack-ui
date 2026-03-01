@@ -1,51 +1,51 @@
 <div class="row g-3 mb-4">
   <div class="col-4">
-    <div class="card-rev d-flex flex-column align-items-center justify-content-center p-3">
-      <span class="kpi-label" style="font-size: 10px;">Spent</span>
-      <div class="text-white fw-bold fs-3 mt-1">{{ totalSpent() | number:'1.0-0' }}€</div>
+    <div class="card-premium d-flex flex-column align-items-center justify-content-center p-3 mb-0">
+      <span style="font-size: 11px; color: var(--muted-text); text-transform: uppercase; letter-spacing: 1px;">Spent</span>
+      <div class="text-white fw-bold fs-4 mt-1">{{ totalSpent() | number:'1.0-0' }}€</div>
     </div>
   </div>
 
   <div class="col-4">
-    <div class="card-rev d-flex flex-column align-items-center justify-content-center p-3">
-      <span class="kpi-label" style="font-size: 10px;">Work</span>
-      <div class="text-white fw-bold fs-3 mt-1">{{ workHoursStr() }}h</div>
+    <div class="card-premium d-flex flex-column align-items-center justify-content-center p-3 mb-0">
+      <span style="font-size: 11px; color: var(--muted-text); text-transform: uppercase; letter-spacing: 1px;">Work</span>
+      <div class="text-white fw-bold fs-4 mt-1">{{ workHoursStr() }}h</div>
     </div>
   </div>
 
   <div class="col-4">
-    <div class="card-rev d-flex flex-column align-items-center justify-content-center p-3">
-      <span class="kpi-label" style="font-size: 10px;">Vitality</span>
-      <div class="fw-bold fs-3 mt-1" [style.color]="vitalityScore() > 70 ? 'var(--rev-success)' : 'white'">{{ vitalityScore() }}%</div>
+    <div class="card-premium d-flex flex-column align-items-center justify-content-center p-3 mb-0">
+      <span style="font-size: 11px; color: var(--muted-text); text-transform: uppercase; letter-spacing: 1px;">Vitality</span>
+      <div class="fw-bold fs-4 mt-1" [style.color]="vitalityScore() > 70 ? 'var(--success-accent)' : 'white'">{{ vitalityScore() }}%</div>
     </div>
   </div>
 </div>
 
-<!-- Weekly Target (High Contrast) -->
-<div class="card-rev mb-4">
+<!-- Weekly Target -->
+<div class="card-premium mb-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h6 class="kpi-label m-0">Weekly Goal</h6>
-    <span class="badge bg-white bg-opacity-10 text-white rounded-pill px-2" style="font-size: 10px;">PRO</span>
+    <h6 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--muted-text); letter-spacing: 0.5px; margin: 0;">Weekly Goal</h6>
+    <span class="badge rounded-pill px-3 py-1" style="font-size: 10px; background: rgba(76, 141, 255, 0.1); color: var(--primary-accent); border: 1px solid rgba(76, 141, 255, 0.2);">PRO</span>
   </div>
   
   <div class="d-flex flex-column gap-4">
     <div>
       <div class="d-flex justify-content-between align-items-end mb-2">
-        <span class="text-white fw-bold">Budget Plan</span>
-        <span class="text-grey small">{{ totalSpent() | number:'1.0-0' }} / {{ GOALS.budget }}€</span>
+        <span class="text-white fw-semibold" style="font-size: 15px;">Budget Plan</span>
+        <span style="color: var(--secondary-text); font-size: 13px;">{{ totalSpent() | number:'1.0-0' }} / {{ GOALS.budget }}€</span>
       </div>
-      <div class="prog-container">
-        <div class="prog-fill" [style.width.%]="budgetProgress()" [class.success]="budgetProgress() <= 100" [style.background]="budgetProgress() > 90 ? 'var(--rev-danger)' : 'var(--rev-blue)'"></div>
+      <div class="progress-bar-p">
+        <div class="progress-fill-p" [style.width.%]="budgetProgress()" [style.background]="budgetProgress() > 90 ? '#FF453A' : 'var(--progress-gradient)'"></div>
       </div>
     </div>
 
     <div>
       <div class="d-flex justify-content-between align-items-end mb-2">
-        <span class="text-white fw-bold">Deep Work Focus</span>
-        <span class="text-grey small">{{ workHoursStr() }} / {{ GOALS.work }}h</span>
+        <span class="text-white fw-semibold" style="font-size: 15px;">Deep Work Focus</span>
+        <span style="color: var(--secondary-text); font-size: 13px;">{{ workHoursStr() }} / {{ GOALS.work }}h</span>
       </div>
-      <div class="prog-container">
-        <div class="prog-fill" [style.width.%]="workProgress()"></div>
+      <div class="progress-bar-p">
+        <div class="progress-fill-p" [style.width.%]="workProgress()"></div>
       </div>
     </div>
   </div>

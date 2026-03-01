@@ -17,6 +17,7 @@ export class CreateHabitModalComponent {
   name = signal('');
   type = signal<'TIME' | 'COUNT'>('TIME');
   target = signal<number>(15);
+  frequency = signal('Daily');
   category = signal('HEALTH');
   
   loading = signal(false);

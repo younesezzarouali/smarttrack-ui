@@ -2,36 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../environments/environment';
-
-export interface Habit {
-  id: string;
-  name: string;
-  type: 'TIME' | 'COUNT' | 'BOOLEAN';
-  targetValue: number;
-  unit: string;
-  category: string;
-  streak: number;
-  lastCompletedDate: string;
-  active: boolean;
-}
-
-export interface HabitProgress {
-  userId: string;
-  date: string;
-  progressMap: Record<string, number>;
-  completedIds: string[];
-}
-
-export interface DaySummary {
-  date: string;
-  label: string;
-  ratio: number;
-}
-
-export interface WeeklySummary {
-  days: DaySummary[];
-  totalScore: string;
-}
+import { Habit, HabitProgress, WeeklySummary } from '../core/habits/habit-types';
 
 @Injectable({ providedIn: 'root' })
 export class HabitService {
@@ -81,6 +52,21 @@ export class HabitService {
   deleteHabit(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => this.fetchHabits())
+    );
+  }
+
+  logHabitProgress(habitId: string, delta: number, source: string = 'manual'): Observable<Habit> {
+    const payload = {
+      date: new Date().toISOString().split('T')[0],
+      delta: delta,
+      unit: 'min',
+      source: source
+    };
+    return this.http.post<Habit>(`${this.apiUrl}/${habitId}/log`, payload).pipe(
+      tap(() => {
+        this.fetchHabits();
+        this.fetchProgress();
+      })
     );
   }
 

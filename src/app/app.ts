@@ -1,13 +1,17 @@
-import { Component, OnInit, OnDestroy, inject, computed, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, computed, signal, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LifeService, LifeEvent } from './services/life.service';
-import { SpeechService } from './services/speech.service';
+import { VoiceService } from './core/voice/voice.service';
 import { HabitService } from './services/habit.service';
+import { HabitsMotivationService } from './services/habits-motivation.service';
 import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary';
 import { CreateHabitModalComponent } from './components/create-habit-modal/create-habit-modal';
-import { finalize } from 'rxjs';
+import { ToastService } from './services/toast.service';
+import { finalize, Subscription } from 'rxjs';
+import { Capacitor } from '@capacitor/core';
+import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
   selector: 'app-root',
@@ -18,12 +22,31 @@ import { finalize } from 'rxjs';
 })
 export class AppComponent implements OnInit, OnDestroy {
   public lifeService = inject(LifeService);
-  public speechService = inject(SpeechService);
+  public voiceService = inject(VoiceService);
   public habitService = inject(HabitService);
+  public motivationService = inject(HabitsMotivationService);
+  public toastService = inject(ToastService);
   private modalService = inject(NgbModal);
+  private renderer = inject(Renderer2);
+
+  private voiceSubs: Subscription[] = [];
+  private keyboardSubs: any[] = [];
+
+  readonly timerDisplay = computed(() => {
+    const s = this.motivationService.timerSecondsRemaining();
+    const m = Math.floor(s / 60);
+    const rs = s % 60;
+    return `${m}:${rs < 10 ? '0' : ''}${rs}`;
+  });
 
   // Navigation state
   readonly currentView = signal<'home' | 'journal' | 'habits' | 'dashboard'>('home');
+
+  readonly otherHabits = computed(() => {
+    const habits = this.habitService.habits();
+    const focusId = this.motivationService.focusHabitId();
+    return habits.filter(h => h.id !== focusId);
+  });
 
   magicText: string = '';
   loading: boolean = false;
@@ -40,6 +63,22 @@ export class AppComponent implements OnInit, OnDestroy {
 
   readonly events = this.lifeService.events;
   
+  getVitality(): number {
+    let score = 50;
+    const events = this.lifeService.events();
+    const healthCount = events.filter(e => e.type === 'HEALTH').length;
+    score += Math.min(healthCount * 15, 30);
+    
+    const completedHabits = this.habitService.progress()?.completedIds?.length || 0;
+    score += (completedHabits * 10);
+
+    events.forEach(e => {
+      if (e.payload.sentiment === 'POSITIVE') score += 5;
+      if (e.payload.sentiment === 'NEGATIVE') score -= 10;
+    });
+    return Math.min(Math.max(score, 0), 100);
+  }
+
   readonly groupedEvents = computed(() => {
     const groups: { date: string, items: LifeEvent[] }[] = [];
     this.lifeService.events().forEach(event => {
@@ -54,10 +93,46 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.lifeService.sync();
     this.habitService.fetchHabits();
+    this.setupVoiceListeners();
+    this.setupKeyboardListeners();
   }
 
   ngOnDestroy() {
     if (this.undoTimer) clearTimeout(this.undoTimer);
+    this.voiceSubs.forEach(s => s.unsubscribe());
+    this.keyboardSubs.forEach(s => s.remove());
+  }
+
+  private setupKeyboardListeners() {
+    if (Capacitor.getPlatform() === 'ios') {
+      this.renderer.addClass(document.body, 'platform-ios');
+
+      Keyboard.addListener('keyboardWillShow', () => {
+        this.renderer.addClass(document.body, 'keyboard-open');
+      }).then(s => this.keyboardSubs.push(s));
+
+      Keyboard.addListener('keyboardWillHide', () => {
+        this.renderer.removeClass(document.body, 'keyboard-open');
+      }).then(s => this.keyboardSubs.push(s));
+    }
+  }
+
+  private setupVoiceListeners() {
+    this.voiceSubs.push(
+      this.voiceService.onPartialResult$.subscribe(text => {
+        this.magicText = text;
+      }),
+      this.voiceService.onFinalResult$.subscribe(text => {
+        this.magicText = text;
+      }),
+      this.voiceService.onError$.subscribe(err => {
+        let msg = "Erreur micro";
+        if (err === 'NOT_AVAILABLE') msg = "Vocal non disponible.";
+        if (err === 'PERMISSION_DENIED') msg = "Activez le micro dans les réglages.";
+        if (err === 'not-allowed') msg = "Microphone non autorisé.";
+        this.toastService.show(msg);
+      })
+    );
   }
 
   setView(view: 'home' | 'journal' | 'habits' | 'dashboard') {
@@ -65,10 +140,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   toggleListening() {
-    if (this.speechService.isListening()) {
-      this.speechService.stopListening();
+    if (this.voiceService.isListening()) {
+      this.voiceService.stopListening();
     } else {
-      this.speechService.startListening((text) => this.magicText = text, () => {});
+      this.voiceService.startListening();
     }
   }
 

@@ -22,6 +22,9 @@ export class AppComponent implements OnInit, OnDestroy {
   public habitService = inject(HabitService);
   private modalService = inject(NgbModal);
 
+  // Navigation state
+  readonly currentView = signal<'home' | 'journal' | 'habits' | 'dashboard'>('home');
+
   magicText: string = '';
   loading: boolean = false;
   editingEvent: LifeEvent | null = null;
@@ -35,9 +38,8 @@ export class AppComponent implements OnInit, OnDestroy {
   undoVisible = signal<boolean>(false);
   private undoTimer: any;
 
-  placeholderSignal = signal<string>('How was your day?');
-
   readonly events = this.lifeService.events;
+  
   readonly groupedEvents = computed(() => {
     const groups: { date: string, items: LifeEvent[] }[] = [];
     this.lifeService.events().forEach(event => {
@@ -56,6 +58,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.undoTimer) clearTimeout(this.undoTimer);
+  }
+
+  setView(view: 'home' | 'journal' | 'habits' | 'dashboard') {
+    this.currentView.set(view);
   }
 
   toggleListening() {
@@ -123,7 +129,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.pendingUpdates.set([]);
   }
 
-  // --- INTERACTIVE TIMELINE METHODS ---
   startEdit(event: LifeEvent) {
     this.editingEvent = { ...event, payload: { ...event.payload } };
   }

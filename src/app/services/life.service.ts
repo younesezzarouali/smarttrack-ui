@@ -11,6 +11,7 @@ export interface LifeEvent {
   timestamp: number;
   type: LifeEventType;
   content: string;
+  fullDescription: string;
   payload: any;
 }
 

@@ -1,150 +1,122 @@
 <header class="revolut-header">
   <div class="container d-flex flex-column align-items-center">
     <div class="w-100 d-flex justify-content-between align-items-center px-3 mb-2">
-      <div style="width: 32px; height: 32px; background: #2C2C2E; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i class="bi bi-person-fill text-white opacity-50"></i></div>
-      <span class="fw-bold fs-5">SmartTrack</span>
+      <div (click)="setView('home')" class="header-icon-btn"><i class="bi bi-robot text-white"></i></div>
+      <span class="fw-bold fs-4">{{ currentView() === 'home' ? 'SmartTrack' : currentView() | uppercase }}</span>
       <div class="dropdown">
-        <button class="btn btn-sm text-white opacity-50 p-0" type="button" data-bs-toggle="dropdown"><i class="bi bi-grid-3x3-gap-fill"></i></button>
+        <button class="header-icon-btn text-white p-0 border-0" type="button" data-bs-toggle="dropdown"><i class="bi bi-grid-3x3-gap-fill"></i></button>
         <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary">
-          <li><a class="dropdown-item text-white" (click)="showDebug = !showDebug">Debug View</a></li>
+          <li><a class="dropdown-item text-white" (click)="setView('journal')">Journal</a></li>
+          <li><a class="dropdown-item text-white" (click)="setView('habits')">Habits</a></li>
+          <li><a class="dropdown-item text-white" (click)="setView('dashboard')">Dashboard</a></li>
+          <li><hr class="dropdown-divider border-secondary"></li>
           <li><a class="dropdown-item text-danger" (click)="clearAll()">Reset Data</a></li>
         </ul>
       </div>
     </div>
-    <div class="nav-tab-wrapper">
-      <button class="nav-tab-btn" (click)="lifeService.setTab('journal')" [style.background]="lifeService.activeTab() === 'journal' ? 'white' : 'transparent'" [style.color]="lifeService.activeTab() === 'journal' ? 'black' : '#8E8E93'" style="padding: 6px 20px; border-radius: 30px; border: none; font-weight: 600; font-size: 13px; transition: 0.2s;">Journal</button>
-      <button class="nav-tab-btn" (click)="lifeService.setTab('habits')" [style.background]="lifeService.activeTab() === 'habits' ? 'white' : 'transparent'" [style.color]="lifeService.activeTab() === 'habits' ? 'black' : '#8E8E93'" style="padding: 6px 20px; border-radius: 30px; border: none; font-weight: 600; font-size: 13px; transition: 0.2s;">Habits</button>
-    </div>
   </div>
 </header>
 
-<!-- CONFIRMATION SHEET -->
-<div *ngIf="pendingEvents().length > 0 || pendingUpdates().length > 0" class="fixed-top h-100 d-flex align-items-end justify-content-center" style="z-index: 2100; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);">
-  <div class="bottom-sheet animate-slide">
+<!-- CENTERED CONFIRMATION MODAL -->
+<div *ngIf="pendingEvents().length > 0 || pendingUpdates().length > 0" class="confirmation-overlay">
+  <div class="confirm-card animate-slide">
     <div class="text-center mb-4">
-      <div style="width: 40px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 0 auto 20px;"></div>
-      <h4 class="fw-bold">Confirm Transaction</h4>
+      <h4 class="fw-bold text-white">Save this?</h4>
+      <p class="text-secondary small">Verify your entries</p>
     </div>
-    <div class="mb-5 px-2">
-      <div *ngFor="let p of pendingEvents()" class="d-flex justify-content-between align-items-center py-3 border-bottom border-white border-opacity-5">
+
+    <div class="mb-4">
+      <div *ngFor="let p of pendingEvents()" class="d-flex justify-content-between align-items-center p-3 mb-2" style="background: rgba(255,255,255,0.05); border-radius: 16px;">
         <span class="text-white fw-bold">{{ p.content }}</span>
-        <span class="text-white fw-bold fs-4">
-          <ng-container *ngIf="p.payload.amount">{{ p.payload.amount }}€</ng-container>
-          <ng-container *ngIf="!p.payload.amount && (p.payload.duration_min || p.payload.value)">{{ p.payload.duration_min || p.payload.value }} min</ng-container>
+        <span class="text-white opacity-70">
+          <span *ngIf="p.payload.amount">{{ p.payload.amount }}€</span>
+          <span *ngIf="!p.payload.amount">{{ p.payload.duration_min || p.payload.value }} min</span>
         </span>
       </div>
-      <div *ngFor="let u of pendingUpdates()" class="mt-3">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-          <span class="text-white opacity-70">{{ u.habitName }}</span>
-          <span class="text-white fw-bold">+{{ u.progressDelta }} min</span>
-        </div>
-        <div class="prog-container"><div class="prog-fill" style="width: 100%; opacity: 0.6;"></div></div>
-      </div>
     </div>
-    <div class="d-flex flex-column gap-2 mb-4">
-      <button class="btn btn-rev-white" (click)="confirmPending()" [disabled]="loading">Confirm & Save</button>
-      <button class="btn btn-link text-secondary text-decoration-none" (click)="cancelPending()">Discard</button>
+
+    <div class="btn-group-vertical">
+      <button class="btn-confirm" (click)="confirmPending()" [disabled]="loading">Confirm & Save</button>
+      <button class="btn-cancel" (click)="cancelPending()">Discard</button>
     </div>
   </div>
 </div>
 
 <main class="app-container">
-  <ng-container *ngIf="lifeService.activeTab() === 'journal'">
-    <app-expense-summary></app-expense-summary>
-    
-    <div *ngFor="let group of groupedEvents()" class="mb-5">
-      <h6 class="kpi-label mb-3 px-1">{{ group.date }}</h6>
+  <!-- HOME VIEW WITH CENTRAL CONTENT -->
+  <ng-container *ngIf="currentView() === 'home'">
+    <div class="central-container">
+      
+      <!-- DEFAULT STATE -->
+      <div *ngIf="!aiAnswer()" class="animate-fade-in">
+        <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #007AFF, #5856D6); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 0 20px rgba(0,122,255,0.3);"><i class="bi bi-robot fs-2"></i></div>
+        <h2 class="fw-bold text-white">Hello Youne.</h2>
+        <p class="text-secondary">How can I help you today?</p>
+      </div>
+
+      <!-- AI ANSWER STATE (CENTERED) -->
+      <div *ngIf="aiAnswer()" class="ai-response-card">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <span class="badge bg-primary rounded-pill px-3">Insight</span>
+          <button class="btn btn-sm p-0 text-white opacity-50" (click)="aiAnswer.set(null)"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <p class="m-0 text-white fs-5 fw-medium" style="line-height: 1.6;">{{ aiAnswer() }}</p>
+      </div>
+
+    </div>
+  </ng-container>
+
+  <!-- JOURNAL VIEW -->
+  <ng-container *ngIf="currentView() === 'journal'">
+    <div *ngFor="let group of groupedEvents()" class="mb-4">
+      <h6 class="kpi-label px-1">{{ group.date }}</h6>
       <div class="card-rev p-0 overflow-hidden">
-        <div *ngFor="let event of group.items" class="px-4 py-3 border-bottom border-white border-opacity-5 timeline-item-interactive"
-             [class.editing]="editingEvent?.timestamp === event.timestamp">
-          
-          <div *ngIf="editingEvent?.timestamp !== event.timestamp" class="d-flex justify-content-between align-items-center" (click)="startEdit(event)">
-            <div class="d-flex align-items-center">
-              <!-- ICON AND TEXT ON SAME LINE -->
-              <div style="width: 32px; height: 32px; background: #1C1C1E; border-radius: 8px; display: flex; align-items: center; justify-content: center;"><i class="bi" [ngClass]="event.type === 'FINANCE' ? 'bi-credit-card text-warning' : 'bi-activity text-info'" style="font-size: 0.9rem;"></i></div>
-              <span class="text-white fw-bold ms-3">{{ event.content }}</span>
-              <span class="text-secondary small ms-2" style="font-size: 10px; opacity: 0.5;">{{ event.timestamp | date:'HH:mm' }}</span>
-            </div>
-            <div class="text-white fw-bold fs-5">
-              <span *ngIf="event.type === 'FINANCE'">-{{ event.payload.amount }}€</span>
-              <span *ngIf="event.type !== 'FINANCE' && (event.payload.value || event.payload.duration_min)">{{ event.payload.value || event.payload.duration_min }} min</span>
+        <div *ngFor="let event of group.items" class="px-4 py-3 border-bottom border-white border-opacity-5 d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <div style="width: 32px; height: 32px; background: #2C2C2E; border-radius: 8px; display: flex; align-items: center; justify-content: center;"><i class="bi" [ngClass]="event.type === 'FINANCE' ? 'bi-credit-card text-warning' : 'bi-activity text-info'"></i></div>
+            <div class="ms-3">
+              <div class="text-white fw-bold">{{ event.content }}</div>
+              <div class="text-secondary small">{{ event.timestamp | date:'HH:mm' }}</div>
             </div>
           </div>
-
-          <div *ngIf="editingEvent?.timestamp === event.timestamp" class="py-2 animate-slide">
-            <input type="text" class="form-control bg-transparent text-white fw-bold p-0 mb-3 border-0 border-bottom rounded-0 border-primary" [(ngModel)]="editingEvent!.content" style="font-size: 18px;">
-            <div class="d-flex justify-content-between align-items-center gap-3">
-              <div class="d-flex gap-2">
-                <button class="btn btn-rev-blue-sm" (click)="saveEdit()">Save</button>
-                <button class="btn btn-link text-secondary text-decoration-none small" (click)="cancelEdit()">Cancel</button>
-              </div>
-              <button class="btn btn-link text-danger text-decoration-none small fw-bold" (click)="deleteEvent(event.timestamp)">
-                <i class="bi bi-trash3 me-1"></i> Delete
-              </button>
-            </div>
+          <div class="text-white fw-bold">
+            <span *ngIf="event.type === 'FINANCE'">-{{ event.payload.amount }}€</span>
+            <span *ngIf="event.type !== 'FINANCE' && (event.payload.value || event.payload.duration_min)">{{ event.payload.value || event.payload.duration_min }} min</span>
           </div>
         </div>
       </div>
     </div>
   </ng-container>
 
-  <ng-container *ngIf="lifeService.activeTab() === 'habits'">
-    <!-- WEEKLY CONSISTENCY CHART AT TOP -->
-    <div class="d-flex justify-content-between align-items-center mb-4 px-1">
-      <h6 class="kpi-label m-0">Weekly consistency</h6>
-      <span class="text-secondary fw-bold small" *ngIf="habitService.weeklySummary()">{{ habitService.weeklySummary()?.totalScore }}</span>
-    </div>
-    
-    <div class="card-rev mb-5">
-      <div class="d-flex justify-content-between align-items-end" style="height: 100px; padding-top: 10px;">
-        <div *ngFor="let day of habitService.weeklySummary()?.days" class="d-flex flex-column align-items-center gap-2" style="width: 12%;">
-          <div class="rounded-pill" 
-               [style.height.px]="day.ratio * 60 + 4" 
-               [style.background]="day.ratio >= 1 ? 'var(--rev-success)' : (day.ratio > 0 ? 'var(--rev-blue)' : 'rgba(255,255,255,0.05)')"
-               style="width: 100%; min-height: 4px; transition: height 0.6s ease-out;">
-          </div>
-          <span class="text-secondary" style="font-size: 9px; font-weight: 700;">{{ day.label }}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="d-flex justify-content-between align-items-center mb-4 px-1">
-      <h6 class="kpi-label m-0">Active Habits</h6>
-      <button class="btn-rev-blue-sm" (click)="openCreateHabit()">+ Add</button>
-    </div>
-    
+  <!-- HABITS VIEW -->
+  <ng-container *ngIf="currentView() === 'habits'">
     <div class="card-rev">
       <div *ngFor="let habit of habitService.habits()" class="mb-4 last-mb-0">
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <div class="d-flex align-items-center gap-2">
-            <i class="bi bi-circle-fill" [style.color]="habit.category === 'HEALTH' ? 'var(--rev-success)' : 'var(--rev-blue)'" style="font-size: 0.5rem;"></i>
-            <span class="text-white fw-bold">{{ habit.name }}</span>
-          </div>
-          <span class="text-secondary fw-bold small">{{ habitService.getHabitProgress(habit.id) }} / {{ habit.targetValue }} min</span>
+          <span class="text-white fw-bold">{{ habit.name }}</span>
+          <span class="text-secondary small">{{ habitService.getHabitProgress(habit.id) }} / {{ habit.targetValue }} min</span>
         </div>
         <div class="prog-container"><div class="prog-fill" [style.width.%]="habitService.getHabitPercentage(habit)"></div></div>
-        <div class="mt-3 d-flex justify-content-between align-items-center">
-          <div class="streak-pill"><i class="bi bi-fire text-warning me-1"></i>Streak: {{ habit.streak }} days</div>
-          <button class="btn btn-rev-delete p-0" (click)="deleteHabit(habit.id)"><i class="bi bi-trash3"></i></button>
-        </div>
       </div>
     </div>
   </ng-container>
+
+  <!-- DASHBOARD VIEW -->
+  <ng-container *ngIf="currentView() === 'dashboard'">
+    <app-expense-summary></app-expense-summary>
+  </ng-container>
 </main>
 
+<!-- SIMPLE BOTTOM BAR -->
 <div class="bottom-bar-rev">
-  <!-- AI ANSWER BUBBLE -->
-  <div *ngIf="aiAnswer()" class="ai-answer-bubble animate-slide">
-    <div class="d-flex justify-content-between align-items-start mb-2">
-      <span class="badge bg-primary rounded-pill" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Insight</span>
-      <button class="btn btn-sm p-0 text-white opacity-50" (click)="aiAnswer.set(null)"><i class="bi bi-x-lg"></i></button>
-    </div>
-    <p class="m-0 text-white fw-medium" style="font-size: 14px; line-height: 1.5;">{{ aiAnswer() }}</p>
+  <div class="input-container-pill">
+    <button class="btn-mic-rev" [class.listening]="speechService.isListening()" (click)="toggleListening()">
+      <i class="bi" [ngClass]="speechService.isListening() ? 'bi-mic-fill' : 'bi-mic'"></i>
+    </button>
+    <input type="text" class="input-rev" placeholder="Ask me anything..." [(ngModel)]="magicText" (keyup.enter)="processMagic()" [disabled]="loading">
+    <button class="btn-send-rev" (click)="processMagic()" [disabled]="loading || !magicText">
+      <i *ngIf="!loading" class="bi bi-arrow-up-short fs-4"></i>
+      <span *ngIf="loading" class="spinner-border spinner-border-sm text-dark"></span>
+    </button>
   </div>
-
-  <button class="btn-mic-rev" [class.listening]="speechService.isListening()" (click)="toggleListening()"><i class="bi fs-5" [ngClass]="speechService.isListening() ? 'bi-mic-fill' : 'bi-mic'"></i></button>
-  <input type="text" class="input-rev" placeholder="How was your day?" [(ngModel)]="magicText" (keyup.enter)="processMagic()" [disabled]="loading">
-  <button class="btn-send-rev shadow-sm" (click)="processMagic()" [disabled]="loading || !magicText">
-    <i *ngIf="!loading" class="bi bi-arrow-up-short fs-3"></i><span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
-  </button>
 </div>

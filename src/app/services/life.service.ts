@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, signal, inject } from '@angular/core';
-import { Observable, tap, forkJoin } from 'rxjs';
+import { Observable, tap, forkJoin, catchError, throwError } from 'rxjs';
 import { environment } from '../environments/environment';
 import { HabitService } from './habit.service';
 
@@ -13,15 +13,32 @@ export interface LifeEvent {
   content: string;
   fullDescription: string;
   payload: any;
+  embedding?: number[];
+}
+
+export interface AiAdvice {
+  priority_habit?: string;
+  action?: string;
+  why?: string;
+  cta_label?: string;
+  cta_habit_id?: string;
+  cta_minutes: number;
 }
 
 export interface MagicResponse {
   intent: 'CAPTURE' | 'ANALYSE';
   dailyInsight?: string;
   answer?: string;
+  advice?: AiAdvice;
   events?: LifeEvent[];
   habitUpdates?: any[];
   habitCreations?: any[];
+}
+
+export interface AiError {
+  code: 'AI_TIMEOUT' | 'AI_RATE_LIMIT' | 'AI_UPSTREAM_ERROR';
+  message: string;
+  retryAfterMs?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -48,7 +65,19 @@ export class LifeService {
   }
 
   interact(text: string): Observable<MagicResponse> {
-    return this.http.post<MagicResponse>(`${this.apiUrl}/magic`, { text });
+    const t0 = performance.now();
+    
+    return this.http.post<MagicResponse>(`${this.apiUrl}/magic`, { text }).pipe(
+      tap(() => {
+        const t1 = performance.now();
+        console.log(`[Perf] Response received in ${(t1 - t0).toFixed(0)}ms`);
+      }),
+      catchError(err => {
+        console.error('[Perf] AI Request failed', err);
+        const errorBody = err.error as AiError;
+        return throwError(() => errorBody || { code: 'AI_UPSTREAM_ERROR', message: 'Unknown error' });
+      })
+    );
   }
 
   sync(): void {
@@ -69,7 +98,6 @@ export class LifeService {
   }
 
   saveBatch(events: LifeEvent[]): Observable<void> {
-    // Send list directly as expected by the backend
     return this.http.post<void>(`${this.apiUrl}/events/batch`, events).pipe(
       tap(() => this.sync())
     );

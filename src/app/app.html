@@ -1,6 +1,6 @@
 <!-- TOAST NOTIFICATION -->
-<div *ngIf="toastService.message()" class="toast-container-p animate-fade-slide">
-  <div class="toast-p">
+<div *ngIf="toastService.message()" class="toast-container-p">
+  <div class="toast-p animate-fade-up">
     {{ toastService.message() }}
   </div>
 </div>
@@ -10,328 +10,372 @@
     <div class="w-100 d-flex justify-content-between align-items-center px-4">
       <div (click)="setView('home')" class="header-icon-btn"><i class="bi bi-robot"></i></div>
       
-      <span class="fw-bold fs-5" style="letter-spacing: -0.5px; color: var(--primary-text);">
-        {{ currentView() === 'home' ? 'SmartTrack' : currentView() | titlecase }}
+      <span class="text-title-2" style="color: var(--primary-text);">
+        {{ currentView() === 'home' ? 'SmartTrack' : (currentView() === 'journal' ? 'Journal' : (currentView() === 'habits' ? 'Habitudes' : 'Tableau de bord')) }}
       </span>
+
       <div class="dropdown">
         <button class="header-icon-btn p-0" type="button" data-bs-toggle="dropdown"><i class="bi bi-grid-3x3-gap-fill"></i></button>
         <ul class="dropdown-menu dropdown-menu-end">
           <li><a class="dropdown-item" (click)="setView('journal')">Journal</a></li>
-          <li><a class="dropdown-item" (click)="setView('habits')">Habits</a></li>
-          <li><a class="dropdown-item" (click)="setView('dashboard')">Dashboard</a></li>
+          <li><a class="dropdown-item" (click)="setView('habits')">Habitudes</a></li>
+          <li><a class="dropdown-item" (click)="setView('dashboard')">Tableau de bord</a></li>
           <li><hr class="dropdown-divider border-secondary opacity-20"></li>
-          <li><a class="dropdown-item text-danger" (click)="clearAll()">Reset Data</a></li>
+          <li><a class="dropdown-item text-danger" (click)="showResetConfirm.set(true)">Réinitialiser</a></li>
         </ul>
       </div>
     </div>
   </div>
 </header>
 
-<!-- STEP 3 — CONFIRM ENTRY MODAL (IMAGE STYLE) -->
-<div *ngIf="pendingEvents().length > 0 || pendingUpdates().length > 0" class="overlay-p">
-  <div class="modal-p">
-    <div class="modal-header-p">
-      <h4 class="modal-title-p">Confirm Entry</h4>
-      <p style="font-size: 13px; color: var(--muted-text); margin-top: 8px;">Habit Update</p>
+<!-- RESET DATA CONFIRM MODAL -->
+<div *ngIf="showResetConfirm()" class="premium-overlay" (click)="showResetConfirm.set(false)">
+  <div class="modal-container-p animate-fade-up" (click)="$event.stopPropagation()" style="max-width: 400px; width: 100%;">
+    <div class="text-center">
+      <div class="bg-danger bg-opacity-10 text-danger mb-3 mx-auto d-flex align-items-center justify-content-center" 
+           style="width: 64px; height: 64px; border-radius: 50%;">
+        <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+      </div>
+      <h4 class="text-title-2">Effacer tout ?</h4>
+      <p class="text-body-p text-secondary mt-2">Cette action est irréversible. Vous perdrez tout votre historique.</p>
+    </div>
+    <div class="d-flex flex-column gap-3 mt-4">
+      <button class="btn-premium btn-danger-p w-100" (click)="clearAll()">Réinitialiser les données</button>
+      <button class="btn-link-p" (click)="showResetConfirm.set(false)">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM ENTRY MODAL -->
+<div *ngIf="pendingEvents().length > 0 || pendingUpdates().length > 0" class="premium-overlay" (click)="cancelPending()">
+  <div class="modal-container-p animate-fade-up" (click)="$event.stopPropagation()" style="max-width: 400px; width: 100%;">
+    <div class="text-start mb-4">
+      <span class="text-label-caps text-primary">Nouveauté</span>
+      <h4 class="text-title-2 mt-1">Confirmer l'entrée</h4>
     </div>
 
-    <div class="mb-5">
-      <div *ngFor="let p of pendingEvents()" class="habit-row-premium" style="background: rgba(255,255,255,0.03);">
-        <div class="habit-details">
-          <div class="habit-header-row">
-            <span class="habit-name-p">{{ p.content }}</span>
-            <span class="habit-meta-p" style="color: var(--primary-accent); font-weight: 600;">
-              <span *ngIf="p.payload.amount">{{ p.payload.amount }}€</span>
-              <span *ngIf="!p.payload.amount">+{{ p.payload.duration_min || p.payload.value }} min</span>
-            </span>
-          </div>
-          <div class="progress-bar-p"><div class="progress-fill-p" style="width: 100%;"></div></div>
-          <div class="mt-2" style="font-size: 11px; color: var(--muted-text);">Streak 2 days</div>
-        </div>
+    <div class="my-4 d-flex flex-column gap-2">
+      <div *ngFor="let p of pendingEvents()" class="input-container-p py-3 px-3">
+        <i class="bi me-3" [ngClass]="p.type === 'FINANCE' ? 'bi-credit-card' : 'bi-lightning-charge'"></i>
+        <div class="flex-grow-1 text-body-p">{{ p.content }}</div>
+        <span class="fw-bold text-primary">
+          <span *ngIf="p.payload?.amount">{{ p.payload.amount }}€</span>
+          <span *ngIf="!p.payload?.amount && p.payload?.duration_min">+{{ p.payload.duration_min }} min</span>
+          <span *ngIf="!p.payload?.amount && !p.payload?.duration_min && p.payload?.value">+{{ p.payload.value }}</span>
+        </span>
       </div>
     </div>
 
-    <div class="d-flex flex-column gap-3">
-      <button class="btn-premium-primary py-3" (click)="confirmPending()" [disabled]="loading">Confirm & Save</button>
-      <button class="btn btn-link text-decoration-none text-secondary py-2" (click)="cancelPending()">Discard</button>
+    <div class="d-flex flex-column gap-3 mt-2">
+      <button class="btn-premium w-100 py-3" (click)="confirmPending()" [disabled]="loading">Confirmer et enregistrer</button>
+      <button class="btn-link-p w-100" (click)="cancelPending()">Annuler</button>
     </div>
   </div>
 </div>
 
 <main class="app-container">
-  <!-- HOME VIEW WITH DASHBOARD (IMAGE STYLE) -->
+  <!-- HOME VIEW -->
   <ng-container *ngIf="currentView() === 'home'">
-    
-    <div *ngIf="!aiAnswer()" class="animate-fade-slide">
+    <div *ngIf="!aiAnswer()" class="animate-fade-up">
       <div class="mb-4">
-        <h2 class="fw-bold mb-1" style="font-size: 28px; letter-spacing: -0.5px;">Hello Youne.</h2>
-        <p style="color: var(--secondary-text); font-size: 15px;">Here is a quick look at your day.</p>
+        <h2 class="text-title-1 mb-1">Salut Younes.</h2>
+        <p class="text-body-p text-secondary">Voici un aperçu de ta journée.</p>
       </div>
 
-      <!-- TODAY'S STATE CARD -->
       <div class="state-card">
         <div>
-          <div class="state-label">Today's State</div>
+          <div class="text-label-caps mb-1">État du jour</div>
           <div class="state-value">{{ getVitality() }}%</div>
-          <div class="state-label mt-1">Vitality</div>
-          
-          <div class="vitality-info">
-            {{ getVitality() > 70 ? 'Balanced, high performance' : 'Balanced, but low sleep' }}
+          <div class="text-body-p text-secondary mt-1">
+            {{ getVitality() > 70 ? 'Équilibre parfait, haute performance' : 'Équilibré, mais manque de sommeil' }}
           </div>
         </div>
 
         <div class="vitality-circle-container">
-          <svg class="vitality-circle-svg" width="140" height="140">
+          <svg class="vitality-circle-svg" viewBox="0 0 150 150">
             <defs>
               <linearGradient id="vitalityGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" style="stop-color:#3CCF91; stop-opacity:1" />
                 <stop offset="100%" style="stop-color:#4C8DFF; stop-opacity:1" />
               </linearGradient>
             </defs>
-            <circle class="vitality-circle-bg" cx="70" cy="70" r="60"></circle>
-            <circle class="vitality-circle-fill" cx="70" cy="70" r="60" 
+            <circle class="vitality-circle-bg" cx="75" cy="75" r="60"></circle>
+            <circle class="vitality-circle-fill" cx="75" cy="75" r="60" 
                     [style.stroke-dasharray]="377" 
                     [style.stroke-dashoffset]="377 - (377 * getVitality() / 100)"></circle>
           </svg>
-          <div style="position: absolute; font-size: 24px; font-weight: 700; color: white;">{{ getVitality() }}<span style="font-size: 14px; opacity: 0.6; margin-left: 2px;">%</span></div>
+          <div class="vitality-text-center">{{ getVitality() }}<span style="font-size: 14px; opacity: 0.6; margin-left: 2px;">%</span></div>
         </div>
       </div>
 
-      <!-- COMPACT HABITS LIST (HOME) -->
-      <div class="mb-4">
-        <div *ngFor="let habit of habitService.habits().slice(0, 3)" class="habit-row-premium">
-          <div class="habit-icon-box"><i class="bi" [ngClass]="habit.category === 'WORK' ? 'bi-activity' : 'bi-lightning-charge-fill' " style="color: #4C8DFF;"></i></div>
-          <div class="habit-details">
-            <div class="habit-header-row">
-              <span class="habit-name-p">{{ habit.name }}</span>
-              <span class="habit-meta-p">{{ habitService.getHabitProgress(habit.id) }} / {{ habit.targetValue }} min</span>
-            </div>
-            <div class="progress-bar-p"><div class="progress-fill-p" [style.width.%]="habitService.getHabitPercentage(habit)"></div></div>
+      <div class="mb-5">
+        <div *ngFor="let habit of habitService.habits().slice(0, 3)" class="habit-row-premium tappable">
+          <div class="habit-icon-box" (click)="motivationService.startTimer(habit.id)">
+            <i class="bi" [ngClass]="habit.category === 'WORK' ? 'bi-activity' : 'bi-lightning-charge-fill' "></i>
           </div>
+          <div class="habit-details" (click)="motivationService.startTimer(habit.id)">
+            <div class="habit-header-row mb-1">
+              <div class="d-flex align-items-center gap-2">
+                <span class="habit-name-p">{{ habit.name }}</span>
+                <span *ngIf="getHabitStatus(habit) === 'AT_RISK'" class="badge-mini at-risk">À faire</span>
+                <span *ngIf="getHabitStatus(habit) === 'COMPLETED'" class="badge-mini completed"><i class="bi bi-check-lg"></i></span>
+              </div>
+              
+              <!-- MINUTEUR RÉDUIT -->
+              <div *ngIf="motivationService.isTimerRunning() && motivationService.isMinimized() && motivationService.activeTimerHabitId() === habit.id" 
+                   (click)="$event.stopPropagation(); motivationService.isMinimized.set(false)" 
+                   class="timer-mini-pill" style="padding: 2px 10px; scale: 0.85; transform-origin: right;">
+                <div class="spinner-grow spinner-grow-sm text-primary" style="width: 8px; height: 8px;"></div>
+                <span class="text-primary fw-bold ms-2" style="font-size: 13px;">{{ timerDisplay() }}</span>
+              </div>
+
+              <span *ngIf="!(motivationService.isTimerRunning() && motivationService.isMinimized() && motivationService.activeTimerHabitId() === habit.id)" 
+                    class="habit-meta-p">{{ habitService.getHabitProgress(habit.id) }}/{{ habit.targetValue }}</span>
+            </div>
+            <div class="progress-bar-p">
+              <div class="progress-fill-p" [class.at-risk-bg]="getHabitStatus(habit) === 'AT_RISK'" [style.width.%]="habitService.getHabitPercentage(habit)"></div>
+            </div>
+          </div>
+          <i class="bi bi-chevron-right ms-2 opacity-20" style="font-size: 12px;"></i>
         </div>
       </div>
 
-      <!-- RECENT INSIGHT MINI -->
-      <div class="card-premium animate-fade-slide" style="border-radius: 24px; padding: 24px; background: rgba(255,255,255,0.02);">
-        <span class="modal-badge-p">Insight</span>
-        <h5 class="fw-bold text-white mt-3" style="font-size: 17px; line-height: 1.4;">Sleep cycle slightly disturbed</h5>
-        <p class="mb-0 mt-2" style="color: var(--secondary-text); font-size: 14px;">Try going to bed 30min earlier tonight.</p>
+      <div class="card-premium animate-fade-up">
+        <div class="mb-3">
+          <span class="badge-mini completed bg-opacity-10">Insight IA</span>
+        </div>
+        <h5 class="text-title-2" style="font-size: 16px; line-height: 1.4;">Cycle de sommeil légèrement perturbé</h5>
+        <p class="text-body-p text-secondary mb-0 mt-2">Essaie de te coucher 30 min plus tôt ce soir.</p>
       </div>
     </div>
 
-    <!-- AI ANSWER STATE (CENTERED INSIGHT) -->
-    <div *ngIf="aiAnswer()" class="overlay-p">
-      <div class="modal-p">
+    <!-- AI ADVICE MODAL -->
+    <div *ngIf="aiAdvice()" class="premium-overlay" (click)="aiAdvice.set(null)">
+      <div class="modal-container-p animate-fade-up" (click)="$event.stopPropagation()" style="max-width: 400px; width: 100%;">
+        <div class="text-start mb-4">
+          <span class="text-label-caps text-primary">Conseil IA</span>
+          <h4 class="text-title-2 mt-1">🎯 Priorité : {{ aiAdvice().priority_habit }}</h4>
+        </div>
+
+        <div class="mb-4">
+          <p class="text-title-2 mb-2" style="font-size: 18px;">👉 {{ aiAdvice().action }}</p>
+          <p *ngIf="aiAdvice().why" class="text-body-p text-secondary" style="font-size: 13px; opacity: 0.8;">
+            Pourquoi : {{ aiAdvice().why }}
+          </p>
+        </div>
+
+        <div class="d-flex flex-column gap-3">
+          <button *ngIf="aiAdvice().cta_habit_id" class="btn-premium w-100 py-3" (click)="executeAdvice()">
+            {{ aiAdvice().cta_label || 'Démarrer' }}
+          </button>
+          <button class="btn-link-p w-100" (click)="aiAdvice.set(null)">Fermer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI ANSWER STATE (Fallback for generic chat) -->
+    <div *ngIf="aiAnswer() && !aiAdvice()" class="premium-overlay" (click)="aiAnswer.set(null)">
+      <div class="modal-container-p animate-fade-up" (click)="$event.stopPropagation()" style="max-width: 450px;">
         <div class="text-center mb-4">
-          <span class="modal-badge-p">Insight</span>
+          <span class="text-label-caps text-primary">Analyse IA</span>
         </div>
-        <p class="text-white fs-5 fw-medium text-center mb-5" style="line-height: 1.6;">{{ aiAnswer() }}</p>
-        <button class="btn-premium-primary w-100 py-3" (click)="aiAnswer.set(null)">OK</button>
+        <p class="text-title-2 text-center mb-5" style="line-height: 1.6;">{{ aiAnswer() }}</p>
+        <button class="btn-premium w-100 py-3" (click)="aiAnswer.set(null)">Compris</button>
       </div>
     </div>
-
   </ng-container>
 
-  <!-- JOURNAL VIEW (IMAGE STYLE) -->
+  <!-- JOURNAL VIEW -->
   <ng-container *ngIf="currentView() === 'journal'">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-bold mb-0" style="font-size: 24px;">Journal</h2>
+    <div class="mb-4 px-2">
+      <h2 class="text-title-1 mb-0">Journal</h2>
     </div>
 
     <div *ngFor="let group of groupedEvents()" class="mb-5">
-      <div style="font-size: 12px; color: var(--muted-text); margin-bottom: 16px; font-weight: 500;">{{ group.date }}</div>
-      
+      <div class="date-group-label">{{ group.date | titlecase }}</div>
       <div *ngFor="let event of group.items" class="habit-row-premium">
         <div class="habit-icon-box"><i class="bi" [ngClass]="event.type === 'FINANCE' ? 'bi-credit-card' : 'bi-activity'"></i></div>
         <div class="habit-details">
           <div class="habit-header-row">
             <span class="habit-name-p">{{ event.content }}</span>
             <div class="d-flex align-items-center gap-3">
-              <span class="habit-meta-p">
+              <span class="habit-meta-p font-monospace">
                 <span *ngIf="event.type === 'FINANCE'">-{{ event.payload.amount }}€</span>
                 <span *ngIf="event.type !== 'FINANCE' && (event.payload.value || event.payload.duration_min)">{{ event.payload.value || event.payload.duration_min }} min</span>
               </span>
               <div class="dropdown">
                 <i class="bi bi-three-dots-vertical text-secondary opacity-50 cursor-pointer" data-bs-toggle="dropdown"></i>
                 <ul class="dropdown-menu dropdown-menu-end">
-                  <li><a class="dropdown-item" (click)="startEdit(event)"><i class="bi bi-pencil me-2"></i> Edit</a></li>
-                  <li><a class="dropdown-item text-danger" (click)="deleteEvent(event.timestamp)"><i class="bi bi-trash me-2"></i> Delete</a></li>
+                  <li><a class="dropdown-item" (click)="startEdit(event)"><i class="bi bi-pencil me-2"></i> Modifier</a></li>
+                  <li><a class="dropdown-item text-danger" (click)="deleteEvent(event.timestamp)"><i class="bi bi-trash me-2"></i> Supprimer</a></li>
                 </ul>
               </div>
             </div>
           </div>
-          <div class="habit-meta-p" style="font-size: 11px;">{{ event.timestamp | date:'HH:mm' }}</div>
-          <div class="progress-bar-p mt-2"><div class="progress-fill-p" style="width: 100%;"></div></div>
+          <div class="text-label-caps" style="opacity: 0.5;">{{ event.timestamp | date:'HH:mm' }}</div>
         </div>
       </div>
     </div>
   </ng-container>
 
-  <!-- HABITS VIEW (IMAGE STYLE + MOTIVATION LAYER) -->
+  <!-- HABITS VIEW -->
   <ng-container *ngIf="currentView() === 'habits'">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-bold mb-0" style="font-size: 24px;">Habits</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+      <h2 class="text-title-1 mb-0">Habitudes</h2>
+      <button class="btn-premium px-3 py-2 fs-6" style="border-radius: 12px;" (click)="openCreateHabit()">+ Nouveau</button>
     </div>
 
-    <div class="mb-4 d-flex justify-content-between align-items-center">
-      <span style="font-size: 15px; color: var(--primary-text); font-weight: 500;">{{ habitService.habits().length }} active today</span>
-      <button class="btn btn-sm px-3 py-2" style="background: rgba(255,255,255,0.05); color: white; border-radius: 12px; font-size: 13px; border: var(--border);" (click)="openCreateHabit()">+ New</button>
-    </div>
-
-    <!-- MOTIVATION FOCUS CARD (OPTIMAL BALANCE) -->
-    <div *ngIf="motivationService.showIdentityNudge()" class="text-center mb-2 animate-fade-in" style="color: var(--muted-text); font-size: 13px;">
-      You showed up today.
-    </div>
-
-    <div *ngIf="motivationService.focusHabit() as focus" class="card-focus-p animate-cross-fade mb-4">
-      
+    <!-- FOCUS HABIT -->
+    <div *ngIf="motivationService.focusHabit() as focus" class="card-premium animate-fade-up mb-5" 
+         style="background: linear-gradient(145deg, var(--card-surface), var(--elevated-surface));">
       <div class="d-flex justify-content-between align-items-start mb-4">
-        <span class="badge-focus-p" [style.background]="motivationService.getHabitState(focus) === 'STREAK_AT_RISK' ? 'rgba(255, 126, 74, 0.1)' : 'rgba(255, 177, 74, 0.1)'" 
-                                     [style.color]="motivationService.getHabitState(focus) === 'STREAK_AT_RISK' ? '#FF7E4A' : '#FFB14A'">
-          Today's Focus
-        </span>
+        <span class="text-label-caps text-primary">Objectif Focus</span>
         <div class="dropdown">
           <i class="bi bi-three-dots text-secondary opacity-30 cursor-pointer" data-bs-toggle="dropdown"></i>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" (click)="deleteHabit(focus.id)"><i class="bi bi-archive me-2"></i> Archive</a></li>
+            <li><a class="dropdown-item" (click)="deleteHabit(focus.id)"><i class="bi bi-archive me-2"></i> Archiver</a></li>
           </ul>
         </div>
       </div>
 
-      <div class="d-flex justify-content-between align-items-center mb-1">
+      <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <h3 class="fw-bold mb-0" style="font-size: 22px;">{{ focus.name }}</h3>
-          <p *ngIf="focus.currentStreak >= 1" class="mb-0" style="font-size: 13px; color: #FFB14A; font-weight: 600; opacity: 0.9;">
-            Streak: {{ focus.currentStreak }} days<span *ngIf="motivationService.showStreakFire()"> 🔥</span>
+          <h3 class="text-title-2 mb-1">{{ focus.name }}</h3>
+          <p *ngIf="focus.currentStreak >= 1" class="text-body-p mb-0" style="color: #FFB14A; font-weight: 700;">
+            Série : {{ focus.currentStreak }} jours<span *ngIf="motivationService.showStreakFire()"> 🔥</span>
           </p>
         </div>
-        
-        <!-- INLINE TIMER IF MINIMIZED OR SCORE -->
         <div class="text-end">
-          <div *ngIf="motivationService.isTimerRunning() && motivationService.isMinimized()" 
-               (click)="motivationService.isMinimized.set(false)"
-               class="d-flex align-items-center gap-2 px-3 py-1 bg-primary bg-opacity-10 border border-primary border-opacity-20 rounded-pill cursor-pointer">
+          <div *ngIf="motivationService.isTimerRunning() && motivationService.isMinimized()" (click)="motivationService.isMinimized.set(false)" class="timer-mini-pill">
             <div class="spinner-grow spinner-grow-sm text-primary" style="width: 8px; height: 8px;"></div>
-            <span class="text-primary fw-bold" style="font-size: 14px;">{{ timerDisplay() }}</span>
+            <span class="text-primary fw-bold ms-2">{{ timerDisplay() }}</span>
           </div>
-          <span *ngIf="!(motivationService.isTimerRunning() && motivationService.isMinimized())" class="text-white opacity-60" style="font-size: 14px; font-weight: 500;">
-            {{ habitService.getHabitProgress(focus.id) }} / {{ focus.targetValue }} min
+          <span *ngIf="!(motivationService.isTimerRunning() && motivationService.isMinimized())" class="text-body-p text-secondary">
+            {{ habitService.getHabitProgress(focus.id) }}/{{ focus.targetValue }} min
           </span>
         </div>
       </div>
 
-      <div class="progress-bar-p mb-2" style="height: 6px;">
-        <div class="progress-fill-focus" [style.width.%]="habitService.getHabitPercentage(focus)"></div>
+      <div class="progress-bar-p mb-3" style="height: 6px;">
+        <div class="progress-fill-p" [style.width.%]="habitService.getHabitPercentage(focus)"></div>
       </div>
 
-      <!-- Micro success feedback under progress bar -->
-      <div class="text-center mb-4" style="height: 20px;">
-        <div *ngIf="motivationService.justCompletedHabitId() === focus.id" class="animate-fade-in-out" style="color: #3CCF91; font-size: 12px; font-weight: 600;">
-          ✔ +5 min logged
-        </div>
-        <p *ngIf="motivationService.justCompletedHabitId() !== focus.id" class="mb-0" style="color: var(--secondary-text); font-size: 14px; font-weight: 500;">
-          {{ motivationService.getNudgeMessage(focus) }}
-        </p>
-      </div>
-
-      <button class="btn-start-now-p" (click)="motivationService.startTimer(focus.id)">
-        Start 5 min
+      <button class="btn-premium w-100 py-3" (click)="motivationService.startTimer(focus.id)">
+        <i class="bi bi-play-fill fs-5"></i> Démarrer 5 min
       </button>
     </div>
 
-    <!-- REGULAR HABITS LIST -->
-    <div class="mb-3 mt-5" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted-text); font-weight: 700;">3 active today</div>
-    <div *ngFor="let habit of otherHabits()" class="habit-row-premium">
-      <div class="habit-icon-box">
-        <i class="bi" [ngClass]="habit.category === 'WORK' ? 'bi-activity' : 'bi-lightning-charge-fill' " style="color: #4C8DFF;"></i>
+    <div class="section-title px-2">Toutes les habitudes</div>
+    <div *ngFor="let habit of otherHabits()" class="habit-row-premium tappable">
+      <div class="habit-icon-box" (click)="motivationService.startTimer(habit.id)">
+        <i class="bi" [ngClass]="habit.category === 'WORK' ? 'bi-activity' : 'bi-lightning-charge-fill' "></i>
       </div>
-      <div class="habit-details">
-        <div class="habit-header-row">
-          <span class="habit-name-p">{{ habit.name }}</span>
-          <span class="habit-meta-p">{{ habitService.getHabitProgress(habit.id) }} / {{ habit.targetValue }} min</span>
+      <div class="habit-details" (click)="motivationService.startTimer(habit.id)">
+        <div class="habit-header-row mb-1">
+          <div class="d-flex align-items-center gap-2">
+            <span class="habit-name-p">{{ habit.name }}</span>
+            <span *ngIf="getHabitStatus(habit) === 'AT_RISK'" class="badge-mini at-risk">À faire</span>
+            <span *ngIf="getHabitStatus(habit) === 'COMPLETED'" class="badge-mini completed"><i class="bi bi-check-lg"></i></span>
+          </div>
+          <span class="habit-meta-p">{{ habitService.getHabitProgress(habit.id) }}/{{ habit.targetValue }}</span>
         </div>
         <div class="progress-bar-p">
-          <div class="progress-fill-p" 
-               [class.success]="motivationService.getHabitState(habit) === 'COMPLETED'"
-               [style.width.%]="habitService.getHabitPercentage(habit)"></div>
+          <div class="progress-fill-p" [class.success]="getHabitStatus(habit) === 'COMPLETED'" [class.at-risk-bg]="getHabitStatus(habit) === 'AT_RISK'" [style.width.%]="habitService.getHabitPercentage(habit)"></div>
         </div>
-        <div *ngIf="habit.currentStreak >= 1" class="mt-2" style="font-size: 11px; color: var(--muted-text);">Streak {{ habit.currentStreak }} days</div>
+      </div>
+      <div class="dropdown ms-2" (click)="$event.stopPropagation()">
+        <i class="bi bi-three-dots-vertical text-secondary opacity-30 cursor-pointer" data-bs-toggle="dropdown"></i>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item text-danger" (click)="deleteHabit(habit.id)"><i class="bi bi-archive me-2"></i> Archiver</a></li>
+        </ul>
       </div>
     </div>
   </ng-container>
 
   <!-- EDIT EVENT MODAL -->
-  <div *ngIf="editingEvent" class="overlay-p">
-    <div class="modal-p">
-      <div class="modal-header-p">
-        <h4 class="modal-title-p">Edit Entry</h4>
+  <div *ngIf="editingEvent" class="premium-overlay" (click)="cancelEdit()">
+    <div class="modal-container-p animate-fade-up" (click)="$event.stopPropagation()" style="max-width: 400px; width: 100%;">
+      <div class="text-start mb-4">
+        <div class="text-label-caps text-primary">Journal</div>
+        <h4 class="text-title-2 mt-1">Modifier l'entrée</h4>
+      </div>
+
+      <div class="input-container-p py-3 mb-4">
+        <span class="me-3">{{ editingEvent.type === 'FINANCE' ? '💰' : '⚡' }}</span>
+        <div class="flex-grow-1 text-body-p">{{ editingEvent.content }}</div>
       </div>
       
-      <div class="mb-4">
-        <label class="state-label mb-2">Description</label>
-        <div style="background: rgba(255, 255, 255, 0.04); border-radius: 16px; padding: 14px 18px;">
-          <input type="text" class="form-control border-0 bg-transparent text-white p-0" 
-                 [(ngModel)]="editingEvent.content" style="outline: none; box-shadow: none;">
+      <div class="form-group-p">
+        <label class="text-label-caps mb-2 d-block">Description</label>
+        <div class="input-container-p">
+          <input type="text" class="input-p" [(ngModel)]="editingEvent.content">
         </div>
       </div>
 
-      <div class="mb-5">
-        <label class="state-label mb-2">{{ editingEvent.type === 'FINANCE' ? 'Amount (€)' : 'Value / Duration (min)' }}</label>
-        <div style="background: rgba(255, 255, 255, 0.04); border-radius: 16px; padding: 14px 18px;">
-          <input *ngIf="editingEvent.type === 'FINANCE'" type="number" class="form-control border-0 bg-transparent text-white p-0" 
-                 [(ngModel)]="editingEvent.payload.amount" style="outline: none; box-shadow: none;">
-          <input *ngIf="editingEvent.type !== 'FINANCE'" type="number" class="form-control border-0 bg-transparent text-white p-0" 
-                 [(ngModel)]="editingEvent.payload.duration_min" style="outline: none; box-shadow: none;">
+      <div class="form-group-p">
+        <label class="text-label-caps mb-2 d-block">{{ editingEvent.type === 'FINANCE' ? 'Montant (€)' : 'Valeur / Durée (min)' }}</label>
+        <div class="input-container-p">
+          <input *ngIf="editingEvent.type === 'FINANCE'" type="number" class="input-p" [(ngModel)]="editingEvent.payload.amount">
+          <input *ngIf="editingEvent.type !== 'FINANCE'" type="number" class="input-p" [(ngModel)]="editingEvent.payload.duration_min">
         </div>
       </div>
 
-      <div class="d-flex flex-column gap-3">
-        <button class="btn-premium-primary py-3" (click)="saveEdit()">Save Changes</button>
-        <button class="btn btn-link text-decoration-none text-secondary py-2" (click)="cancelEdit()">Cancel</button>
+      <div class="d-flex flex-column gap-3 mt-4">
+        <button class="btn-premium w-100 py-3" (click)="saveEdit()" [disabled]="loading">
+          <span *ngIf="!loading">Enregistrer les modifications</span>
+          <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+        </button>
+        <button class="btn-link-p w-100" (click)="cancelEdit()">Annuler</button>
       </div>
     </div>
   </div>
 
   <!-- DASHBOARD VIEW -->
   <ng-container *ngIf="currentView() === 'dashboard'">
-    <h2 class="fw-bold mb-4" style="font-size: 24px;">Dashboard</h2>
+    <h2 class="text-title-1 mb-4 px-2">Tableau de bord</h2>
     <app-expense-summary></app-expense-summary>
   </ng-container>
 </main>
 
-<!-- BOTTOM BAR (IMAGE STYLE) -->
-<div class="bottom-bar-p">
-  <div class="input-pill-p">
-    <button class="btn-mic-p"><i class="bi bi-mic-fill"></i></button>
-    <input type="text" class="input-p" placeholder="Ask me anything..." [(ngModel)]="magicText" (keyup.enter)="processMagic()" [disabled]="loading">
-    <button class="btn-send-p" (click)="processMagic()" [disabled]="loading || !magicText">
-      <i *ngIf="!loading" class="bi bi-arrow-up-short fs-4"></i>
-      <span *ngIf="loading" class="spinner-border spinner-border-sm text-dark"></span>
+<!-- BOTTOM BAR -->
+<div class="bottom-bar-p" [style.bottom]="'var(--kb-height, 0px)'">
+  <div class="input-pill-p" [class.error-border]="aiError()">
+    <button class="btn-mic-p" [class.listening]="isListening()" (click)="toggleSpeech()">
+      <i class="bi" [ngClass]="isListening() ? 'bi-mic-fill text-danger' : 'bi-mic-fill'"></i>
     </button>
+    <input type="text" class="input-p px-2" placeholder="Écris ici…" [ngModel]="magicText()" (ngModelChange)="magicText.set($event)" (keyup.enter)="processMagic()" [disabled]="loading">
+    <button *ngIf="!aiError()" class="btn-send-p" (click)="processMagic()" [disabled]="loading || !magicText">
+      <i *ngIf="!loading" class="bi bi-arrow-up-short fs-4"></i>
+      <div *ngIf="loading" class="d-flex align-items-center gap-2 px-1">
+        <span class="spinner-border spinner-border-sm text-dark" style="width: 12px; height: 12px;"></span>
+        <span class="loading-text" style="font-size: 11px; font-weight: 700;">{{ loadingStatus() }}</span>
+      </div>
+    </button>
+    <button *ngIf="aiError()" class="btn-send-p bg-danger text-white" (click)="retryMagic()" title="Réessayer">
+      <i class="bi bi-arrow-clockwise fs-5"></i>
+    </button>
+  </div>
+  <div *ngIf="aiError()" class="error-hint">
+    <span *ngIf="aiError()?.code === 'AI_TIMEOUT'">L'IA est occupée—réessaie.</span>
+    <span *ngIf="aiError()?.code === 'AI_RATE_LIMIT'">Trop de requêtes, attends un peu.</span>
+    <span *ngIf="aiError()?.code === 'AI_UPSTREAM_ERROR'">Service indisponible.</span>
   </div>
 </div>
 
-<!-- TIMER FLOW MODAL (5 MIN MICRO-ACTION) -->
-<div *ngIf="motivationService.isTimerRunning() && !motivationService.isMinimized()" class="overlay-p">
-  <div class="timer-modal">
-    <div class="mb-4">
-      <span class="badge-focus">Micro-Habit</span>
-      <h3 class="fw-bold mt-3">{{ habitService.habits().find(h => h.id === motivationService.activeTimerHabitId())?.name }}</h3>
-      <p style="color: var(--secondary-text); font-size: 14px;">Focus for a quick session</p>
-    </div>
-
-    <div class="timer-display">
-      {{ timerDisplay() }}
-    </div>
-
+<!-- TIMER FLOW MODAL -->
+<div *ngIf="motivationService.isTimerRunning() && !motivationService.isMinimized()" class="premium-overlay">
+  <div class="modal-container-p animate-fade-up text-center" style="max-width: 400px; width: 100%;">
+    <span class="text-label-caps text-primary">Micro-Habitude</span>
+    <h3 class="text-title-2 mt-2">{{ habitService.habits().find(h => h.id === motivationService.activeTimerHabitId())?.name }}</h3>
+    <p class="text-body-p text-secondary mt-1">Concentre-toi sur cette session</p>
+    
+    <div class="timer-display">{{ timerDisplay() }}</div>
+    
     <div class="d-flex flex-column gap-3 mt-4">
-      <button class="btn btn-premium-primary py-3" style="background: rgba(255, 69, 58, 0.1); color: #FF453A; border: 1px solid rgba(255, 69, 58, 0.2);"
-              (click)="motivationService.cancelTimer()">
-        <i class="bi bi-stop-fill me-2"></i> Stop
+      <button class="btn-premium btn-danger-p w-100 py-3" (click)="motivationService.cancelTimer()">
+        <i class="bi bi-stop-fill me-2"></i> Arrêter la session
       </button>
-      <button class="btn btn-link text-decoration-none text-secondary py-2" (click)="motivationService.minimizeTimer()">
-        Minimize
-      </button>
+      <button class="btn-link-p w-100" (click)="motivationService.minimizeTimer()">Réduire en mode flottant</button>
     </div>
   </div>
 </div>

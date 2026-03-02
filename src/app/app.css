@@ -6,7 +6,7 @@
    ========================================================================== */
 .toast-container-p {
   position: fixed;
-  top: calc(100px + var(--sat));
+  top: 20px;
   left: 0; right: 0;
   display: flex; justify-content: center;
   z-index: 5000;
@@ -27,14 +27,14 @@
 }
 
 .app-container {
-  padding: calc(100px + var(--sat)) 16px calc(140px + var(--sab)) 16px;
+  padding: 100px 16px 140px 16px;
   max-width: 600px;
   margin: 0 auto;
   min-height: 100vh;
 }
 
 .revolut-header {
-  padding: calc(16px + var(--sat)) 0 16px 0;
+  padding: 16px 0;
   background: rgba(10, 10, 12, 0.85);
   backdrop-filter: blur(24px);
   position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
@@ -159,8 +159,7 @@
 .bottom-bar-p {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  height: calc(100px + var(--sab));
-  padding-bottom: var(--sab);
+  height: 100px;
   background: linear-gradient(to top, rgba(10, 10, 12, 1) 40%, rgba(10, 10, 12, 0));
   display: flex;
   align-items: center;
@@ -197,7 +196,7 @@
   color: white;
   padding: 8px 10px;
   outline: none;
-  font-size: 16px; /* 16px to prevent iOS auto-zoom */
+  font-size: 15px;
 }
 
 /* TOUCH OPTIMIZATIONS */
@@ -222,33 +221,6 @@ input {
   color: black;
   border: none;
   display: flex; align-items: center; justify-content: center;
-}
-
-/* iOS SPECIFIC FIXES */
-.platform-ios .bottom-bar-p {
-  height: calc(85px + var(--sab)) !important;
-  padding-bottom: var(--sab) !important;
-  background: rgba(10, 10, 12, 0.9) !important;
-  backdrop-filter: blur(25px);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.platform-ios.keyboard-open .bottom-bar-p {
-  height: 64px !important;
-  padding-bottom: 0 !important;
-  background: #0A0A0C !important;
-  position: fixed !important;
-  bottom: 0 !important;
-}
-
-.platform-ios .app-container {
-  padding-top: calc(16px + var(--sat)) !important;
-  padding-bottom: calc(110px + var(--sab)) !important;
-}
-
-.platform-ios .revolut-header {
-  padding-top: var(--sat) !important;
-  height: calc(70px + var(--sat)) !important;
 }
 
 /* ==========================================================================

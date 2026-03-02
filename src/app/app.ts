@@ -3,15 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LifeService, LifeEvent } from './services/life.service';
-import { VoiceService } from './core/voice/voice.service';
 import { HabitService } from './services/habit.service';
 import { HabitsMotivationService } from './services/habits-motivation.service';
 import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary';
 import { CreateHabitModalComponent } from './components/create-habit-modal/create-habit-modal';
 import { ToastService } from './services/toast.service';
-import { finalize, Subscription } from 'rxjs';
-import { Capacitor } from '@capacitor/core';
-import { Keyboard } from '@capacitor/keyboard';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -22,15 +19,11 @@ import { Keyboard } from '@capacitor/keyboard';
 })
 export class AppComponent implements OnInit, OnDestroy {
   public lifeService = inject(LifeService);
-  public voiceService = inject(VoiceService);
   public habitService = inject(HabitService);
   public motivationService = inject(HabitsMotivationService);
   public toastService = inject(ToastService);
   private modalService = inject(NgbModal);
   private renderer = inject(Renderer2);
-
-  private voiceSubs: Subscription[] = [];
-  private keyboardSubs: any[] = [];
 
   readonly timerDisplay = computed(() => {
     const s = this.motivationService.timerSecondsRemaining();
@@ -39,7 +32,6 @@ export class AppComponent implements OnInit, OnDestroy {
     return `${m}:${rs < 10 ? '0' : ''}${rs}`;
   });
 
-  // Navigation state
   readonly currentView = signal<'home' | 'journal' | 'habits' | 'dashboard'>('home');
 
   readonly otherHabits = computed(() => {
@@ -51,7 +43,6 @@ export class AppComponent implements OnInit, OnDestroy {
   magicText: string = '';
   loading: boolean = false;
   editingEvent: LifeEvent | null = null;
-  showDebug: boolean = false;
   
   pendingEvents = signal<LifeEvent[]>([]);
   pendingUpdates = signal<any[]>([]);
@@ -93,58 +84,14 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.lifeService.sync();
     this.habitService.fetchHabits();
-    this.setupVoiceListeners();
-    this.setupKeyboardListeners();
   }
 
   ngOnDestroy() {
     if (this.undoTimer) clearTimeout(this.undoTimer);
-    this.voiceSubs.forEach(s => s.unsubscribe());
-    this.keyboardSubs.forEach(s => s.remove());
-  }
-
-  private setupKeyboardListeners() {
-    if (Capacitor.getPlatform() === 'ios') {
-      this.renderer.addClass(document.body, 'platform-ios');
-
-      Keyboard.addListener('keyboardWillShow', () => {
-        this.renderer.addClass(document.body, 'keyboard-open');
-      }).then(s => this.keyboardSubs.push(s));
-
-      Keyboard.addListener('keyboardWillHide', () => {
-        this.renderer.removeClass(document.body, 'keyboard-open');
-      }).then(s => this.keyboardSubs.push(s));
-    }
-  }
-
-  private setupVoiceListeners() {
-    this.voiceSubs.push(
-      this.voiceService.onPartialResult$.subscribe(text => {
-        this.magicText = text;
-      }),
-      this.voiceService.onFinalResult$.subscribe(text => {
-        this.magicText = text;
-      }),
-      this.voiceService.onError$.subscribe(err => {
-        let msg = "Erreur micro";
-        if (err === 'NOT_AVAILABLE') msg = "Vocal non disponible.";
-        if (err === 'PERMISSION_DENIED') msg = "Activez le micro dans les réglages.";
-        if (err === 'not-allowed') msg = "Microphone non autorisé.";
-        this.toastService.show(msg);
-      })
-    );
   }
 
   setView(view: 'home' | 'journal' | 'habits' | 'dashboard') {
     this.currentView.set(view);
-  }
-
-  toggleListening() {
-    if (this.voiceService.isListening()) {
-      this.voiceService.stopListening();
-    } else {
-      this.voiceService.startListening();
-    }
   }
 
   processMagic() {

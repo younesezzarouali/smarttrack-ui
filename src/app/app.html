@@ -6,7 +6,6 @@
 </div>
 
 <header class="revolut-header">
-
   <div class="container d-flex flex-column align-items-center">
     <div class="w-100 d-flex justify-content-between align-items-center px-4">
       <div (click)="setView('home')" class="header-icon-btn"><i class="bi bi-robot"></i></div>
@@ -303,9 +302,7 @@
 <!-- BOTTOM BAR (IMAGE STYLE) -->
 <div class="bottom-bar-p">
   <div class="input-pill-p">
-    <button class="btn-mic-p" [class.text-danger]="voiceService.isListening()" (click)="toggleListening()">
-      <i class="bi bi-mic-fill"></i>
-    </button>
+    <button class="btn-mic-p"><i class="bi bi-mic-fill"></i></button>
     <input type="text" class="input-p" placeholder="Ask me anything..." [(ngModel)]="magicText" (keyup.enter)="processMagic()" [disabled]="loading">
     <button class="btn-send-p" (click)="processMagic()" [disabled]="loading || !magicText">
       <i *ngIf="!loading" class="bi bi-arrow-up-short fs-4"></i>

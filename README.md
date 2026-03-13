@@ -1,5 +1,22 @@
 # SmarttrackUi
 
+## SmartTrack Life OS Mission
+
+SmartTrack est mon Life OS personnel.
+Ce n’est pas seulement une app de suivi.
+C’est le système central qui m’aide à :
+- suivre mes dépenses et mes finances
+- suivre mes habitudes et ma progression
+- capturer les événements importants de ma vie
+- produire des analyses et des insights
+- m’aider à prendre de meilleures décisions
+- me donner un briefing clair de mon état de vie
+
+Règle produit :
+une fonctionnalité n’est prioritaire que si elle m’aide à mieux comprendre, piloter ou améliorer ma vie.
+
+SmartTrack est positionné comme Life OS personnel principal du projet.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.2.
 
 ## Development server

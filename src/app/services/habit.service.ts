@@ -74,6 +74,10 @@ export class HabitService {
     return this.progressSignal()?.progressMap?.[habitId] || 0;
   }
 
+  getHabitDisplayProgress(habit: Habit): number {
+    return Math.min(this.getHabitProgress(habit.id), habit.targetValue);
+  }
+
   getHabitPercentage(habit: Habit): number {
     const current = this.getHabitProgress(habit.id);
     return Math.min((current / habit.targetValue) * 100, 100);

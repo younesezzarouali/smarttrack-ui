@@ -130,7 +130,7 @@
               </div>
 
               <span *ngIf="!(motivationService.isTimerRunning() && motivationService.isMinimized() && motivationService.activeTimerHabitId() === habit.id)" 
-                    class="habit-meta-p">{{ habitService.getHabitProgress(habit.id) }}/{{ habit.targetValue }}</span>
+                    class="habit-meta-p">{{ habitService.getHabitDisplayProgress(habit) }}/{{ habit.targetValue }}</span>
             </div>
             <div class="progress-bar-p">
               <div class="progress-fill-p" [class.at-risk-bg]="getHabitStatus(habit) === 'AT_RISK'" [style.width.%]="habitService.getHabitPercentage(habit)"></div>
@@ -251,7 +251,7 @@
             <span class="text-primary fw-bold ms-2">{{ timerDisplay() }}</span>
           </div>
           <span *ngIf="!(motivationService.isTimerRunning() && motivationService.isMinimized())" class="text-body-p text-secondary">
-            {{ habitService.getHabitProgress(focus.id) }}/{{ focus.targetValue }} min
+            {{ habitService.getHabitDisplayProgress(focus) }}/{{ focus.targetValue }} min
           </span>
         </div>
       </div>
@@ -261,7 +261,7 @@
       </div>
 
       <button class="btn-premium w-100 py-3" (click)="motivationService.startTimer(focus.id)">
-        <i class="bi bi-play-fill fs-5"></i> Démarrer 5 min
+        <i class="bi bi-play-fill fs-5"></i> Démarrer {{ focus.type === 'TIME' ? focus.targetValue : 5 }} min
       </button>
     </div>
 
@@ -277,7 +277,7 @@
             <span *ngIf="getHabitStatus(habit) === 'AT_RISK'" class="badge-mini at-risk">À faire</span>
             <span *ngIf="getHabitStatus(habit) === 'COMPLETED'" class="badge-mini completed"><i class="bi bi-check-lg"></i></span>
           </div>
-          <span class="habit-meta-p">{{ habitService.getHabitProgress(habit.id) }}/{{ habit.targetValue }}</span>
+          <span class="habit-meta-p">{{ habitService.getHabitDisplayProgress(habit) }}/{{ habit.targetValue }}</span>
         </div>
         <div class="progress-bar-p">
           <div class="progress-fill-p" [class.success]="getHabitStatus(habit) === 'COMPLETED'" [class.at-risk-bg]="getHabitStatus(habit) === 'AT_RISK'" [style.width.%]="habitService.getHabitPercentage(habit)"></div>
@@ -366,7 +366,7 @@
 <div *ngIf="motivationService.isTimerRunning() && !motivationService.isMinimized()" class="premium-overlay">
   <div class="modal-container-p animate-fade-up text-center" style="max-width: 400px; width: 100%;">
     <span class="text-label-caps text-primary">Micro-Habitude</span>
-    <h3 class="text-title-2 mt-2">{{ habitService.habits().find(h => h.id === motivationService.activeTimerHabitId())?.name }}</h3>
+    <h3 class="text-title-2 mt-2">{{ activeTimerHabit()?.name }}</h3>
     <p class="text-body-p text-secondary mt-1">Concentre-toi sur cette session</p>
     
     <div class="timer-display">{{ timerDisplay() }}</div>

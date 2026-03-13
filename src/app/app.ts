@@ -45,6 +45,11 @@ export class AppComponent implements OnInit, OnDestroy {
     return habits.filter(h => h.id !== focusId);
   });
 
+  readonly activeTimerHabit = computed(() => {
+    const activeId = this.motivationService.activeTimerHabitId();
+    return this.habitService.habits().find(h => h.id === activeId) || null;
+  });
+
   magicText = signal<string>('');
   loading: boolean = false;
   loadingStatus = signal<string>('');

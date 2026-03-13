@@ -25,6 +25,7 @@ export class HabitsMotivationService {
   readonly showIdentityNudge = signal<boolean>(false);
   
   private habitsCompletedTodayCount = 0;
+  private activeTimerDurationMin = 0;
   readonly now = signal(new Date());
 
   constructor(
@@ -71,10 +72,14 @@ export class HabitsMotivationService {
   });
 
   // Timer Commands
-  startTimer(habitId: string, durationMin: number = 5) {
+  startTimer(habitId: string, durationMin?: number) {
+    const habit = this.habitService.habits().find(h => h.id === habitId);
+    const resolvedDuration = durationMin ?? (habit?.type === 'TIME' ? habit.targetValue : 5);
+
     this.justCompletedHabitId.set(null);
     this.isMinimized.set(false);
-    this.timerController.start(durationMin, habitId);
+    this.activeTimerDurationMin = resolvedDuration;
+    this.timerController.start(resolvedDuration, habitId);
   }
 
   cancelTimer() {
@@ -92,7 +97,9 @@ export class HabitsMotivationService {
 
     const oldStreak = habit.currentStreak;
 
-    this.habitService.logHabitProgress(habitId, 5, 'timer').subscribe({
+    const delta = habit.type === 'TIME' ? this.activeTimerDurationMin || habit.targetValue : 5;
+
+    this.habitService.logHabitProgress(habitId, delta, 'timer').subscribe({
       next: (updatedHabit) => {
         this.justCompletedHabitId.set(habitId);
         
@@ -116,9 +123,9 @@ export class HabitsMotivationService {
         const habitEvent = {
           timestamp: Date.now(),
           type: habit.category === 'WORK' ? 'WORK' : 'HEALTH',
-          content: `${habit.name} (Quick 5m session)`,
+          content: `${habit.name} (${delta}m session)`,
           payload: {
-            duration_min: "5",
+            duration_min: String(delta),
             linkedHabitId: habitId,
             source: "timer"
           }
